@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@Lexopia/shared-types": ["./src/lib/dashboard/types.ts"],
+      "@readdly/shared-types": ["./src/lib/dashboard/types.ts"]
     }
   },
   "include": [

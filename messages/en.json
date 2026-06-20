@@ -1,0 +1,1178 @@
+{
+	"LoadingComponent": {
+		"loading": "Loading..."
+	},
+	"Hero": {
+		"headline": "Stories That Make Your Child",
+		"subline": "Journey through magical tales and solve mind-bending riddles",
+		"details": "Perfect for young readers (6-14 years old) • Build reading skills • Develop critical thinking",
+		"cta": {
+			"getStarted": "Get Started",
+			"startAdventure": "Start Your Child's Adventure",
+			"parentDashboard": "Parent Dashboard"
+		},
+		"trust": "✨ Trusted by parents and educators • Safe & educational • AI-powered learning",
+		"words": [
+			"Think",
+			"Imagine",
+			"Explore",
+			"Learn"
+		]
+	},
+	"CoreHeader": {
+		"nav": {
+			"parentDashboard": "Parent Dashboard",
+			"adminDashboard": "Admin Dashboard",
+			"roadmapsLibrary": "Roadmaps Library"
+		},
+		"menu": {
+			"open": "Open menu",
+			"close": "Close menu"
+		},
+		"themeToggle": "Toggle theme"
+	},
+	"CommonComponents": {
+		"missingData": "Missing Data",
+		"goBack": "Go Back",
+		"language": "Language",
+		"loading": "Loading...",
+		"english": "English",
+		"french": "French",
+		"arabic": "Arabic",
+		"selectLanguage": "Language"
+	},
+	"ParentDashboard": {
+		"loading": "Loading...",
+		"yourChildren": "Your Children",
+		"unknown": "Unknown",
+		"stars": "{count} stars",
+		"addChild": "Add Child",
+		"addChildDialog": {
+			"title": "Add New Child",
+			"step1": {
+				"title": "Child's Basic Information",
+				"description": "Tell us about your child",
+				"childNameLabel": "Child's Name",
+				"childNamePlaceholder": "e.g., Emma",
+				"ageGroupLabel": "Age Group",
+				"ageGroupPlaceholder": "Select age group",
+				"genderLabel": "Child's Gender"
+			},
+			"step2": {
+				"title": "Favorite Themes",
+				"description": "What does {name} enjoy?",
+				"noThemes": "No themes available",
+				"favoriteThemesLabel": "Favorite Themes",
+				"selectAtLeastOneTheme": "Select at least one theme"
+			},
+			"step3": {
+				"title": "Review Child Profile",
+				"nameLabel": "Name",
+				"ageGroupLabel": "Age Group",
+				"genderLabel": "Gender",
+				"favoriteThemesLabel": "Favorite Themes",
+				"createButton": "Create Child",
+				"creating": "Creating..."
+			},
+			"errors": {
+				"childNameRequired": "Child name is required",
+				"selectAgeGroup": "Please select an age group for your child",
+				"invalidAgeGroup": "Selected age group is invalid",
+				"selectAtLeastOneTheme": "Select at least one theme",
+				"selectGender": "Please select a gender"
+			},
+			"messages": {
+				"createdSuccess": "Child profile created successfully!",
+				"createError": "Failed to create child profile"
+			},
+			"buttons": {
+				"cancel": "Cancel",
+				"next": "Next",
+				"previous": "Previous"
+			}
+		},
+		"tabs": {
+			"overview": "Overview",
+			"readingPlan": "Reading Plan",
+			"achievements": "Achievements",
+			"weeklyReports": "Weekly Reports",
+			"riddleStatistics": "Riddle Statistics",
+			"timeAnalytics": "Time Analytics",
+			"childStorytelling": "Child Storytelling"
+		},
+		"overview": {
+			"welcome": "Welcome, {name}! 👋",
+			"description": "Here's a quick overview of {childName}'s reading journey and achievements.",
+			"childDashboardButton": "{childName}'s dashboard →",
+			"gettingStartedTitle": "Ready to begin!",
+			"gettingStartedDescription": "{childName} hasn't started their first reading session yet. Encourage them to open the app and begin their adventure!",
+			"readingGoal": "Your goal: {storiesPerWeek} stories per week, about {sessionDurationMins} minutes each.",
+			"readingLevel": "Reading level",
+			"age": "Age",
+			"ageValue": "{age} years old",
+			"weeklyGoal": "Weekly goal",
+			"weeklyGoalValue": "{stories} stories / week",
+			"generateReadingPlanButton": "Generate Child Reading Plan"
+		},
+		"readingPlan": {
+			"confirmTitle": "Create a new reading plan?",
+			"confirmDescription": "This will replace {childName}'s current reading path with a fresh AI-generated plan. Previous roadmap progress will be archived.",
+			"confirmCancel": "Cancel",
+			"confirmAction": "Generate plan",
+			"startedToast": "Reading plan is being created. Story 1 will be ready shortly.",
+			"failedToast": "Failed to start reading plan generation.",
+			"generatingTitle": "Building reading plan…",
+			"generatingDescription": "We're creating a personalized roadmap. This usually takes a few minutes.",
+			"readyTitle": "Reading plan active",
+			"readyDescription": "{ready} of {total} stories ready for your child.",
+			"failedTitle": "Plan generation failed",
+			"failedDescription": "Something went wrong while generating the reading plan. Try again.",
+			"nextPrefetch": "Next weekly story prefetch: {date}"
+		},
+		"readingPlanTab": {
+			"title": "Reading Plan",
+			"description": "The personalized story roadmap generated for {childName}.",
+			"noChildSelected": "Select a child to view their reading plan.",
+			"emptyTitle": "No reading plan yet",
+			"emptyDescription": "Generate a personalized reading plan for {childName} to get started.",
+			"interests": "Based on interests",
+			"storyTone": "Story tone",
+			"roadmapsTitle": "{count, plural, one {# learning path} other {# learning paths}}",
+			"pathsOverviewHint": "Browse worlds and episodes in each themed learning path.",
+			"pathsProgress": "Child progress",
+			"pathsProgressCount": "{completed}/{total} completed · {ready} ready",
+			"challengesLabel": "Challenges",
+			"worldCount": "{count, plural, one {# world} other {# worlds}}",
+			"arcEpisodes": "{count} connected episodes",
+			"episodeLabel": "Ep. {number}:",
+			"meta": {
+				"planNumber": "Plan version",
+				"readingLevel": "Reading level",
+				"weeklyGoal": "Weekly goal",
+				"sessionLength": "Session length",
+				"sessionMinutes": "{minutes} min / session"
+			},
+			"worldStatus": {
+				"locked": "Locked",
+				"available": "Available",
+				"in_progress": "In progress",
+				"completed": "Completed"
+			},
+			"episodeGeneration": {
+				"pending": "Pending",
+				"generating": "Generating",
+				"ready": "Ready",
+				"failed": "Failed"
+			},
+			"episodeProgress": {
+				"available": "Ready to read",
+				"inProgress": "Reading",
+				"completed": "Completed"
+			},
+			"generateStoryButton": "Generate this story",
+			"generateStoryCtaTitle": "Create the next story",
+			"generateStoryCtaDescription": "Generate \"{episodeTitle}\" in {worldName} with chapters and challenges for {childName}.",
+			"generateStoryConfirmTitle": "Generate this story?",
+			"generateStoryConfirmDescription": "This will create the full story content for \"{episodeTitle}\" in {worldName}, including reading pages and challenges tailored for {childName}.",
+			"generateStoryStarted": "Story content is being generated. This may take a few minutes.",
+			"generateStoryFailed": "Failed to start story generation.",
+			"generatingStory": "Generating story content…",
+			"generatingAudio": "Generating audio…",
+			"previewStory": "Preview"
+		},
+		"weeklySummary": {
+			"weekRange": "Week of {start} – {end}",
+			"storiesCompleted": "{count, plural, one {# story completed} other {# stories completed}}",
+			"challengeAccuracy": "{percent}% challenge accuracy",
+			"strengths": "Strengths",
+			"needsSupport": "Areas to support",
+			"recommendation": "Recommendation"
+		},
+		"stats": {
+			"totalStars": "Total Stars",
+			"storiesCompleted": "Stories Completed",
+			"riddlesSolved": "Challenges Solved",
+			"totalReadingTime": "Total Reading Time",
+			"averagePerDay": "Average Per Day",
+			"currentStreak": "Current Streak",
+			"minutes": "minutes",
+			"days": "days",
+			"day": "day"
+		},
+		"achievements": {
+			"title": "Badges & Achievements",
+			"unlockedSummary": "Unlocked {unlocked} of {total} badges for {childName}",
+			"dashboardButton": "{childName}'s dashboard →",
+			"currentLevel": "Current level",
+			"nextBadge": "Next badge",
+			"starsToGo": "{stars} stars to go",
+			"allUnlocked": "All badges earned!",
+			"gettingStartedTitle": "Start earning badges!",
+			"gettingStartedDescription": "{childName} hasn't earned any badges yet. Complete stories and challenges to collect stars and unlock achievements.",
+			"emptyTitle": "🏆",
+			"emptyMessage": "No badges configured yet. Check back later for achievements!",
+			"locked": {
+				"title": "Badge Locked",
+				"message": "Earn more stars by reading and completing challenges!",
+				"required": "Required: Level {level}",
+				"requiredStars": "Requires {stars} stars ({remaining} more to go)"
+			},
+			"levelLabel": "Level {level}"
+		},
+		"riddleStatistics": {
+			"chapter": "Chapter",
+			"title": "Riddle Statistics",
+			"description": "In-depth insights into {childName}'s reading and problem-solving journey",
+			"dashboardButton": "{childName}'s dashboard →",
+			"stats": {
+				"totalChallenges": "Total Challenges",
+				"solved": "Solved",
+				"successRate": "Success Rate",
+				"avgAttempts": "Avg Attempts",
+				"detailedTitle": "Detailed Challenge Statistics"
+			},
+			"noAttempts": "No challenge attempts yet. Start playing to see statistics!",
+			"tableHeaders": {
+				"storyChapter": "Story - Chapter",
+				"status": "Status",
+				"attempts": "Attempts",
+				"successRate": "Success Rate",
+				"hintsUsed": "Hints Used",
+				"timeSec": "Time (sec)"
+			},
+			"status": {
+				"solved": "✓ Solved",
+				"skipped": "⊘ Skipped",
+				"incorrect": "✗ Incorrect",
+				"notAttempted": "Not attempted yet (story in progress)"
+			},
+			"true": "True",
+			"false": "False",
+			"gettingStartedTitle": "No challenge data yet",
+			"gettingStartedDescription": "{childName} hasn't attempted any challenges yet. As they read stories and complete activities, detailed statistics will appear here.",
+			"na": "N/A",
+			"multipleAnswers": "Multiple valid answers (choice-based)",
+			"noCorrectAnswer": "No correct answer defined",
+			"tipPrefix": "Tip:",
+			"tip": "Click on any challenge row to view detailed information including the correct answer, all available hints, and your child's action attempts with their selections and responses.",
+			"loading": "Loading...",
+			"modal": {
+				"title": "Challenge Details",
+				"description": "Detailed view of the selected challenge",
+				"questionLabel": "Question:",
+				"correctAnswerLabel": "Correct Answer is:",
+				"optionsLabel": "Options:",
+				"sequenceItemsLabel": "Correct Sequence",
+				"sequenceItemsHint": "Events should be arranged in this order:",
+				"childSequenceLabel": "Child's Arranged Sequence",
+				"errorParsingSequence": "Error displaying sequence data",
+				"hintsLabel": "Hints:",
+				"hintNumber": "Hint {n}:",
+				"childAttemptsTitle": "Child Attempts:",
+				"attempts": "Attempts : {n}",
+				"attemptLabel": "Attempt {n}",
+				"hintsUsed": "Hints Used",
+				"timeSpent": "Time Spent",
+				"selected": "Selected:",
+				"typedAnswer": "Typed Answer:",
+				"finalAnswerLabel": "Final Answer:",
+				"noAttemptsRecorded": "No attempts recorded for this challenge."
+			},
+			"action": {
+				"correct": "✓ Correct",
+				"incorrect": "✗ Incorrect"
+			}
+		},
+		"timeAnalytics": {
+			"title": "Time Analytics",
+			"description": "In-depth insights into {childName}'s reading through the lens of time spent and consistency",
+			"dashboardButton": "{childName}'s dashboard →",
+			"presets": {
+				"last3Days": "Last 3 Days",
+				"last7Days": "Last 7 Days",
+				"last30Days": "Last 30 Days"
+			},
+			"stats": {
+				"totalReadingTime": "Total Reading Time",
+				"averagePerDay": "Average Per Day",
+				"onActiveDays": "on days with reading activity",
+				"currentStreak": "Current Streak",
+				"consecutiveDays": "consecutive days",
+				"readingActivityRate": "Reading Activity Rate",
+				"sinceJoining": "since joining",
+				"totalStoriesRead": "Stories With Activity",
+				"storiesWithActivity": "unique stories with reading sessions",
+				"dailyReadingTime": "Daily Reading Time",
+				"periodSummary": "{minutes} min across {days} active days in selected period"
+			},
+			"tableHeaders": {
+				"date": "Date",
+				"minutes": "Minutes",
+				"stories": "Stories"
+			},
+			"dateRangePicker": {
+				"selectTimePeriod": "Select Time Period",
+				"custom": "Custom",
+				"from": "From",
+				"selectStartDate": "select a start date",
+				"apply": "Apply",
+				"showing": "Showing",
+				"presetBeforeJoining": "This date range is before your child joined"
+			},
+			"noActivityMessage": "No reading activity yet. Start playing to see reading statistics!",
+			"gettingStartedTitle": "No reading time logged yet",
+			"gettingStartedDescription": "{childName} hasn't completed a reading session yet. Time spent in stories will appear here once they start reading."
+		},
+		"childStorytelling": {
+			"activated": "Activated",
+			"deactivated": "Deactivated",
+			"title": "Child Storytelling",
+			"description": "Create personalized stories featuring {childName} as the hero! Tailored adventures based on their interests and reading journey.",
+			"dashboardButton": "{childName}'s dashboard →",
+			"activateOption": "Activate Storytelling for {childName} →",
+			"storytellingDashboard": "{childName}'s Storytelling Dashboard",
+			"status": {
+				"completed": "Completed",
+				"inProgress": "In Progress",
+				"notStarted": "Not Started"
+			},
+			"generatedDate": "Generated on",
+			"inactiveTitle": "Inactive",
+			"inactiveDescription": "Storytelling is inactive for {childName}.",
+			"noStoriesTitle": "No Stories Yet",
+			"deactivateOption": "Deactivate Storytelling",
+			"noStoriesDescription": "Stories will appear here once they are generated for {childName}. Check back soon!"
+		},
+		"weeklyReports": {
+			"title": "Weekly Progress Reports",
+			"active": "Active",
+			"inactive": "Inactive",
+			"activateButton": "Activate Weekly Reports",
+			"deactivateButton": "Deactivate Weekly Reports",
+			"description": "AI-generated weekly insights for {childName}'s reading and learning progress",
+			"loading": "Loading weekly report...",
+			"errorTitle": "Unable to Load Report",
+			"failedToLoadReport": "Failed to load the weekly report. Please try again later.",
+			"noReportYet": "No Report Yet",
+			"reportAvailableSoon": "Weekly reports for {childName} will be available soon as they continue their reading journey.",
+			"noReportForWeek": "No report available for week {week}",
+			"executiveSummary": "Executive Summary",
+			"progressTrends": "Progress Trends",
+			"recommendations": "Recommendations",
+			"metricsSnapshot": "Metrics Snapshot",
+			"week": "Week {week}",
+			"previousWeek": "← Previous Week",
+			"nextWeek": "Next Week →",
+			"inactiveTitle": "Inactive",
+			"inactiveDescription": "Weekly reports are inactive for {childName}.",
+			"generatedOn": "Generated on {date} at {time}",
+			"noRecommendations": "No specific recommendations for this week."
+		},
+		"notificationSettings": {
+			"title": "Notification Settings",
+			"description": "Manage reading reminders for {childName}",
+			"enableReminders": "Enable Reminders",
+			"remindersDescription": "Receive notifications when {childName} misses reading sessions",
+			"enabledStatus": "Enabled",
+			"disabledStatus": "Disabled",
+			"statusMessage": "Reading reminders are {status} for {childName}",
+			"statusMessagePrefix": "Reading reminders for {childName} are",
+			"settingsDescription": "Use the settings button to manage your child's notification preferences.",
+			"cancel": "Cancel",
+			"save": "Save",
+			"saving": "Saving...",
+			"savedSuccess": "Notification settings saved!"
+		},
+		"childSettings": {
+			"title": "Child Settings",
+			"generalTab": "General",
+			"notificationsTab": "Notifications",
+			"deleteChildTab": "Delete",
+			"childName": "Child Name",
+			"childNamePlaceholder": "Enter child's name",
+			"ageGroup": "Age Group",
+			"ageGroups": {
+				"6to8": "6-8 years",
+				"9to12": "9-12 years",
+				"13plus": "13+ years"
+			},
+			"favoriteThemes": "Favorite Themes",
+			"themesInputPlaceholder": "e.g., Adventure, Fantasy, Mystery (comma-separated)",
+			"themesDescription": "Separate multiple themes with commas",
+			"storiesPerWeek": "Stories Per Week",
+			"selectAgeGroupFirst": "Please select an age group first",
+			"savedSuccess": "Settings saved successfully!",
+			"generalInfoMessage": "General settings help personalize the learning experience for your child.",
+			"saving": "Saving...",
+			"saveGeneral": "Save Changes",
+			"notificationsDescription": "When enabled, you'll receive reminders about your child's reading progress and activity.",
+			"dangerZone": "Danger Zone",
+			"dangerZoneDescription": "These actions cannot be undone. Please proceed with caution.",
+			"deleteChildTitle": "Delete Child Profile",
+			"deleteChildDescription": "This will permanently delete {childName}'s profile and all associated data.",
+			"deleteChild": "Delete Child Profile",
+			"deleteConfirmation": "Please type the child's name to confirm deletion",
+			"confirmPlaceholder": "Type child name",
+			"cancel": "Cancel",
+			"close": "Close",
+			"deleting": "Deleting...",
+			"confirmDelete": "Delete",
+			"deleteSuccess": "Child deleted successfully"
+		},
+		"errors": {
+			"childNotFound": "Child not found. Please check and try again."
+		},
+		"inactivityReminder": {
+			"title": "Time for a Reading Adventure!",
+			"description": "{childName} hasn't read any stories for {daysSince} {daysLabel}. They're aiming for {storiesPerWeek} stories per week.",
+			"weeklyProgress": "{storiesThisWeek} of {storiesNeeded} stories this week ({percentage}%)"
+		}
+	},
+	"ChildDashboard": {
+		"continueReading": "Continue Reading",
+		"childNotFound": "Child not found. Please check the link and try again.",
+		"progressTracker": {
+			"title": "Your Journey",
+			"levelsUnlocked": "{completed}/{total} levels unlocked",
+			"nextLevel": {
+				"firstBadge": "Start reading to unlock your first badge!",
+				"keepGoing": "Great work! Keep it up to reach the next level."
+			},
+			"totalStarsLabel": "Total Stars",
+			"progressTo": "Progress to Level {level}",
+			"starsToGo": "stars to go",
+			"levelsLabel": "Levels",
+			"levelLabel": "Level {level}",
+			"requiredStars": "{count} stars",
+			"badgeLabel": "Badge",
+			"motivation": {
+				"1": "Welcome to your reading adventure",
+				"2": "You're building momentum! Keep going 🚀",
+				"3": "Wow, you're doing amazing 🌟",
+				"4": "You're on fire! You're unstoppable 🔥",
+				"5": "You're a reading champion 👑",
+				"6": "Incredible dedication! You're a star reader 🌠",
+				"7": "You're a reading superstar! Keep shining ✨",
+				"8": "You're a reading legend in the making! Keep it up 🏆",
+				"9": "You're a reading hero! Your story is just beginning 🌟",
+				"10": "You're an inspiration to other readers! 🌟",
+				"11": "Your reading journey is extraordinary! Keep reaching for the stars 🌟",
+				"default": "Keep reading and you'll reach new heights! ⭐"
+			}
+		},
+		"welcomeBanner": {
+			"greetingNew": "Welcome on board, {childName}!",
+			"greetingBack": "Welcome, {childName}!",
+			"subtitleNew": "Your reading adventure begins now! 🌟",
+			"subtitleBack": "Ready for another amazing reading adventure?",
+			"stats": {
+				"stars": "Stars earned:",
+				"stories": "Stories completed:",
+				"readingTime": "Minutes read:",
+				"minutes": "{count} minutes"
+			},
+			"avatarAlt": "Avatar of {name}"
+		},
+		"roadmaps": {
+			"title": "Roadmaps",
+			"seeAll": "See All",
+			"coverAlt": "Roadmap cover image for {name}",
+			"untitled": "Untitled Roadmap",
+			"viewButton": "View Roadmap"
+		},
+		"readingPlan": {
+			"title": "Your Reading Plan",
+			"noPlanTitle": "No reading plan yet",
+			"noPlanDescription": "Ask your parent to create a reading plan for {childName} from the parent dashboard.",
+			"generatingTitle": "Building your reading plan…",
+			"generatingDescription": "We're putting together a personalized adventure for {childName}. Check back in a moment!",
+			"failedTitle": "Reading plan unavailable",
+			"failedDescription": "Something went wrong while creating the reading plan. Ask your parent to try again.",
+			"continueReading": "Continue Reading",
+			"startReading": "Start Reading",
+			"readAgain": "Read Again",
+			"upNext": "Up next",
+			"episodeLabel": "Episode {number}",
+			"worldCount": "{count, plural, one {# world} other {# worlds}}",
+			"storyProgress": "{ready}/{total} stories ready",
+			"comingSoon": "Coming soon",
+			"generatingStory": "Preparing story…",
+			"worldLocked": "World locked",
+			"locked": "Complete the previous story first",
+			"completed": "Completed",
+			"inProgress": "In progress",
+			"readyToRead": "Ready to read",
+			"waitingForFirstStory": "Your first story is on its way, {childName}! It will appear here when it's ready."
+		},
+		"readingPlanPage": {
+			"title": "Your Reading Plan",
+			"subtitle": "A personalized path of stories picked for {childName}. Follow the journey world by world.",
+			"backToDashboard": "Back to dashboard",
+			"viewFullPlan": "View full reading plan",
+			"planVersion": "Plan v{number}",
+			"overallProgress": "Overall progress",
+			"roadmapsTitle": "Your adventure paths",
+			"readingLevel": "Reading level",
+			"stats": {
+				"completed": "Stories completed",
+				"ready": "Stories ready",
+				"weeklyGoal": "Weekly goal",
+				"sessionLength": "Session length",
+				"storiesPerWeek": "{count} / week",
+				"minutes": "{count} min"
+			}
+		},
+		"roadmapPage": {
+			"title": "Roadmap: {name}",
+			"proTip": "Pro Tip:",
+			"proTipMessage": "Hover over story cards to see details. Complete stories to earn stars and unlock new challenges!",
+			"worldTabs": {
+				"storiesLabel": "stories"
+			},
+			"storiesRoadmap": {
+				"noStories": "No stories available in this world.",
+				"status": {
+					"completed": "Completed",
+					"inProgress": "In Progress ({percentage}%)",
+					"locked": "Locked",
+					"notStarted": "Start"
+				},
+				"chapters": "Chapters",
+				"challenges": "Challenges",
+				"buttons": {
+					"readAgain": "Read again",
+					"continueReading": "Continue Reading",
+					"startReading": "Start Reading"
+				}
+			}
+		},
+		"storytelling": {
+			"title": "Weekly Stories",
+			"status": {
+				"completed": "Completed",
+				"inProgress": "In Progress",
+				"notStarted": "Not Started"
+			},
+			"generatedDate": "Generated on",
+			"viewAll": "View All Stories"
+		}
+	},
+	"RoadmapsLibrary": {
+		"library": {
+			"title": "Roadmaps Library",
+			"description": "Discover amazing stories and start your child reading adventure!",
+			"allRoadmaps": "All Roadmaps ({count})",
+			"empty": {
+				"title": "No roadmaps found",
+				"hint": "Try adjusting your filters or search query"
+			}
+		},
+		"searchBar": {
+			"placeholder": "Search for stories...",
+			"noSuggestions": "No suggestions found"
+		},
+		"filterPanel": {
+			"title": "Filters",
+			"categoryLabel": "Category",
+			"ageGroupLabel": "Age Group",
+			"readingLevelLabel": "Reading Level",
+			"clearAllFilters": "Clear All Filters ({count})",
+			"activeCount": "{count} active",
+			"readingLevels": {
+				"BEGINNER": "Beginner",
+				"EASY": "Easy",
+				"MEDIUM": "Medium",
+				"HARD": "Hard",
+				"ADVANCED": "Advanced"
+			}
+		},
+		"featuredCarousel": {
+			"startReading": "Start Reading",
+			"previousStory": "Previous story",
+			"nextStory": "Next story",
+			"goToRoadmap": "Go to roadmap {index}"
+		},
+		"roadmapCard": {
+			"worldLabel": "World",
+			"worldsLabel": "Worlds",
+			"coverImageAlt": "Cover image for {title}",
+			"allocateButton": "Allocate to Child",
+			"readingLevels": {
+				"BEGINNER": "Beginner",
+				"EASY": "Easy",
+				"MEDIUM": "Medium",
+				"HARD": "Hard",
+				"ADVANCED": "Advanced"
+			}
+		},
+		"allocateDialog": {
+			"title": "Allocate Roadmap to Child",
+			"description": "Select which child should have access to \"{roadmapName}\"",
+			"empty": "No children available. Please add children first.",
+			"alreadyAllocated": "Already allocated",
+			"buttons": {
+				"cancel": "Cancel",
+				"allocate": "Allocate",
+				"allocating": "Allocating..."
+			},
+			"messages": {
+				"selectChild": "Please select a child",
+				"alreadyHasAccess": "{childName} already has access to this roadmap",
+				"allocatedSuccess": "Roadmap \"{roadmapName}\" allocated to {childName}",
+				"allocationFailed": "Failed to allocate roadmap",
+				"unexpectedError": "An unexpected error occurred"
+			}
+		}
+	},
+	"Profile": {
+		"profile": "Profile",
+		"settings": "Settings",
+		"dashboard": "Dashboard",
+		"logout": "Logout",
+		"loggedOut": "Logged out successfully!",
+		"profileInformation": "Profile Information",
+		"fullName": "Full Name",
+		"emailAddress": "Email Address",
+		"accountType": "Account Type",
+		"notificationPreferences": "Notification Preferences",
+		"emailNotifications": "Email notifications",
+		"learningProgressUpdates": "Learning progress updates",
+		"weeklySummary": "Weekly summary",
+		"dangerZone": "Danger Zone",
+		"deleteAccount": "Delete Account"
+	},
+	"LoginForm": {
+		"titleCreate": "Create an account",
+		"titleWelcome": "Welcome",
+		"descriptionSignUp": "Sign up to get started",
+		"descriptionLogin": "Login with your email and password",
+		"fullNameLabel": "Full name",
+		"fullNamePlaceholder": "Your name",
+		"emailLabel": "Email",
+		"emailPlaceholder": "m@example.com",
+		"passwordLabel": "Password",
+		"passwordPlaceholder": "********",
+		"forgotPassword": "Forgot your password?",
+		"confirmPasswordLabel": "Confirm password",
+		"passwordsNotMatch": "Passwords do not match",
+		"passwordTooShort": "Password must be at least 8 characters",
+		"buttonLoading": "Loading...",
+		"buttonCreate": "Create account",
+		"buttonLogin": "Login",
+		"haveAccount": "Already have an account?",
+		"logIn": "Log in",
+		"noAccount": "Don't have an account?",
+		"signUp": "Sign up",
+		"loginWithGoogle": "Login with Google",
+		"signUpWithGoogle": "Sign up with Google",
+		"orContinueWith": "Or continue with",
+		"tosAgreement": "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+		"errors": {
+			"fullNameRequired": "Full name is required",
+			"registrationFailed": "Registration failed",
+			"loginFailedAfterRegistration": "Login failed after registration",
+			"loginFailed": "Login failed",
+			"accountCreatedAndLoggedIn": "Account created and logged in successfully!",
+			"loggedIn": "Logged in successfully!",
+			"unauthorized": "No account found with this email",
+			"invalidCredentials": "Invalid email or password",
+			"userNotFound": "User not found",
+			"emailAlreadyExists": "Email already exists",
+			"invalidEmail": "Invalid email address",
+			"passwordTooWeak": "Password is too weak",
+			"passwordIncorrect": "Password is incorrect, please try again"
+		}
+	},
+	"Onboarding": {
+		"welcomeTitle": "Welcome to Lexopia",
+		"welcomeDesc": "An interactive reading platform designed for children with dyslexia and their families.",
+		"welcomeDyslexiaTitle": "Built for dyslexic learners",
+		"welcomeFeatureMultimodal": "Multimodal learning with text and audio narration",
+		"welcomeFeatureAccessible": "Accessible interface with dyslexia-friendly typography and adjustable settings",
+		"welcomeFeatureProgress": "Progress tracking so you can celebrate every reading milestone",
+		"welcomeCapabilitiesTitle": "What your family can do on Lexopia",
+		"welcomeCapabilityStories": "Story reading",
+		"welcomeCapabilityChallenges": "Interactive challenges",
+		"welcomeCapabilityBadges": "Stars, levels & badges",
+		"welcomeCapabilityDashboard": "Parent dashboard",
+		"welcomeReassurance": "Lexopia supports diverse learning styles and helps children build confidence through positive, pressure-free reading practice.",
+		"letsStart": "Let's Start",
+		"step2Title": "Tell us about your child",
+		"step2Desc": "This name and age will shape their first personalized story.",
+		"step3Title": "Reading profile",
+		"step3Desc": "The most important step — helps us set the right story difficulty.",
+		"step4Title": "Interests & story world",
+		"step4Desc": "Pick themes your child loves. They become the setting for their adventure.",
+		"step5Title": "Goals & launch",
+		"step5Desc": "Set a reading rhythm, review the summary, and create your child's learning path.",
+		"childNameHint": "Use the name your child likes to be called — it will appear in their stories.",
+		"ageLabel": "Age",
+		"invalidAge": "Age must be between 5 and 14",
+		"primaryLanguageLabel": "Primary reading language",
+		"selectLanguagePlaceholder": "Select a language",
+		"languageEnglish": "English",
+		"languageFrench": "French",
+		"languageArabic": "Arabic",
+		"gradeLevelLabel": "Grade / school level",
+		"gradeLevelPlaceholder": "Select grade level",
+		"selectGradeLevel": "Please select a grade level",
+		"readingLevelLabel": "Current reading level",
+		"readingLevelPlaceholder": "Select reading level",
+		"selectReadingLevel": "Please select a reading level",
+		"readingLevelBeginner": "Just starting to read",
+		"readingLevelEasy": "Can read simple words",
+		"readingLevelMedium": "Reads short stories",
+		"readingLevelHard": "Confident reader",
+		"readingLevelAdvanced": "Advanced for age",
+		"assignedChallengesLabel": "Challenges to focus on",
+		"assignedChallengesDesc": "Select the challenge types you'd like us to prioritize in your child's stories.",
+		"selectAtLeastOneChallenge": "Select at least one challenge type",
+		"invalidChallenge": "Invalid challenge type selected",
+		"challengeTypeMultipleChoice": "Multiple choice",
+		"challengeTypeTrueFalse": "True or false",
+		"challengeTypeSequencing": "Story sequencing",
+		"challengeTypeFillBlank": "Fill in the blank",
+		"challengeTypeCompleteWord": "Complete the word",
+		"challengeTypeLetterDiscrimination": "Letter discrimination",
+		"challengeTypeSoundMatch": "Sound match",
+		"challengeTypeReadAloud": "Read aloud",
+		"challengeTypeWordBuild": "Word building",
+		"viewChallengeInfo": "Learn more about this challenge",
+		"challengeInfoPurpose": "Purpose",
+		"challengeInfoHowItWorks": "How it works",
+		"challengeInfoExample": "Example",
+		"challengeTypeInfo": {
+			"multipleChoice": {
+				"purpose": "Builds story comprehension with a low reading load — ideal when long text is tiring.",
+				"howItWorks": "After a story section, your child picks one answer from a few short options.",
+				"example": "\"What did Mia find?\" — cave, egg, or river."
+			},
+			"trueFalse": {
+				"purpose": "Checks simple understanding of story facts without writing or long answers.",
+				"howItWorks": "Your child hears or reads a short statement from the story and taps True or False. Audio narration helps reduce decoding effort.",
+				"example": "\"The dinosaur was alone.\" — True or False."
+			},
+			"sequencing": {
+				"purpose": "Strengthens working memory and story-order skills by putting events in the right sequence.",
+				"howItWorks": "Your child drags 3–4 event cards (with text) into the correct chronological order.",
+				"example": "Order: Mia finds the egg → hears a sound → meets a friend."
+			},
+			"fillBlank": {
+				"purpose": "Practices vocabulary and word recognition using story context.",
+				"howItWorks": "A sentence from the story has one missing word. Your child drags the correct word from a small word bank into the blank.",
+				"example": "\"Mia walked into the ___.\" — choose cave from the word bank."
+			},
+			"completeWord": {
+				"purpose": "Targets letter patterns and spelling — especially helpful for phonics practice.",
+				"howItWorks": "A word appears with a missing letter. Your child taps the correct letter tile to complete it.",
+				"example": "\"F_rest\" — tap o, a, or e to complete \"Forest\"."
+			},
+			"letterDiscrimination": {
+				"purpose": "Helps with commonly reversed letters like b/d and p/q.",
+				"howItWorks": "Similar-looking letters are shown and your child picks the one that matches a spoken or written prompt.",
+				"example": "Show b and d — \"Which letter does 'dog' start with?\""
+			},
+			"soundMatch": {
+				"purpose": "Builds phonemic awareness by linking sounds to the right letters or words.",
+				"howItWorks": "Your child hears a sound or phoneme and taps the matching letter or word option.",
+				"example": "Play the /k/ sound — tap c, k, or s."
+			},
+			"readAloud": {
+				"purpose": "Supports oral reading fluency and confident pronunciation.",
+				"howItWorks": "Your child reads a target word or short phrase from the story aloud. Speech recognition checks their pronunciation gently.",
+				"example": "\"Read this word from the story: cave.\""
+			},
+			"wordBuild": {
+				"purpose": "Practices spelling and letter order by building words step by step.",
+				"howItWorks": "Your child hears a target word via audio, then arranges letter tiles in the correct order.",
+				"example": "Hear \"cave\" — arrange tiles c-a-v-e."
+			}
+		},
+		"interestsHint": "Pick 1–5 themes for your child's first story world.",
+		"maxInterests": "Please select at most 5 interests",
+		"invalidInterest": "Invalid interest selected",
+		"characterTypeLabel": "Favorite character type",
+		"characterTypePlaceholder": "Who should lead the story?",
+		"selectCharacterType": "Please select a character type",
+		"characterHero": "Hero",
+		"characterExplorer": "Explorer",
+		"characterInventor": "Inventor",
+		"characterAnimalFriend": "Animal friend",
+		"characterTeamPlayer": "Team player",
+		"storyToneLabel": "Story tone",
+		"storyTonePlaceholder": "How should stories feel?",
+		"selectStoryTone": "Please select a story tone",
+		"toneFunny": "Funny",
+		"toneAdventurous": "Adventurous",
+		"toneCalm": "Calm",
+		"toneMagical": "Magical",
+		"toneEducational": "Educational",
+		"sessionDurationLabel": "Session duration",
+		"sessionDurationOption": "{mins} minutes per story",
+		"selectSessionDuration": "Please select a session duration",
+		"storiesPerWeekOption": "{count} stories per week",
+		"interests": {
+			"animals": "Animals",
+			"dinosaurs": "Dinosaurs",
+			"space": "Space",
+			"sports": "Sports",
+			"fantasy": "Fantasy",
+			"superheroes": "Superheroes",
+			"nature": "Nature",
+			"cars": "Cars",
+			"music": "Music",
+			"cooking": "Cooking",
+			"friendship": "Friendship",
+			"mystery": "Mystery",
+			"science": "Science",
+			"ocean": "Ocean",
+			"robots": "Robots"
+		},
+		"titleReadingSettings": "Reading Goals & Reminders",
+		"summaryTitle": "Review your child's profile",
+		"summaryDesc": "Confirm the details below before creating the profile.",
+		"titleStep1": "Tell us about your child",
+		"titleStep2": "What does your child enjoy?",
+		"titleStep3": "All set!",
+		"descStep1": "Help us personalize the experience for your child.",
+		"descStep2": "Select themes to customize recommendations.",
+		"descStep3": "Your profile is ready. Let's start exploring!",
+		"readyToStart": "Ready to Start?",
+		"descStep3ReadingSettings": "Set reading goals and notification preferences",
+		"descStep4": "Review your child's settings",
+		"childNameLabel": "Child's Name",
+		"childNamePlaceholder": "Emma",
+		"ageGroupLabel": "Age Group",
+		"ageGroupPlaceholder": "Select an age group",
+		"availableThemesEmpty": "Please select an age group first to see available themes",
+		"favoriteThemesLabel": "Favorite Themes",
+		"selectAllApply": "Select all that apply",
+		"cancel": "Cancel",
+		"next": "Next",
+		"previous": "Previous",
+		"settingUp": "Setting up...",
+		"startExploring": "Start Exploring",
+		"missingRequired": "Missing required information",
+		"childCreated": "Child profile created successfully!",
+		"onboardingError": "An error occurred during onboarding",
+		"childNameRequired": "Child name is required",
+		"selectAgeGroup": "Please select an age group for your child",
+		"invalidAgeGroup": "Selected age group is invalid",
+		"selectAtLeastOneTheme": "Select at least one theme",
+		"stepOf": "Step {step} of {total}",
+		"genderLabel": "Child's Gender",
+		"selectGender": "Please select a gender",
+		"selectLanguageRequired": "Please select a reading language",
+		"storiesPerWeekLabel": "How many stories should {childName} read per week?",
+		"selectReadingFrequency": "Select a reading frequency that works for your child",
+		"sessionPerWeek": "week",
+		"sessionEveryNDays": "every {days}d",
+		"enableReadingReminders": "Enable Reading Reminders",
+		"enableRemindersDescription": "Get reminded if {childName} misses their reading schedule",
+		"readingFrequency": "Reading Frequency",
+		"storiesPerWeekDisplay": "{count}x per week",
+		"readingReminders": "Reading Reminders",
+		"enabled": "✓ Enabled",
+		"disabled": "Disabled",
+		"enableNotificationsTitle": "Enable Notifications",
+		"enableNotificationsDescription": "Allow us to send you reminders about your child's reading sessions so you stay informed and can encourage them to read regularly.",
+		"enabling": "Enabling...",
+		"allowNotifications": "Allow Notifications",
+		"notNow": "Not Now",
+		"browserPermissionSteps": "How to enable notifications:",
+		"step1BrowserPrompt": "Click the button below",
+		"step2AcceptPrompt": "Your browser will ask you to allow notifications",
+		"step3ClickAllow": "Click 'Allow' in the browser popup",
+		"step4IfNoPopup": "If no popup appears, go to your browser settings and allow notifications for this site",
+		"enableNotificationsRequired": "You must enable notifications to continue",
+		"serviceWorkerNotSupported": "Service workers are not supported in this browser",
+		"serviceWorkerRegistrationFailed": "Failed to register service worker",
+		"enableNotificationsInBrowser": "Please enable notifications in your browser",
+		"enableNotificationsFailed": "Failed to enable notifications",
+		"enableNotificationsSuccess": "Notifications enabled successfully!",
+		"gender": {
+			"boy": "Boy",
+			"girl": "Girl"
+		}
+	},
+	"OnboardingStorytelling": {
+		"Arabic": "Arabic",
+		"English": "English",
+		"French": "French",
+		"titleStep1": "Welcome! Let's get to know your child",
+		"titleStep2": "What interests does your child have?",
+		"titleStep3": "What would you like your child to improve?",
+		"titleStep4": "Review & Confirm",
+		"descStep1": "Tell us your child's name (or nickname) - it will be featured in their personalized stories!",
+		"descStep2": "Select themes to make stories engaging and personalized.",
+		"descStep3": "Choose learning goals that align with your expectations.",
+		"descStep4": "Review all information before creating the profile.",
+		"childNameLabel": "Child's Name (or Nickname)",
+		"childNamePlaceholder": "e.g., Emma or nickname",
+		"childNameDesc": "This name will appear as the main character in your child's generated stories",
+		"childLanguageLabel": "Preferred Language for Stories",
+		"selectLanguagePlaceholder": "Select a language",
+		"selectLanguageRequired": "Please select a language for your child's stories",
+		"ageGroupLabel": "Age Group",
+		"ageGroupPlaceholder": "Select an age group",
+		"availableThemesEmpty": "No themes available",
+		"favoriteThemesLabel": "Favorite Themes",
+		"selectAllApply": "Select all that apply",
+		"addCustomThemePlaceholder": "Add a custom theme for your child...",
+		"learningObjectivesLabel": "Learning Goals",
+		"selectObjectivesDesc": "Choose what you'd like your child to improve",
+		"selectAtLeastOneObjective": "Select at least one learning goal",
+		"objective_thinking": "Thinking & problem solving",
+		"objective_reading": "Reading and understanding stories",
+		"objective_vocabulary": "Learning new words",
+		"objective_focus": "Focus and attention",
+		"objective_confidence": "Confidence and decision making",
+		"objective_social": "Social skills and empathy",
+		"objective_other": "Other (please specify)",
+		"otherObjectivePlaceholder": "Describe what you'd like your child to improve",
+		"cancel": "Cancel",
+		"next": "Next",
+		"previous": "Previous",
+		"creatingProfile": "Creating profile...",
+		"createProfile": "Create Profile",
+		"settingUp": "Setting up...",
+		"startExploring": "Start Exploring",
+		"missingRequired": "Missing required information",
+		"childCreated": "Child profile created successfully!",
+		"onboardingError": "An error occurred during onboarding",
+		"childNameRequired": "Child name is required",
+		"selectAgeGroup": "Please select an age group for your child",
+		"invalidAgeGroup": "Selected age group is invalid",
+		"selectAtLeastOneTheme": "Select at least one theme",
+		"theme_space": "Space",
+		"theme_magic": "Magic",
+		"theme_fantasy": "Fantasy",
+		"theme_animals": "Animals",
+		"theme_adventure": "Adventure",
+		"theme_robots": "Robots",
+		"theme_mystery": "Mystery",
+		"stepOf": "Step {step} of {total}"
+	},
+	"AiStorytellingIntro": {
+		"title": " Weekly Generated Stories",
+		"subtitle": "Create personalized adventures where your child is the hero",
+		"feature1Title": " Personalized Stories",
+		"feature1Desc": "Each week, new stories featuring your child as the main character",
+		"feature2Title": " Learning Goals",
+		"feature2Desc": "Stories aligned with the skills you want your child to develop",
+		"feature3Title": " Engaging Adventures",
+		"feature3Desc": "Interactive challenges to reach objectives and build confidence",
+		"mainDescription": "Your child will embark on weekly adventures where they're the hero! Stories are tailored to their interests and designed to help them reach your chosen learning objectives. Watch as they grow in confidence, expand their vocabulary, and develop critical thinking skills all through the joy of reading.",
+		"continueButton": "Continue to Setup"
+	},
+	"StoryReadingInterface": {
+		"saving": "Saving...",
+		"missingRequiredParameters": "A story ID is required to load the story.",
+		"storyNotFound": "The requested story could not be found. Please verify the story ID and try again.",
+		"storyNotReady": "This story has not been generated yet. Chapters and challenges will appear here once AI content is ready.",
+		"unableToStartStory": "Unable to start the story for the child. Check the parameters and try again.",
+		"childNotFound": "Child not found. Please check the link and try again.",
+		"readingSettings": {
+			"title": "Reading Settings",
+			"textSize": "Text Size",
+			"small": "Small",
+			"medium": "Medium",
+			"large": "Large",
+			"language": "Language",
+			"english": "English",
+			"french": "French",
+			"arabic": "Arabic",
+			"highContrast": "High Contrast Mode",
+			"highContrastDesc": "Easier reading for visual accessibility",
+			"readingTip": "Reading Tip",
+			"readingTipText": "Use the audio controls to listen along while reading. This helps improve pronunciation and comprehension!",
+			"closeButton": "Close"
+		},
+		"readingHelp": {
+			"title": "Reading Help",
+			"navigation": "Navigation",
+			"navigationDesc": "Use the arrows at the bottom to move between pages. Your progress is saved automatically.",
+			"audioReading": "Audio Reading",
+			"audioReadingDesc": "Press play to hear the story read aloud. Adjust language in the controls.",
+			"riddles": "Riddles",
+			"riddlesDesc": "When you see a riddle indicator, solve it to continue the story and earn stars!",
+			"gotIt": "Got it!"
+		},
+		"storyFlowNavigation": {
+			"backButton": "Back",
+			"previousButton": "Previous",
+			"returnToStory": "Return to Story",
+			"nextButton": "Next",
+			"starsEarned": "{count} stars",
+			"pageProgress": "Page {current} of {total}",
+			"timeDisplay": "Time: {seconds}",
+			"timerMessage": "Keep reading... ({remaining}s remaining)",
+			"completionMessage": "Story completed",
+			"solveRiddle": "Solve the riddle",
+			"challengeSolved": "Challenge solved",
+			"challengeSkipped": "Challenge skipped",
+			"riddleTime": "It's riddle time",
+			"riddleTimeText": "Once you read this page, click Solve the riddle button to continue the story"
+		},
+		"storyControls": {
+			"playAudio": "Play Audio",
+			"pauseAudio": "Pause Audio",
+			"volumeControl": "Volume",
+			"playbackSpeed": "Speed",
+			"normalSpeed": "Normal",
+			"fastSpeed": "Fast",
+			"slowSpeed": "Slow",
+			"settings": "Settings",
+			"help": "Help"
+		},
+		"playAudio": {
+			"play": "Play Story Audio",
+			"pause": "Pause Audio",
+			"loading": "Loading audio...",
+			"repeat": "Repeat",
+			"highlightWord": "Word",
+			"highlightSentence": "Sentence"
+		},
+		"riddleInterface": {
+			"submitAnswer": "Submit Answer",
+			"needAHint": "Need a Hint?",
+			"incorrectAnswer": "Not quite right, but that's okay! Every try helps you learn. Want to try again or use a hint?",
+			"almostAnswer": "Think about it a little more. You can do this!",
+			"solvedAnswerRIDDLE": "Fantastic! You solved the riddle! Your reading skills are amazing!",
+			"solvedAnswerTRUE_FALSE": "Correct! You understood that statement perfectly!",
+			"solvedAnswerMULTIPLE_CHOICE": "Excellent choice! You really understood the story!",
+			"solvedAnswerSEQUENCING": "Excellent! You arranged the events in the correct order!",
+			"solvedAnswerFILL_BLANK": "Great job! You picked the right word!",
+			"solvedAnswerCOMPLETE_WORD": "Well done! You completed the word!",
+			"solvedAnswerLETTER_DISCRIMINATION": "Perfect! You found the right letter!",
+			"solvedAnswerSOUND_MATCH": "Amazing! You matched the sound correctly!",
+			"solvedAnswerREAD_ALOUD": "Wonderful reading! You pronounced it clearly!",
+			"solvedAnswerWORD_BUILD": "Excellent! You built the word correctly!",
+			"riddleQuestion": {
+				"riddleCounter": "Riddle {current} of {total}",
+				"trueOrFalse": "Choose True or False:",
+				"multipleChoice": "Choose the correct answer:",
+				"sequencing": "Put these events in the correct order:",
+				"fillBlank": "Choose the word that fits:",
+				"completeWord": "Complete the word:",
+				"letterDiscrimination": "Find the matching letter:",
+				"soundMatch": "Which sound matches?",
+				"readAloud": "Read this word aloud:",
+				"wordBuild": "Build the word:",
+				"defaultQuestion": "Answer the question:",
+				"timeDisplay": "Time: {seconds}s",
+				"playAudio": "Read riddle aloud",
+				"stopAudio": "Stop reading riddle"
+			},
+			"floatingItems": {
+				"attemptsLabel": "Attempts",
+				"hintsUsedLabel": "Hints Used"
+			},
+			"textInputAnswer": {
+				"yourAnswer": "Your Answer:",
+				"placeholder": "Type your answer here...",
+				"checkButton": "Check"
+			},
+			"voiceInputAnswer": {
+				"yourAnswer": "Speak Your Answer",
+				"startRecording": "Start Recording",
+				"stopRecording": "Stop Recording",
+				"submit": "Submit",
+				"recording": "Recording...",
+				"transcript": "Transcript",
+				"processing": "Processing audio...",
+				"permissionDenied": "Microphone permission denied. Please enable microphone access in your browser settings.",
+				"notSupported": "Voice input is not supported in this browser. Try Chrome or Edge.",
+				"recognitionError": "Could not recognize speech. Please try again."
+			},
+			"inputMode": {
+				"text": "Type",
+				"voice": "Speak"
+			},
+			"multipleChoiceAnswer": {
+				"chooseAnswer": "Choose your answer:"
+			},
+			"sequencingAnswer": {
+				"instructions": "Arrange these events in the correct order:",
+				"dragHint": "Drag and drop to reorder",
+				"checking": "Checking...",
+				"submit": "Check Order"
+			},
+			"fillBlankAnswer": {
+				"instructions": "Tap the word that completes the sentence:"
+			},
+			"letterTilesAnswer": {
+				"instructions": "Tap the correct letter:"
+			},
+			"completeWordAnswer": {
+				"instructions": "Tap a letter to complete the word:",
+				"emptySlot": "Missing letter slot",
+				"clearLetter": "Tap to remove the letter"
+			},
+			"soundMatchAnswer": {
+				"instructions": "Listen to the sound, then choose the matching option:",
+				"playSound": "Play sound",
+				"playOption": "Play option sound"
+			},
+			"readAloudAnswer": {
+				"readThisWord": "Read this word:"
+			},
+			"wordBuildAnswer": {
+				"instructions": "Arrange the letters to build the word:",
+				"dragHint": "Drag letters left or right to build the word",
+				"checking": "Checking...",
+				"submit": "Check Word"
+			},
+			"hintPanel": {
+				"title": "Helpful Hint",
+				"hintsRemaining": "{count} hints remaining",
+				"previousHints": "Previous Hints:",
+				"hintCounter": "Hint {current} of {total}",
+				"noMoreHints": "No more hints available. You can do this!",
+				"allHintsRevealed": "All hints revealed. Give it your best try!",
+				"closeButton": "Close",
+				"getAnotherHint": "Another Hint ({remaining} left)"
+			},
+			"feedbackDisplay": {
+				"solvedTitle": "Amazing Work!",
+				"almostTitle": "Almost There!",
+				"incorrectTitle": "Keep Trying!",
+				"starsEarned": "+{count} Stars Earned!",
+				"continueButton": "Continue Story",
+				"skipButton": "Skip This Riddle",
+				"tryAgainButton": "Try Again"
+			}
+		}
+	},
+	"StoryCompletion": {
+		"childNotFound": "Child not found. Please check the link and try again.",
+		"storyNotFound": "The requested story is not found. Please check the link and try again.",
+		"progressNotFound": "Child progress not found. Please check the link and try again.",
+		"storyNotCompleted": "The story is not completed. Please check the link and try again.",
+		"completionHeader": {
+			"title": "Story Completed!",
+			"subtitle": "Great job, {childName}! You finished \"{storyTitle}\"."
+		},
+		"completionMessage": {
+			"title": "Story Completed!",
+			"subtitle": "Great job, {childName}! You finished \"{storyTitle}\".",
+			"starsEarned": "{count} Stars Earned!"
+		},
+		"progressCard": {
+			"starsEarned": "Stars Earned:",
+			"currentLevel": "Current Level",
+			"totalStars": "Total Stars",
+			"progressToLevel": "Progress to Level {nextLevel}",
+			"progressPercentage": "{percentage}%",
+			"levelUnlocked": " You've reached Level {nextLevel}!",
+			"starsNeeded": "{count} more stars needed"
+		},
+		"badgeInfo": {
+			"unlocked": "New Badge Unlocked:"
+		},
+		"buttons": {
+			"continueReading": "Continue Reading",
+			"showProgressButton": "Show Progress"
+		}
+	}
+}

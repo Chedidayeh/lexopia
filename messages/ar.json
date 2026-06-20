@@ -1,0 +1,1110 @@
+{
+	"LoadingComponent": {
+		"loading": "جارٍ التحميل..."
+	},
+	"Hero": {
+		"headline": " قصص تُلهم طفلك كي",
+		"subline": "سافر عبر حكايات سحرية وحل الألغاز المحفزة للعقل",
+		"details": "مثالي للقراء الصغار (6-14 سنة) • بناء مهارات القراءة • تطوير التفكير النقدي",
+		"cta": {
+			"getStarted": "البدء",
+			"startAdventure": "ابدأ مغامرة طفلك",
+			"parentDashboard": "لوحة الولي"
+		},
+		"trust": "✨ موثوق من قبل الأهالي والمربين • آمن وتعليمي • تعلم مدعوم بالذكاء الاصطناعي",
+		"words": [
+			"يفكر",
+			"يتخيل",
+			"يكتشف",
+			"يتعلّم"
+		]
+	},
+	"CommonComponents": {
+		"missingData": "بيانات مفقودة",
+		"goBack": "العودة",
+		"language": "اللغة",
+		"english": "الإنجليزية",
+		"french": "الفرنسية",
+		"arabic": "العربية",
+		"loading": "جارٍ التحميل...",
+		"selectLanguage": "اللغة"
+	},
+	"ParentDashboard": {
+		"loading": "جارٍ التحميل...",
+		"yourChildren": "قائمة أطفالك",
+		"unknown": "غير معروف",
+		"stars": "{count} نجمة",
+		"addChild": "إضافة طفل",
+		"addChildDialog": {
+			"title": "إضافة طفل جديد",
+			"step1": {
+				"title": "المعلومات الأساسية للطفل",
+				"description": "أخبرنا عن طفلك",
+				"childNameLabel": "اسم الطفل",
+				"childNamePlaceholder": "مثال: إيما",
+				"ageGroupLabel": "فئة العمر",
+				"ageGroupPlaceholder": "اختر فئة عمرية",
+				"genderLabel": " الطفل"
+			},
+			"step2": {
+				"title": "الموضوعات المفضلة",
+				"description": "ما الذي يستمتع به {name}؟",
+				"noThemes": "لا توجد موضوعات متاحة",
+				"favoriteThemesLabel": "الموضوعات المفضلة",
+				"selectAtLeastOneTheme": "حدد موضوعًا واحدًا على الأقل"
+			},
+			"step3": {
+				"title": "مراجعة ملف الطفل",
+				"nameLabel": "الاسم",
+				"ageGroupLabel": "فئة العمر",
+				"genderLabel": "الجنس",
+				"favoriteThemesLabel": "الموضوعات المفضلة",
+				"createButton": "إنشاء الطفل",
+				"creating": "جارٍ الإنشاء..."
+			},
+			"errors": {
+				"childNameRequired": "اسم الطفل مطلوب",
+				"selectAgeGroup": "يرجى تحديد فئة عمرية لطفلك",
+				"invalidAgeGroup": "فئة العمر المحددة غير صالحة",
+				"selectAtLeastOneTheme": "حدد موضوعًا واحدًا على الأقل",
+				"selectGender": "يرجى اختيار"
+			},
+			"messages": {
+				"createdSuccess": "تم إنشاء ملف الطفل بنجاح!",
+				"createError": "فشل في إنشاء ملف الطفل"
+			},
+			"buttons": {
+				"cancel": "إلغاء",
+				"next": "التالي",
+				"previous": "السابق"
+			}
+		},
+		"overview": {
+			"welcome": "مرحبًا بعودتك، {name}! 👋",
+			"description": " فيما يلي نظرة سريعة على رحلة القراءة وإنجازات لطفلك {childName}.",
+			"childDashboardButton": "فضاء التعلم لطفلك {childName}",
+			"gettingStartedTitle": "جاهز للبدء!",
+			"gettingStartedDescription": "لم يبدأ {childName} جلسة القراءة الأولى بعد. شجّعه على فتح التطبيق وبدء مغامرته!",
+			"readingGoal": "هدفك: {storiesPerWeek} قصص في الأسبوع، حوالي {sessionDurationMins} دقيقة لكل قصة.",
+			"readingLevel": "مستوى القراءة",
+			"age": "العمر",
+			"ageValue": "{age} سنة",
+			"weeklyGoal": "الهدف الأسبوعي",
+			"weeklyGoalValue": "{stories} قصص / أسبوع",
+			"generateReadingPlanButton": "إنشاء خطة قراءة للطفل"
+		},
+		"readingPlan": {
+			"confirmTitle": "إنشاء خطة قراءة جديدة؟",
+			"confirmDescription": "سيؤدي هذا إلى استبدال مسار القراءة الحالي لـ {childName} بخطة جديدة. سيتم أرشفة التقدم السابق.",
+			"confirmCancel": "إلغاء",
+			"confirmAction": "إنشاء الخطة",
+			"startedToast": "جاري إنشاء خطة القراءة. ستكون القصة الأولى جاهزة قريبًا.",
+			"failedToast": "فشل بدء إنشاء خطة القراءة.",
+			"generatingTitle": "جاري بناء خطة القراءة…",
+			"generatingDescription": "نقوم بإنشاء خارطة طريق مخصصة وتوليد القصة الأولى. قد يستغرق ذلك بضع دقائق.",
+			"readyTitle": "خطة القراءة نشطة",
+			"readyDescription": "{ready} من {total} قصص جاهزة لطفلك.",
+			"failedTitle": "فشل إنشاء الخطة",
+			"failedDescription": "حدث خطأ أثناء إنشاء خطة القراءة. حاول مرة أخرى.",
+			"nextPrefetch": "التوليد الأسبوعي التالي: {date}"
+		},
+		"readingPlanTab": {
+			"title": "خطة القراءة",
+			"description": "خارطة القصص المخصصة المُنشأة لـ {childName}.",
+			"noChildSelected": "اختر طفلاً لعرض خطة القراءة الخاصة به.",
+			"emptyTitle": "لا توجد خطة قراءة بعد",
+			"emptyDescription": "أنشئ خطة قراءة مخصصة لـ {childName} للبدء.",
+			"interests": "بناءً على الاهتمامات",
+			"storyTone": "أسلوب القصص",
+			"roadmapsTitle": "{count, plural, one {مسار واحد} other {# مسارات}}",
+			"pathsOverviewHint": "تصفّح العوالم والحلقات في كل مسار تعلّم.",
+			"pathsProgress": "تقدم الطفل",
+			"pathsProgressCount": "{completed}/{total} مكتملة · {ready} جاهزة",
+			"challengesLabel": "التحديات",
+			"worldCount": "{count, plural, one {عالم واحد} other {# عوالم}}",
+			"arcEpisodes": "{count} حلقات متصلة",
+			"episodeLabel": "الحلقة {number}:",
+			"meta": {
+				"planNumber": "إصدار الخطة",
+				"readingLevel": "مستوى القراءة",
+				"weeklyGoal": "الهدف الأسبوعي",
+				"sessionLength": "مدة الجلسة",
+				"sessionMinutes": "{minutes} دقيقة / جلسة"
+			},
+			"worldStatus": {
+				"locked": "مقفل",
+				"available": "متاح",
+				"in_progress": "قيد التقدم",
+				"completed": "مكتمل"
+			},
+			"episodeGeneration": {
+				"pending": "في الانتظار",
+				"generating": "جاري التوليد",
+				"ready": "جاهز",
+				"failed": "فشل"
+			},
+			"episodeProgress": {
+				"available": "جاهز للقراءة",
+				"inProgress": "قيد القراءة",
+				"completed": "مكتمل"
+			},
+			"generateStoryButton": "إنشاء هذه القصة",
+			"generateStoryCtaTitle": "إنشاء القصة التالية",
+			"generateStoryCtaDescription": "إنشاء «{episodeTitle}» في {worldName} مع صفحات وتحديات لـ {childName}.",
+			"generateStoryConfirmTitle": "إنشاء هذه القصة؟",
+			"generateStoryConfirmDescription": "سيؤدي هذا إلى إنشاء المحتوى الكامل لـ «{episodeTitle}» في {worldName}، بما في ذلك صفحات القراءة والتحديات المخصصة لـ {childName}.",
+			"generateStoryStarted": "جاري إنشاء محتوى القصة. قد يستغرق ذلك بضع دقائق.",
+			"generateStoryFailed": "فشل بدء إنشاء القصة.",
+			"generatingStory": "جاري إنشاء محتوى القصة…",
+			"generatingAudio": "جاري إنشاء الصوت…",
+			"previewStory": "معاينة"
+		},
+		"weeklySummary": {
+			"weekRange": "أسبوع {start} – {end}",
+			"storiesCompleted": "{count, plural, one {قصة واحدة مكتملة} other {# قصص مكتملة}}",
+			"challengeAccuracy": "{percent}% دقة التحديات",
+			"strengths": "نقاط القوة",
+			"needsSupport": "مجالات تحتاج دعمًا",
+			"recommendation": "التوصية"
+		},
+		"stats": {
+			"totalStars": "إجمالي النجوم",
+			"storiesCompleted": "القصص المكتملة",
+			"riddlesSolved": "التحديات المحلولة",
+			"totalReadingTime": "إجمالي وقت القراءة",
+			"averagePerDay": "المتوسط يوميًا",
+			"currentStreak": "السلسلة الحالية",
+			"minutes": "دقيقة",
+			"days": "أيام",
+			"day": "يوم"
+		},
+		"tabs": {
+			"overview": "نظرة عامة",
+			"readingPlan": "خطة القراءة",
+			"achievements": "الإنجازات",
+			"weeklyReports": "التقارير الأسبوعية",
+			"riddleStatistics": "إحصائيات الألغاز",
+			"timeAnalytics": "تحليلات الوقت",
+			"childStorytelling": "قصص مخصصة للطفل"
+		},
+		"achievements": {
+			"title": "الشارات والإنجازات",
+			"unlockedSummary": "تم فتح {unlocked} من أصل {total} شارات لـ {childName}",
+			"dashboardButton": "فضاء التعلم لطفلك {childName} ",
+			"currentLevel": "المستوى الحالي",
+			"nextBadge": "الشارة التالية",
+			"starsToGo": "متبقي {stars} نجمة",
+			"allUnlocked": "تم الحصول على جميع الشارات!",
+			"gettingStartedTitle": "ابدأ بجمع الشارات!",
+			"gettingStartedDescription": "لم يحصل {childName} على أي شارات بعد. أكمل القصص والتحديات لجمع النجوم وفتح الإنجازات.",
+			"emptyTitle": "🏆",
+			"emptyMessage": "لم يتم إعداد الشارات بعد. تحقق لاحقًا!",
+			"locked": {
+				"title": "الشارة مقفلة",
+				"message": "اجمع المزيد من النجوم عبر القراءة وإكمال التحديات!",
+				"required": "المطلوب: المستوى {level}",
+				"requiredStars": "يتطلب {stars} نجمة (متبقي {remaining})"
+			},
+			"levelLabel": "المستوى {level}"
+		},
+		"riddleStatistics": {
+			"chapter": "الفصل",
+			"title": "إحصائيات الألغاز",
+			"description": "رؤى متعمقة حول رحلة القراءة وحل المشكلات لـ {childName}.",
+			"dashboardButton": "فضاء التعلم لطفلك {childName} ",
+			"stats": {
+				"totalChallenges": "إجمالي التحديات",
+				"solved": "تحديات ناجحة",
+				"successRate": "نسبة النجاح",
+				"avgAttempts": "متوسط المحاولات",
+				"detailedTitle": "إحصاءات التحديات التفصيلية"
+			},
+			"noAttempts": "لا توجد محاولات تحدي بعد. ابدأ اللعب لرؤية الإحصاءات!",
+			"tableHeaders": {
+				"storyChapter": "القصة - الفصل",
+				"status": "الحالة",
+				"attempts": "المحاولات",
+				"successRate": "نسبة النجاح",
+				"hintsUsed": "التلميحات المستخدمة",
+				"timeSec": "الوقت (ث)"
+			},
+			"status": {
+				"solved": "✓ تم حل التحدي",
+				"skipped": "⊘ تم التخطي",
+				"incorrect": "✗ غير صحيح",
+				"notAttempted": "لم يتم المحاولة بعد (القصة قيد التقدم)"
+			},
+			"true": "صحيح",
+			"false": "خطأ",
+			"gettingStartedTitle": "لا توجد بيانات تحديات بعد",
+			"gettingStartedDescription": "لم يحاول {childName} أي تحديات بعد. مع قراءة القصص وإكمال الأنشطة، ستظهر الإحصائيات التفصيلية هنا.",
+			"na": "N/A",
+			"multipleAnswers": "عدة إجابات صحيحة ممكنة (قائمة للاختيار)",
+			"noCorrectAnswer": "لا توجد إجابة صحيحة محددة",
+			"tipPrefix": "تلميح:",
+			"tip": "انقر على أي صف تحدي لعرض معلومات مفصلة بما في ذلك الإجابة الصحيحة، وجميع التلميحات المتاحة، ومحاولات إجراء طفلك مع اختياراتهم وردودهم.",
+			"loading": "جارٍ التحميل...",
+			"modal": {
+				"title": "تفاصيل التحدي",
+				"description": "عرض تفصيلي للتحدي المحدد",
+				"questionLabel": "السؤال:",
+				"correctAnswerLabel": "الإجابة الصحيحة:",
+				"optionsLabel": "الخيارات:",
+				"sequenceItemsLabel": "التسلسل الصحيح",
+				"sequenceItemsHint": "يجب ترتيب الأحداث بهذا الترتيب:",
+				"childSequenceLabel": "التسلسل الذي رتبه الطفل",
+				"errorParsingSequence": "خطأ في عرض بيانات التسلسل",
+				"hintsLabel": "التلميحات:",
+				"hintNumber": "تلميح {n}:",
+				"childAttemptsTitle": "محاولات الطفل:",
+				"attempts": "المحاولات : {n}",
+				"attemptLabel": "المحاولة {n}",
+				"hintsUsed": "التلميحات المستخدمة",
+				"timeSpent": "الوقت المستغرق",
+				"selected": "المحدد:",
+				"typedAnswer": "الإجابة المكتوبة:",
+				"finalAnswerLabel": "الإجابة النهائية:",
+				"noAttemptsRecorded": "لا توجد محاولات مسجلة لهذا التحدي."
+			},
+			"action": {
+				"correct": "✓ صحيح",
+				"incorrect": "✗ غير صحيح"
+			}
+		},
+		"timeAnalytics": {
+			"title": "تحليلات الوقت",
+			"description": "رؤى متعمقة حول قراءة {childName} من حيث الوقت والاتساق",
+			"dashboardButton": "فضاء التعلم لطفلك {childName} ",
+			"presets": {
+				"last3Days": "آخر 3 أيام",
+				"last7Days": "آخر 7 أيام",
+				"last30Days": "آخر 30 يومًا"
+			},
+			"stats": {
+				"totalReadingTime": "إجمالي وقت القراءة",
+				"averagePerDay": "المتوسط يوميًا",
+				"onActiveDays": "في أيام النشاط القرائي",
+				"currentStreak": "السلسلة الحالية",
+				"consecutiveDays": "أيام متتالية",
+				"readingActivityRate": "معدل نشاط القراءة",
+				"sinceJoining": "منذ الانضمام",
+				"totalStoriesRead": "قصص بها نشاط",
+				"storiesWithActivity": "قصص فريدة بها جلسات قراءة",
+				"dailyReadingTime": "الوقت اليومي للقراءة",
+				"periodSummary": "{minutes} دقيقة عبر {days} أيام نشطة في الفترة المحددة"
+			},
+			"tableHeaders": {
+				"date": "التاريخ",
+				"minutes": "دقيقة",
+				"stories": "القصص"
+			},
+			"noActivityMessage": "لا توجد نشاطات قراءة بعد. ابدأ اللعب لرؤية إحصاءات القراءة!",
+			"gettingStartedTitle": "لم يُسجَّل وقت قراءة بعد",
+			"gettingStartedDescription": "لم يُكمل {childName} جلسة قراءة بعد. سيظهر الوقت المستغرق في القصص هنا بمجرد بدء القراءة.",
+			"dateRangePicker": {
+				"selectTimePeriod": "اختر الفترة الزمنية",
+				"custom": "مخصص",
+				"from": "من",
+				"selectStartDate": "اختر تاريخ البدء",
+				"apply": "تطبيق",
+				"showing": "يظهر",
+				"presetBeforeJoining": "هذا النطاق الزمني قبل انضمام طفلك"
+			}
+		},
+		"childStorytelling": {
+			"activated": "تم التفعيل",
+			"deactivated": "غير مفعّل",
+			"title": "قصص مخصصة للطفل",
+			"description": "أنشئ قصصًا مخصصة يظهر فيها {childName} كبطل! مغامرات مُصممة وفقًا لاهتماماته ومسار تقدمه في القراءة.",
+			"dashboardButton": "لوحة تحكم {childName}",
+			"activateOption": "تفعيل ميزة سرد القصص لـ {childName}",
+			"storytellingDashboard": "لوحة تحكم سرد القصص لـ {childName}",
+			"status": {
+				"completed": "تم الانتهاء",
+				"inProgress": "قيد التقدم",
+				"notStarted": "لم يبدأ بعد"
+			},
+			"generatedDate": "تم إنشاؤها في",
+			"inactiveTitle": "غير مفعّل",
+			"inactiveDescription": "ميزة سرد القصص غير مفعلة لـ {childName}.",
+			"noStoriesTitle": "لا توجد قصص حتى الآن",
+			"deactivateOption": "تعطيل ميزة سرد القصص",
+			"noStoriesDescription": "ستظهر القصص هنا بمجرد إنشاؤها لـ {childName}. عودة قريبًا!"
+		},
+		"weeklyReports": {
+			"title": "تقارير التقدم الأسبوعية",
+			"active": "مفعّل",
+			"inactive": "معطّل",
+			"activateButton": "تفعيل التقارير الأسبوعية",
+			"deactivateButton": "تعطيل التقارير الأسبوعية",
+			"description": "رؤى أسبوعية مولدة بالذكاء الاصطناعي حول تقدم القراءة والتعلم لـ {childName}",
+			"loading": "جاري تحميل التقرير الأسبوعي...",
+			"errorTitle": "تعذر تحميل التقرير",
+			"failedToLoadReport": "فشل تحميل التقرير الأسبوعي. يرجى المحاولة مرة أخرى لاحقًا.",
+			"noReportYet": "لا يوجد تقرير حتى الآن",
+			"reportAvailableSoon": "ستكون التقارير الأسبوعية لـ {childName} متاحة قريبًا مع استمراره في رحلة القراءة.",
+			"noReportForWeek": "لا يوجد تقرير متاح للأسبوع {week}",
+			"executiveSummary": "الملخص التنفيذي",
+			"progressTrends": "اتجاهات التقدم",
+			"recommendations": "التوصيات",
+			"metricsSnapshot": "لقطة للمقاييس",
+			"week": "الأسبوع {week}",
+			"previousWeek": "← الأسبوع السابق",
+			"nextWeek": "الأسبوع القادم →",
+			"inactiveTitle": "غير مفعّل",
+			"inactiveDescription": "التقارير الأسبوعية غير مفعلة لـ {childName}.",
+			"generatedOn": "تم التوليد في {date} الساعة {time}",
+			"noRecommendations": "لا توجد توصيات محددة لهذا الأسبوع."
+		},
+		"notificationSettings": {
+			"title": "إعدادات الإشعارات",
+			"description": "إدارة تنبيهات القراءة لـ {childName}",
+			"enableReminders": "تفعيل التنبيهات",
+			"remindersDescription": "احصل على إخطارات عندما يفوّت {childName} جلسات القراءة",
+			"enabledStatus": "مفعلة",
+			"disabledStatus": "غير مفعلة",
+			"statusMessage": "تنبيهات القراءة {status} لـ {childName}",
+			"statusMessagePrefix": "تذكيرات القراءة لـ {childName}",
+			"settingsDescription": "استخدم زر الإعدادات لإدارة تفضيلات الإشعارات لهذا الطفل.",
+			"cancel": "إلغاء",
+			"save": "حفظ",
+			"saving": "جاري الحفظ...",
+			"savedSuccess": "تم حفظ إعدادات الإشعارات!"
+		},
+		"childSettings": {
+			"title": "إعدادات الطفل",
+			"generalTab": "عام",
+			"notificationsTab": "الإشعارات",
+			"deleteChildTab": "حذف",
+			"childName": "اسم الطفل",
+			"childNamePlaceholder": "أدخل اسم الطفل",
+			"ageGroup": "فئة العمر",
+			"ageGroups": {
+				"6to8": "6-8 سنوات",
+				"9to12": "9-12 سنة",
+				"13plus": "13+ سنة"
+			},
+			"favoriteThemes": "المواضيع المفضلة",
+			"themesInputPlaceholder": "مثال: مغامرة، خيال، لغز (مفصولة بفواصل)",
+			"themesDescription": "افصل المواضيع المتعددة بفواصل",
+			"storiesPerWeek": "القصص في الأسبوع",
+			"selectAgeGroupFirst": "يرجى تحديد مجموعة عمرية أولاً",
+			"savedSuccess": "تم حفظ الإعدادات بنجاح!",
+			"generalInfoMessage": "تساعد الإعدادات العامة على تخصيص تجربة التعلم لطفلك.",
+			"saving": "جاري الحفظ...",
+			"saveGeneral": "حفظ التغييرات",
+			"notificationsDescription": "عند التفعيل، ستتلقى تنبيهات حول تقدم القراءة والنشاط لطفلك.",
+			"dangerZone": "منطقة الخطر",
+			"dangerZoneDescription": "لا يمكن التراجع عن هذه الإجراءات. يرجى المتابعة بحذر.",
+			"deleteChildTitle": "حذف ملف الطفل",
+			"deleteChildDescription": "سيؤدي هذا إلى حذف ملف {childName} وجميع البيانات المرتبطة به بشكل دائم.",
+			"deleteChild": "حذف ملف الطفل",
+			"deleteConfirmation": "يرجى إدخال اسم الطفل لتأكيد الحذف",
+			"confirmPlaceholder": "اكتب اسم الطفل",
+			"cancel": "إلغاء",
+			"close": "إغلاق",
+			"deleting": "جاري الحذف...",
+			"confirmDelete": "حذف"
+		},
+		"errors": {
+			"childNotFound": "الطفل غير موجود. يرجى التحقق والمحاولة مرة أخرى."
+		},
+		"inactivityReminder": {
+			"title": "حان وقت مغامرة القراءة!",
+			"description": "طفلك لم يقرأ أي قصص منذ {daysSince} {daysLabel}. يهدف إلى {storiesPerWeek} قصص في الأسبوع",
+			"weeklyProgress": "{storiesThisWeek} من {storiesNeeded} قصص هذا الأسبوع ({percentage}%)"
+		}
+	},
+	"ChildDashboard": {
+		"continueReading": "متابعة القراءة",
+		"childNotFound": "الطفل غير موجود. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"progressTracker": {
+			"title": "رحلتك",
+			"levelsUnlocked": "{completed}/{total} مستويات مفتوحة",
+			"nextLevel": {
+				"firstBadge": "ابدأ القراءة لفتح شارتك الأولى!",
+				"keepGoing": "عمل رائع! استمر للوصول إلى المستوى التالي."
+			},
+			"totalStarsLabel": "إجمالي النجوم",
+			"progressTo": "التقدم إلى المستوى {level}",
+			"starsToGo": "نجوم متبقية",
+			"levelsLabel": "المستويات",
+			"levelLabel": "المستوى {level}",
+			"requiredStars": "{count} نجمة",
+			"badgeLabel": "شارة",
+			"motivation": {
+				"1": "مرحبًا بك في مغامرة القراءة الخاصة بك",
+				"2": "أنت تكتسب الزخم! استمر 🚀",
+				"3": "واو، أنت تقوم بعمل رائع 🌟",
+				"4": "أنت في قمة الأداء! لا يمكن إيقافك 🔥",
+				"5": "أنت بطل القراءة 👑",
+				"6": "تفاني لا يصدق! أنت قارئ نجمي 🌠",
+				"7": "أنت نجم قراءة حقيقي! استمر في الإشعاع ✨",
+				"8": "أنت ستصبح أسطورة قراءة! استمر في المحاولة 🏆",
+				"9": "أنت بطل القراءة! قصتك للتو بدأت 🌟",
+				"10": "أنت مصدر إلهام لقراء آخرين! 🌟",
+				"11": "رحلتك في القراءة استثنائية! استمر في الوصول للنجوم 🌟",
+				"default": "استمر في القراءة وستحقق ارتفاعات جديدة! ⭐"
+			}
+		},
+		"welcomeBanner": {
+			"greetingNew": "مرحبًا بك على متن الرحلة، {childName}",
+			"greetingBack": "مرحبًا بعودتك، {childName}",
+			"subtitleNew": "تبدأ مغامرة القراءة الآن 🌟",
+			"subtitleBack": "هل أنت مستعد لمغامرة قراءة رائعة أخرى؟",
+			"stats": {
+				"stars": "النجوم المكتسبة:",
+				"stories": "القصص المكتملة:",
+				"readingTime": "الدقائق المقروءة:",
+				"minutes": "{count} دقيقة"
+			},
+			"avatarAlt": "الصورة الرمزية لـ {name}"
+		},
+		"roadmaps": {
+			"title": "مسارات التعلم",
+			"seeAll": "عرض الكل",
+			"coverAlt": "صورة غلاف المسار لـ {name}",
+			"untitled": "مسار بدون عنوان",
+			"viewButton": "عرض المسار"
+		},
+		"readingPlan": {
+			"title": "خطة القراءة",
+			"noPlanTitle": "لا توجد خطة قراءة بعد",
+			"noPlanDescription": "اطلب من والدك إنشاء خطة قراءة لـ {childName} من لوحة تحكم الوالدين.",
+			"generatingTitle": "جاري إعداد خطة القراءة…",
+			"generatingDescription": "نحن نجهّز مغامرة مخصصة لـ {childName}. عد بعد قليل!",
+			"failedTitle": "خطة القراءة غير متاحة",
+			"failedDescription": "حدث خطأ أثناء إنشاء خطة القراءة. اطلب من والدك المحاولة مرة أخرى.",
+			"continueReading": "متابعة القراءة",
+			"startReading": "ابدأ القراءة",
+			"readAgain": "اقرأ مرة أخرى",
+			"upNext": "التالي",
+			"episodeLabel": "الحلقة {number}",
+			"worldCount": "{count, plural, one {عالم واحد} other {# عوالم}}",
+			"storyProgress": "{ready}/{total} قصص جاهزة",
+			"comingSoon": "قريباً",
+			"generatingStory": "جاري تحضير القصة…",
+			"worldLocked": "العالم مقفل",
+			"locked": "أكمل القصة السابقة أولاً",
+			"completed": "مكتمل",
+			"inProgress": "قيد التقدم",
+			"readyToRead": "جاهز للقراءة",
+			"waitingForFirstStory": "قصتك الأولى في الطريق يا {childName}! ستظهر هنا عندما تصبح جاهزة."
+		},
+		"readingPlanPage": {
+			"title": "خطة القراءة",
+			"subtitle": "مسار قصص مخصص لـ {childName}. تابع المغامرة عالمًا بعد عالم.",
+			"backToDashboard": "العودة إلى لوحة التحكم",
+			"viewFullPlan": "عرض خطة القراءة الكاملة",
+			"planVersion": "الخطة {number}",
+			"overallProgress": "التقدم الكلي",
+			"roadmapsTitle": "مسارات المغامرة",
+			"readingLevel": "مستوى القراءة",
+			"stats": {
+				"completed": "القصص المكتملة",
+				"ready": "القصص الجاهزة",
+				"weeklyGoal": "الهدف الأسبوعي",
+				"sessionLength": "مدة الجلسة",
+				"storiesPerWeek": "{count} / أسبوع",
+				"minutes": "{count} د"
+			}
+		},
+		"roadmapPage": {
+			"title": "مسار التعلم: {name}",
+			"proTip": "نصيحة:",
+			"proTipMessage": "مرر مؤشرك فوق بطاقات القصة لرؤية التفاصيل. أكمل القصص لكسب النجوم وفتح تحديات جديدة!",
+			"worldTabs": {
+				"storiesLabel": "قصص"
+			},
+			"storiesRoadmap": {
+				"noStories": "لا توجد قصص متاحة في هذا العالم.",
+				"status": {
+					"completed": "مكتمل",
+					"inProgress": "قيد التقدم ({percentage}%)",
+					"locked": "مقفل",
+					"notStarted": "ابدأ"
+				},
+				"chapters": "فصول",
+				"challenges": "تحديات",
+				"buttons": {
+					"readAgain": "اقرأ مرة أخرى",
+					"continueReading": "متابعة القراءة",
+					"startReading": "ابدأ القراءة"
+				}
+			}
+		},
+		"storytelling": {
+			"title": "القصص الأسبوعية",
+			"status": {
+				"completed": "مكتمل",
+				"inProgress": "قيد التقدم",
+				"notStarted": "لم يبدأ"
+			},
+			"generatedDate": "تم إنشاؤها في",
+			"viewAll": "عرض جميع القصص"
+		}
+	},
+	"RoadmapsLibrary": {
+		"library": {
+			"title": "مكتبة القصص",
+			"description": "اكتشف قصصًا مذهلة وابدأ مغامرة القراءة لطفلك!",
+			"allRoadmaps": "جميع المسارات ({count})",
+			"empty": {
+				"title": "لم يتم العثور على مسارات",
+				"hint": "حاول تعديل المرشحات أو استعلام البحث الخاص بك"
+			}
+		},
+		"searchBar": {
+			"placeholder": "ابحث عن القصص...",
+			"noSuggestions": "لم يتم العثور على اقتراحات"
+		},
+		"filterPanel": {
+			"title": " ابحث عن طريق المرشحات",
+			"categoryLabel": "الفئة",
+			"ageGroupLabel": "مجموعة العمر",
+			"readingLevelLabel": "مستوى القراءة",
+			"clearAllFilters": "مسح جميع المرشحات ({count})",
+			"activeCount": "{count} نشط",
+			"readingLevels": {
+				"BEGINNER": "مبتدئ",
+				"EASY": "سهل",
+				"MEDIUM": "متوسط",
+				"HARD": "صعب",
+				"ADVANCED": "صعب جداً"
+			}
+		},
+		"featuredCarousel": {
+			"startReading": "ابدأ القراءة",
+			"previousStory": "القصة السابقة",
+			"nextStory": "القصة التالية",
+			"goToRoadmap": "انتقل إلى المسار {index}"
+		},
+		"roadmapCard": {
+			"worldLabel": "عالم",
+			"worldsLabel": "عوالم",
+			"coverImageAlt": "صورة الغلاف لـ {title}",
+			"allocateButton": "تخصيص للطفل",
+			"readingLevels": {
+				"BEGINNER": "مبتدئ",
+				"EASY": "سهل",
+				"MEDIUM": "متوسط",
+				"HARD": "صعب",
+				"ADVANCED": "متقدم"
+			}
+		},
+		"allocateDialog": {
+			"title": "تخصيص مسار للطفل",
+			"description": "حدد الطفل الذي يجب أن يكون لديه إمكانية الوصول إلى \"{roadmapName}\"",
+			"empty": "لا توجد أطفال متاحة. يرجى إضافة الأطفال أولاً.",
+			"alreadyAllocated": "تم التخصيص بالفعل",
+			"buttons": {
+				"cancel": "إلغاء",
+				"allocate": "تخصيص",
+				"allocating": "جارٍ التخصيص..."
+			},
+			"messages": {
+				"selectChild": "يرجى تحديد طفل",
+				"alreadyHasAccess": "{childName} لديه بالفعل إمكانية الوصول إلى هذا المسار",
+				"allocatedSuccess": "تم تخصيص المسار \"{roadmapName}\" إلى {childName}",
+				"allocationFailed": "فشل تخصيص المسار",
+				"unexpectedError": "حدث خطأ غير متوقع"
+			}
+		}
+	},
+	"CoreHeader": {
+		"nav": {
+			"parentDashboard": "لوحة الولي",
+			"adminDashboard": "لوحة المشرف",
+			"roadmapsLibrary": "مكتبة القصص"
+		},
+		"menu": {
+			"open": "افتح القائمة",
+			"close": "أغلق القائمة"
+		},
+		"themeToggle": "تبديل المظهر"
+	},
+	"Profile": {
+		"profile": "الملف الشخصي",
+		"settings": "الإعدادات",
+		"dashboard": "لوحة التحكم",
+		"logout": "تسجيل الخروج",
+		"loggedOut": "تم تسجيل الخروج بنجاح!",
+		"profileInformation": "معلومات الملف الشخصي",
+		"fullName": "الاسم الكامل",
+		"emailAddress": "عنوان البريد الإلكتروني",
+		"accountType": "نوع الحساب",
+		"notificationPreferences": "تفضيلات الإشعارات",
+		"emailNotifications": "إشعارات البريد الإلكتروني",
+		"learningProgressUpdates": "تحديثات تقدم التعلم",
+		"weeklySummary": "الملخص الأسبوعي",
+		"dangerZone": "منطقة الخطر",
+		"deleteAccount": "حذف الحساب"
+	},
+	"LoginForm": {
+		"titleCreate": "إنشاء حساب",
+		"titleWelcome": "مرحبًا بعودتك",
+		"descriptionSignUp": "سجل للبدء",
+		"descriptionLogin": "سجّل الدخول باستخدام بريدك الإلكتروني وكلمة المرور",
+		"fullNameLabel": "الاسم الكامل",
+		"fullNamePlaceholder": "اسمك",
+		"emailLabel": "البريد الإلكتروني",
+		"emailPlaceholder": "m@example.com",
+		"passwordLabel": "كلمة المرور",
+		"passwordPlaceholder": "********",
+		"forgotPassword": "هل نسيت كلمة المرور؟",
+		"confirmPasswordLabel": "تأكيد كلمة المرور",
+		"passwordsNotMatch": "كلمات المرور غير متطابقة",
+		"passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+		"buttonLoading": "جارٍ التحميل...",
+		"buttonCreate": "إنشاء حساب",
+		"buttonLogin": "تسجيل الدخول",
+		"haveAccount": "هل لديك حساب بالفعل؟",
+		"logIn": "تسجيل الدخول",
+		"noAccount": "ليس لديك حساب؟",
+		"signUp": "سجّل",
+		"loginWithGoogle": "تسجيل الدخول بـ Google",
+		"signUpWithGoogle": "التسجيل بـ Google",
+		"orContinueWith": "أو تابع بـ",
+		"tosAgreement": "عند إنشاء حساب، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
+		"errors": {
+			"fullNameRequired": "الاسم الكامل مطلوب",
+			"registrationFailed": "فشل التسجيل",
+			"loginFailedAfterRegistration": "فشل تسجيل الدخول بعد التسجيل",
+			"loginFailed": "فشل تسجيل الدخول",
+			"accountCreatedAndLoggedIn": "تم إنشاء الحساب وتسجيل الدخول بنجاح!",
+			"loggedIn": "تم تسجيل الدخول بنجاح!",
+			"unauthorized": "لم يتم العثور على حساب بهذا البريد الإلكتروني",
+			"invalidCredentials": "بريد إلكتروني أو كلمة مرور غير صحيحة",
+			"userNotFound": "لم يتم العثور على المستخدم",
+			"emailAlreadyExists": "هذا البريد الإلكتروني موجود بالفعل",
+			"invalidEmail": "عنوان بريد إلكتروني غير صحيح",
+			"passwordTooWeak": "كلمة المرور ضعيفة جداً",
+			"passwordIncorrect": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى"
+		}
+	},
+	"Onboarding": {
+		"welcomeTitle": "مرحبًا بك في Lexopia",
+		"welcomeDesc": "منصة قراءة تفاعلية مصممة للأطفال الذين يعانون من عسر القراءة وعائلاتهم.",
+		"welcomeDyslexiaTitle": "مصممة للمتعلمين الذين يعانون من عسر القراءة",
+		"welcomeFeatureMultimodal": "تعلم متعدد الوسائط عبر النص والرسوم التوضيحية والتعليق الصوتي",
+		"welcomeFeatureAccessible": "واجهة سهلة الوصول مع خطوط مناسبة لعسر القراءة وإعدادات قابلة للتعديل",
+		"welcomeFeatureProgress": "تتبع التقدم للاحتفال بكل إنجاز في القراءة",
+		"welcomeCapabilitiesTitle": "ما يمكن لعائلتك فعله على Lexopia",
+		"welcomeCapabilityStories": "قراءة القصص",
+		"welcomeCapabilityChallenges": "تحديات تفاعلية",
+		"welcomeCapabilityBadges": "نجوم ومستويات وشارات",
+		"welcomeCapabilityDashboard": "لوحة تحكم الوالدين",
+		"welcomeReassurance": "يدعم Lexopia أنماط التعلم المختلفة ويساعد الأطفال على بناء الثقة من خلال ممارسة قراءة إيجابية وخالية من الضغط.",
+		"letsStart": "لنبدأ",
+		"titleReadingSettings": "أهداف القراءة والتذكيرات",
+		"summaryTitle": "راجع ملف طفلك",
+		"summaryDesc": "أكد التفاصيل أدناه قبل إنشاء الملف الشخصي.",
+		"titleStep1": "أخبرنا عن طفلك",
+		"titleStep2": "ما القصص التي يستمتع بها طفلك؟",
+		"titleStep3": "انتهينا!",
+		"descStep1": "ساعدنا في تخصيص التجربة لطفلك.",
+		"descStep2": "اختر الموضوعات لتخصيص التوصيات.",
+		"descStep3": "تم إعداد ملف التعريف. هيا نبدأ الاستكشاف!",
+		"readyToStart": "هل أنت مستعد للبدء؟",
+		"descStep3ReadingSettings": "حدد أهداف القراءة وتفضيلات التنبيهات",
+		"descStep4": "راجع إعدادات طفلك",
+		"childNameLabel": "اسم الطفل",
+		"childNamePlaceholder": "إيما",
+		"ageGroupLabel": "فئة العمر",
+		"ageGroupPlaceholder": "اختر فئة عمرية",
+		"availableThemesEmpty": "يرجى تحديد فئة عمرية أولاً لعرض الموضوعات المتاحة",
+		"favoriteThemesLabel": "الموضوعات المفضلة",
+		"selectAllApply": "حدد كل ما ينطبق",
+		"cancel": "إلغاء",
+		"next": "التالي",
+		"previous": "السابق",
+		"settingUp": "جارٍ الإعداد...",
+		"startExploring": "ابدأ الاستكشاف",
+		"missingRequired": "معلومات مطلوبة مفقودة",
+		"childCreated": "تم إنشاء ملف الطفل بنجاح!",
+		"onboardingError": "حدث خطأ أثناء الإعداد",
+		"childNameRequired": "اسم الطفل مطلوب",
+		"selectAgeGroup": "يرجى تحديد فئة عمرية لطفلك",
+		"invalidAgeGroup": "فئة العمر المحددة غير صالحة",
+		"selectAtLeastOneTheme": "حدد موضوعًا واحدًا على الأقل",
+		"stepOf": "الخطوة {step} من {total}",
+		"genderLabel": "جنس الطفل",
+		"selectGender": "يرجى اختيار",
+		"storiesPerWeekLabel": "كم قصة يجب أن يقرأ {childName} في الأسبوع؟",
+		"storiesPerWeekOption": "{count} قصص في الأسبوع",
+		"selectReadingFrequency": "اختر تكراراً للقراءة يناسب طفلك",
+		"sessionPerWeek": "في الأسبوع",
+		"sessionEveryNDays": "كل {days} أيام",
+		"enableReadingReminders": "تفعيل تذكيرات القراءة",
+		"enableRemindersDescription": "احصل على إشعار إذا فاتت {childName} جلسة قراءة",
+		"readingFrequency": "تكرار القراءة",
+		"storiesPerWeekDisplay": "{count}x في الأسبوع",
+		"readingReminders": "تذكيرات القراءة",
+		"enabled": "✓ مفعل",
+		"disabled": "معطل",
+		"enableNotificationsTitle": "تفعيل الإشعارات",
+		"enableNotificationsDescription": "اسمح لنا بإرسال تذكيرات حول جلسات القراءة لطفلك حتى تبقى على اطلاع وتتمكن من تشجيعه على القراءة بانتظام.",
+		"enabling": "جاري التفعيل...",
+		"allowNotifications": "تفعيل الإشعارات",
+		"notNow": "ليس الآن",
+		"browserPermissionSteps": "كيفية تفعيل الإشعارات:",
+		"step1BrowserPrompt": "انقر على الزر أدناه",
+		"step2AcceptPrompt": "سيطلب منك متصفحك السماح بالإشعارات",
+		"step3ClickAllow": "انقر على 'السماح' في النافذة المنبثقة للمتصفح",
+		"step4IfNoPopup": "إذا لم تظهر أي نافذة منبثقة، انتقل إلى إعدادات متصفحك وسمح بالإشعارات لهذا الموقع",
+		"enableNotificationsRequired": "يجب عليك تفعيل الإشعارات للمتابعة",
+		"serviceWorkerNotSupported": "خدمات العامل ليست مدعومة في هذا المتصفح",
+		"serviceWorkerRegistrationFailed": "فشل تسجيل خدمة العامل",
+		"enableNotificationsInBrowser": "يرجى تفعيل الإشعارات في متصفحك",
+		"enableNotificationsFailed": "فشل تفعيل الإشعارات",
+		"enableNotificationsSuccess": "تم تفعيل الإشعارات بنجاح!",
+		"assignedChallengesLabel": "التحديات المراد التركيز عليها",
+		"assignedChallengesDesc": "اختر أنواع التحديات التي تريد أن نعطيها أولوية في قصص طفلك.",
+		"selectAtLeastOneChallenge": "اختر نوع تحدٍ واحدًا على الأقل",
+		"invalidChallenge": "نوع تحدٍ غير صالح",
+		"challengeTypeMultipleChoice": "اختيار من متعدد",
+		"challengeTypeTrueFalse": "صح أو خطأ",
+		"challengeTypeSequencing": "ترتيب أحداث القصة",
+		"challengeTypeFillBlank": "املأ الفراغ",
+		"challengeTypeCompleteWord": "إكمال الكلمة",
+		"challengeTypeLetterDiscrimination": "تمييز الحروف",
+		"challengeTypeSoundMatch": "مطابقة الأصوات",
+		"challengeTypeReadAloud": "القراءة بصوت عالٍ",
+		"challengeTypeWordBuild": "بناء الكلمات",
+		"viewChallengeInfo": "اعرف المزيد عن هذا التحدي",
+		"challengeInfoPurpose": "الهدف",
+		"challengeInfoHowItWorks": "كيف يعمل",
+		"challengeInfoExample": "مثال",
+		"challengeTypeInfo": {
+			"multipleChoice": {
+				"purpose": "يبني فهم القصة مع عبء قراءة منخفض — مثالي عندما يكون النص الطويل مرهقًا.",
+				"howItWorks": "بعد قسم من القصة، يختار طفلك إجابة واحدة من بين خيارات قصيرة. يمكن قراءة كل خيار بصوت عالٍ.",
+				"example": "\"ماذا وجدت ميا؟\" — كهف، بيضة، أو نهر."
+			},
+			"trueFalse": {
+				"purpose": "يتحقق من فهم حقائق بسيطة في القصة دون كتابة أو إجابات طويلة.",
+				"howItWorks": "يسمع أو يقرأ طفلك جملة قصيرة من القصة ويضغط صح أو خطأ. التعليق الصوتي يقلل جهد فك الشفرة.",
+				"example": "\"كان الديناصور وحيدًا.\" — صح أو خطأ."
+			},
+			"sequencing": {
+				"purpose": "يقوّي الذاكرة العاملة ومهارة ترتيب أحداث القصة.",
+				"howItWorks": "يسحب طفلك 3–4 بطاقات أحداث (نص + قراءة صوتية) ويرتبها بالتسلسل الصحيح.",
+				"example": "الترتيب: ميا تجد البيضة ← تسمع صوتًا ← تلتقي بصديق."
+			},
+			"fillBlank": {
+				"purpose": "يمارس المفردات والتعرف على الكلمات باستخدام سياق القصة.",
+				"howItWorks": "جملة من القصة بها كلمة ناقصة. يسحب طفلك الكلمة الصحيحة من بنك كلمات صغير.",
+				"example": "\"دخلت ميا إلى ___.\" — اختر كهفًا من بنك الكلمات."
+			},
+			"completeWord": {
+				"purpose": "يستهدف أنماط الحروف والإملاء — مفيد جدًا لتدريب الصوتيات.",
+				"howItWorks": "تظهر كلمة بحرف ناقص. يضغط طفلك على الحرف الصحيح لإكمالها.",
+				"example": "\"غاب_ة\" — اضغط على ا، و، أو ي لإكمال \"غابة\"."
+			},
+			"letterDiscrimination": {
+				"purpose": "يساعد مع الحروف التي تُعكس غالبًا مثل ب/د وپ/ق.",
+				"howItWorks": "تُعرض حروف متشابهة ويختار طفلك الحرف المطابق للتلميح المنطوق أو المكتوب.",
+				"example": "اعرض ب و د — \"أي حرف يبدأ كلمة 'كلب'؟\""
+			},
+			"soundMatch": {
+				"purpose": "يبني الوعي الصوتي بربط الأصوات بالحروف أو الكلمات الصحيحة.",
+				"howItWorks": "يسمع طفلك صوتًا أو صوتًا صوتيًا ويضغط على الحرف أو الكلمة المطابقة.",
+				"example": "شغّل صوت /k/ — اضغط على ك، ق، أو س."
+			},
+			"readAloud": {
+				"purpose": "يدعم طلاقة القراءة الجهرية والنطق الواثق.",
+				"howItWorks": "يقرأ طفلك كلمة مستهدفة أو عبارة قصيرة من القصة بصوت عالٍ. يتحقق التعرف على الكلام من النطق بلطف.",
+				"example": "\"اقرأ هذه الكلمة من القصة: كهف.\""
+			},
+			"wordBuild": {
+				"purpose": "يمارس الإملاء وترتيب الحروف ببناء الكلمات خطوة بخطوة.",
+				"howItWorks": "يسمع طفلك كلمة مستهدفة عبر الصوت، ثم يرتب بلاط الحروف بالترتيب الصحيح.",
+				"example": "اسمع \"كهف\" — رتّب البلاط ك-ه-ف."
+			}
+		},
+		"gender": {
+			"boy": "ولد",
+			"girl": "بنت"
+		}
+	},
+	"OnboardingStorytelling": {
+		"Arabic": "العربية",
+		"English": "الإنجليزية",
+		"French": "الفرنسية",
+		"titleStep1": "أهلاً! دعنا نتعرف على طفلك",
+		"titleStep2": "ما اهتمامات طفلك؟",
+		"titleStep3": "ماذا تريد أن يحسّن طفلك؟",
+		"titleStep4": "مراجعة وتأكيد",
+		"descStep1": "أخبرنا باسم طفلك (أو كنيته) - سيظهر في قصصه المخصصة!",
+		"descStep2": "اختر الموضوعات لجعل القصص جذابة وشخصية.",
+		"descStep3": "اختر أهداف التعلم التي تتوافق مع توقعاتك.",
+		"descStep4": "تحقق من جميع المعلومات قبل إنشاء الملف.",
+		"childNameLabel": "اسم الطفل (أو كنيته)",
+		"childNamePlaceholder": "مثل إيما أو كنية,",
+		"childNameDesc": "سيظهر هذا الاسم كشخصية رئيسية في القصص المولدة  لطفلك",
+		"childLanguageLabel": "اللغة المفضلة للقصص",
+		"selectLanguagePlaceholder": "اختر لغة",
+		"selectLanguageRequired": "يرجى اختيار لغة لقصص طفلك",
+		"ageGroupLabel": "فئة العمر",
+		"ageGroupPlaceholder": "اختر فئة عمرية",
+		"availableThemesEmpty": "لا توجد موضوعات متاحة",
+		"favoriteThemesLabel": "الموضوعات المفضلة",
+		"selectAllApply": "حدد كل ما ينطبق",
+		"addCustomThemePlaceholder": "أضف موضوعاً مخصصاً لطفلك...",
+		"learningObjectivesLabel": "أهداف التعلم",
+		"selectObjectivesDesc": "اختر ما تود أن يحسّنه طفلك",
+		"selectAtLeastOneObjective": "حدد هدف تعلم واحد على الأقل",
+		"objective_thinking": "التفكير وحل المشاكل",
+		"objective_reading": "القراءة وفهم القصص",
+		"objective_vocabulary": "تعلم كلمات جديدة",
+		"objective_focus": "التركيز والانتباه",
+		"objective_confidence": "الثقة واتخاذ القرار",
+		"objective_social": "المهارات الاجتماعية والتعاطف",
+		"objective_other": "آخر (يرجى التحديد)",
+		"otherObjectivePlaceholder": "صف ما تود أن يحسّنه طفلك",
+		"cancel": "إلغاء",
+		"next": "التالي",
+		"previous": "السابق",
+		"creatingProfile": "جارٍ إنشاء الاعدادات...",
+		"createProfile": "إنشاء الاعدادات",
+		"settingUp": "جارٍ الإعداد...",
+		"startExploring": "ابدأ الاستكشاف",
+		"missingRequired": "معلومات مطلوبة مفقودة",
+		"childCreated": "تم إنشاء ملف الطفل بنجاح!",
+		"onboardingError": "حدث خطأ أثناء الإعداد",
+		"childNameRequired": "اسم الطفل مطلوب",
+		"selectAgeGroup": "يرجى تحديد فئة عمرية لطفلك",
+		"invalidAgeGroup": "فئة العمر المحددة غير صالحة",
+		"selectAtLeastOneTheme": "حدد موضوعًا واحدًا على الأقل",
+		"theme_space": "الفضاء",
+		"theme_magic": "السحر",
+		"theme_fantasy": "الخيال العلمي",
+		"theme_animals": "الحيوانات",
+		"theme_adventure": "المغامرة",
+		"theme_robots": "الروبوتات",
+		"theme_mystery": "الغموض",
+		"stepOf": "الخطوة {step} من {total}"
+	},
+	"AiStorytellingIntro": {
+		"title": "قصص مخصصة لطفلك",
+		"subtitle": "أنشئ مغامرات مخصصة حيث يكون طفلك هو البطل",
+		"feature1Title": " قصص مخصصة",
+		"feature1Desc": "كل أسبوع، قصص جديدة تضع طفلك كشخصية رئيسية",
+		"feature2Title": " أهداف التعلم",
+		"feature2Desc": "قصص محاذاة للمهارات التي تريد تطويرها عند طفلك",
+		"feature3Title": "مغامرات جذابة",
+		"feature3Desc": "تحديات تفاعلية لتحقيق الأهداف وبناء الثقة",
+		"mainDescription": "سيشهد طفلك كل أسبوع مغامرات حيث يكون هو البطل! تُصمم القصص وفقاً لاهتماماته وتهدف إلى مساعدته على تحقيق أهداف التعلم التي اخترتها. شاهد بينما ينمو بالثقة، يوسع مفرداته، ويطور مهارات التفكير النقدي كل هذا من خلال متعة القراءة.",
+		"continueButton": "المتابعة إلى الإعداد"
+	},
+	"StoryReadingInterface": {
+		"saving": "جارٍ الحفظ...",
+		"missingRequiredParameters": " المعلمات المطلوبة مفقودة. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"storyNotFound": "القصة المطلوبة غير موجودة. يرجى التحقق من معرف القصة والمحاولة مرة أخرى.",
+		"storyNotReady": "لم يتم إنشاء هذه القصة بعد. ستظهر الفصول والتحديات هنا عندما يكون محتوى الذكاء الاصطناعي جاهزًا.",
+		"unableToStartStory": "تعذر بدء القصة. يرجى المحاولة مرة أخرى لاحقًا.",
+		"childNotFound": "لم يتم العثور على الطفل. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"readingSettings": {
+			"title": "إعدادات القراءة",
+			"textSize": "حجم النص",
+			"small": "صغير",
+			"medium": "متوسط",
+			"large": "كبير",
+			"language": "اللغة",
+			"english": "الإنجليزية",
+			"french": "الفرنسية",
+			"arabic": "العربية",
+			"highContrast": "وضع التباين العالي",
+			"highContrastDesc": "قراءة أسهل لتحسين إمكانية الوصول البصري",
+			"readingTip": "نصيحة القراءة",
+			"readingTipText": "استخدم عناصر التحكم في الصوت للاستماع أثناء القراءة. يساعد هذا على تحسين النطق والفهم!",
+			"closeButton": "إغلاق"
+		},
+		"readingHelp": {
+			"title": "مساعدة القراءة",
+			"navigation": "التنقل",
+			"navigationDesc": "استخدم الأسهم في الأسفل للتنقل بين الصفحات. يتم حفظ التقدم الخاص بك تلقائيًا.",
+			"audioReading": "القراءة الصوتية",
+			"audioReadingDesc": "اضغط على تشغيل لسماع القصة بصوت عالٍ. اضبط اللغة في عناصر التحكم.",
+			"riddles": "الألغاز",
+			"riddlesDesc": "عندما ترى مؤشر لغز، قم بحله لمواصلة القصة وكسب النجوم!",
+			"gotIt": "حسناً!"
+		},
+		"storyFlowNavigation": {
+			"backButton": "عودة",
+			"returnToStory": "العودة إلى القصة",
+			"previousButton": "السابق",
+			"nextButton": "التالي",
+			"starsEarned": "{count} نجمة",
+			"pageProgress": "الصفحة {current} من {total}",
+			"timeDisplay": "الوقت: {seconds}",
+			"timerMessage": "استمر في القراءة... ({remaining}ث متبقية)",
+			"completionMessage": "تمت القصة",
+			"solveRiddle": "حل اللغز",
+			"challengeSolved": "تحدي تم حله",
+			"challengeSkipped": "تحدي تم تخطيه. استمر في القراءة ",
+			"riddleTime": "حان وقت اللغز",
+			"riddleTimeText": "بمجرد قراءة هذه الصفحة، انقر على حل اللغز"
+		},
+		"storyControls": {
+			"playAudio": "تشغيل الصوت",
+			"pauseAudio": "إيقاف الصوت",
+			"volumeControl": "مستوى الصوت",
+			"playbackSpeed": "السرعة",
+			"normalSpeed": "عادي",
+			"fastSpeed": "سريع",
+			"slowSpeed": "بطيء",
+			"settings": "الإعدادات",
+			"help": "المساعدة"
+		},
+		"playAudio": {
+			"play": "استمع إلى القصة",
+			"pause": "إيقاف",
+			"loading": "جاري تحميل الصوت...",
+			"repeat": "إعادة",
+			"highlightWord": "كلمة",
+			"highlightSentence": "جملة"
+		},
+		"riddleInterface": {
+			"submitAnswer": "قم بالإجابة",
+			"needAHint": "هل تحتاج إلى تلميح؟",
+			"incorrectAnswer": "ليست الإجابة صحيحة تمامًا، لكن لا بأس! كل محاولة تساعدك على التعلم. هل تريد المحاولة مرة أخرى أو استخدام تلميح؟",
+			"almostAnswer": "فكر في الأمر قليلاً أكثر. يمكنك فعل ذلك!",
+			"solvedAnswerRIDDLE": " رائع! لقد حللت اللغز! مهاراتك في القراءة مذهلة!",
+			"solvedAnswerTRUE_FALSE": "صحيح! لقد فهمت تلك العبارة تمامًا!",
+			"solvedAnswerMULTIPLE_CHOICE": "اختيار ممتاز! لقد فهمت القصة حقًا!",
+			"solvedAnswerSEQUENCING": "ممتاز! لقد رتبت الأحداث بالترتيب الصحيح!",
+			"solvedAnswerFILL_BLANK": "أحسنت! اخترت الكلمة الصحيحة!",
+			"solvedAnswerCOMPLETE_WORD": "أحسنت! أكملت الكلمة!",
+			"solvedAnswerLETTER_DISCRIMINATION": "ممتاز! وجدت الحرف الصحيح!",
+			"solvedAnswerSOUND_MATCH": "رائع! طابقت الصوت بشكل صحيح!",
+			"solvedAnswerREAD_ALOUD": "قراءة رائعة! نطقتها بوضوح!",
+			"solvedAnswerWORD_BUILD": "ممتاز! بنيت الكلمة بشكل صحيح!",
+			"riddleQuestion": {
+				"riddleCounter": "اللغز {current} من {total}",
+				"trueOrFalse": "اختر صحيح أو خاطئ:",
+				"multipleChoice": "اختر الإجابة الصحيحة:",
+				"sequencing": "رتب هذه الأحداث بالترتيب الصحيح:",
+				"fillBlank": "اختر الكلمة المناسبة:",
+				"completeWord": "أكمل الكلمة:",
+				"letterDiscrimination": "ابحث عن الحرف المطابق:",
+				"soundMatch": "أي صوت يطابق؟",
+				"readAloud": "اقرأ هذه الكلمة بصوت عالٍ:",
+				"wordBuild": "ابنِ الكلمة:",
+				"defaultQuestion": "أجب على السؤال:",
+				"timeDisplay": "الوقت: {seconds}ث",
+				"playAudio": "قراءة اللغز بصوت عالٍ",
+				"stopAudio": "إيقاف قراءة اللغز"
+			},
+			"floatingItems": {
+				"attemptsLabel": "المحاولات",
+				"hintsUsedLabel": "التلميحات المستخدمة"
+			},
+			"textInputAnswer": {
+				"yourAnswer": "إجابتك:",
+				"placeholder": "اكتب إجابتك هنا...",
+				"checkButton": "تحقق"
+			},
+			"voiceInputAnswer": {
+				"yourAnswer": "تحدث بإجابتك",
+				"startRecording": "ابدأ التسجيل",
+				"stopRecording": "إيقاف التسجيل",
+				"submit": "إرسال",
+				"recording": "جاري التسجيل...",
+				"transcript": "النص المكتوب",
+				"processing": "جاري معالجة الصوت...",
+				"permissionDenied": "تم رفض إذن الميكروفون. يرجى تفعيل إمكانية الوصول إلى الميكروفون في إعدادات المتصفح.",
+				"notSupported": "الإدخال الصوتي غير مدعوم في هذا المتصفح. جرّب Chrome أو Edge.",
+				"recognitionError": "تعذر التعرف على الكلام. حاول مرة أخرى."
+			},
+			"inputMode": {
+				"text": "اكتب",
+				"voice": "تحدث"
+			},
+			"multipleChoiceAnswer": {
+				"chooseAnswer": "اختر إجابتك:"
+			},
+			"sequencingAnswer": {
+				"instructions": "رتب هذه الأحداث بالترتيب الصحيح:",
+				"dragHint": "اسحب وأفلت لإعادة ترتيب",
+				"checking": "جاري الفحص...",
+				"submit": "التحقق من الترتيب"
+			},
+			"fillBlankAnswer": {
+				"instructions": "اضغط على الكلمة التي تكمل الجملة:"
+			},
+			"letterTilesAnswer": {
+				"instructions": "اضغط على الحرف الصحيح:"
+			},
+			"completeWordAnswer": {
+				"instructions": "اضغط على حرف لإكمال الكلمة:",
+				"emptySlot": "مكان الحرف الناقص",
+				"clearLetter": "اضغط لإزالة الحرف"
+			},
+			"soundMatchAnswer": {
+				"instructions": "استمع إلى الصوت ثم اختر الخيار المطابق:",
+				"playSound": "تشغيل الصوت",
+				"playOption": "تشغيل صوت الخيار"
+			},
+			"readAloudAnswer": {
+				"readThisWord": "اقرأ هذه الكلمة:"
+			},
+			"wordBuildAnswer": {
+				"instructions": "رتب الحروف لبناء الكلمة:",
+				"dragHint": "اسحب الحروف يميناً أو يساراً لبناء الكلمة",
+				"checking": "جاري الفحص...",
+				"submit": "التحقق من الكلمة"
+			},
+			"hintPanel": {
+				"title": "تلميح مفيد",
+				"hintsRemaining": "{count} تلميحات متبقية",
+				"previousHints": "التلميحات السابقة:",
+				"hintCounter": "التلميح {current} من {total}",
+				"noMoreHints": "لا توجد تلميحات إضافية. يمكنك فعل ذلك!",
+				"allHintsRevealed": "تم الكشف عن جميع التلميحات. حاول بأفضل ما لديك!",
+				"closeButton": "إغلاق",
+				"getAnotherHint": "تلميح آخر ({remaining} متبقي)"
+			},
+			"feedbackDisplay": {
+				"solvedTitle": "عمل رائع!",
+				"almostTitle": "قريب جداً!",
+				"incorrectTitle": "استمر في المحاولة!",
+				"starsEarned": "+{count} نجوم مكتسبة!",
+				"continueButton": "متابعة القصة",
+				"skipButton": "تخطي هذا اللغز",
+				"tryAgainButton": "حاول مرة أخرى"
+			}
+		}
+	},
+	"StoryCompletion": {
+		"childNotFound": "لم يتم العثور على الطفل. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"storyNotFound": "القصة المطلوبة غير موجودة. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"progressNotFound": "لم يتم العثور على تقدم الطفل. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"storyNotCompleted": "القصة غير مكتملة. يرجى التحقق من الرابط والمحاولة مرة أخرى.",
+		"completionHeader": {
+			"title": "تمت القصة!",
+			"subtitle": "عمل رائع، {childName} لقد أكملت قصة \"{storyTitle}\""
+		},
+		"completionMessage": {
+			"title": "تمت القصة!",
+			"subtitle": "عمل رائع، {childName} لقد أكملت قصة \"{storyTitle}\"",
+			"starsEarned": "{count} نجمة مكتسبة!"
+		},
+		"progressCard": {
+			"starsEarned": "النجوم المكتسبة:",
+			"currentLevel": "المستوى الحالي",
+			"totalStars": "إجمالي النجوم",
+			"progressToLevel": "التقدم إلى المستوى {nextLevel}",
+			"progressPercentage": "{percentage}%",
+			"levelUnlocked": " لقد وصلت إلى المستوى {nextLevel}!",
+			"starsNeeded": "{count} نجمة إضافية مطلوبة"
+		},
+		"badgeInfo": {
+			"unlocked": "شارة جديدة مفتوحة:"
+		},
+		"buttons": {
+			"continueReading": "متابعة القراءة",
+			"showProgressButton": "عرض التقدم"
+		}
+	}
+}

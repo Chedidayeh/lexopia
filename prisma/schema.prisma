@@ -1,0 +1,1116 @@
+// =============================================================================
+// Dyslexia App — Prisma Schema
+// =============================================================================
+// Supports the learning-path model:
+//   Child → ReadingPlan (many) → Roadmap (per interest) → World (2–3) → StoryArc → Story (8 episodes)
+//   Story → Chapter (page) → Challenge
+//
+// Section index:
+//   1. Generator & datasource
+//   2. Enums
+//   3. Auth & user models
+//   4. Child profile models
+//   5. Content models (AI-generated learning path)
+//   6. Progress models (per-child unlock & completion)
+//   7. Session & performance models (reading + challenge telemetry)
+//   8. Gamification models
+//   9. Media models
+//  10. AI agent & reporting models
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// 2. ENUMS
+// =============================================================================
+
+enum RoleType {
+  PARENT
+  ADMIN
+}
+
+enum LanguageCode {
+  EN
+  AR
+  FR
+}
+
+enum ReadingLevel {
+  BEGINNER
+  EASY
+  MEDIUM
+  HARD
+  ADVANCED
+}
+
+/// Story / world / roadmap access and completion state for a child.
+enum ContentStatus {
+  LOCKED // previous content not finished; cannot open
+  AVAILABLE // unlocked; child has not started
+  IN_PROGRESS // child is actively reading or solving challenges
+  COMPLETED // all pages read + challenges attempted
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// The 9 supported challenge types — all use predefined correct answers.
+enum ChallengeType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SEQUENCING
+  FILL_BLANK
+  COMPLETE_WORD
+  LETTER_DISCRIMINATION
+  SOUND_MATCH
+  READ_ALOUD
+  WORD_BUILD
+}
+
+enum ChallengeStatus {
+  SOLVED
+  SKIPPED
+  INCORRECT
+  NOT_ATTEMPTED
+}
+
+enum HintLevel {
+  TEXT // level 1 — short sentence clue
+  AUDIO // level 2 — TTS nudge or sound cue
+}
+
+
+enum ReadingPlanStatus {
+  DRAFT
+  GENERATING
+  ACTIVE
+  PAUSED
+  FAILED
+  SUPERSEDED
+  COMPLETED
+}
+
+enum StoryGenerationStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}
+
+/// Which AI agent owns a background job.
+enum AgentType {
+  PLANNING // ReadingPlan → roadmaps, worlds, story arcs, story shells
+  STORY    // Episode chapters + narrative content
+  CHALLENGE // Challenge set for one story
+  TTS      // Audio for chapters, challenges, hints
+}
+
+enum AgentJobStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+/// What triggered an agent job (planning or content generation).
+enum AgentTrigger {
+  ONBOARDING
+  MANUAL_REGENERATION
+  SCHEDULED_WEEKLY
+  STORY_UNLOCK // generate next episode when child progresses
+  RETRY
+}
+
+// =============================================================================
+// 3. AUTH & USER MODELS
+// =============================================================================
+
+/// Parent or admin account. Parents own one or more Child records.
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String? // nullable for OAuth users
+  name     String?
+  image    String?
+  role     RoleType @default(PARENT)
+  newUser  Boolean  @default(true)
+
+  emailVerified DateTime?
+
+  children     Child[]
+  readingPlans ReadingPlan[]
+  sessions     Session[]
+  accounts     Account[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// =============================================================================
+// 4. CHILD PROFILE MODELS
+// =============================================================================
+
+/// Core child identity + onboarding preferences that seed the AI learning agent.
+/// A child may have multiple ReadingPlans over time; each plan contains one Roadmap per interest.
+model Child {
+  id       String @id @default(cuid())
+  parentId String
+  parent   User   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  // --- Identity (onboarding step 2) ---
+  name      String
+  age       Int
+  gender    String
+
+  // --- Reading profile (onboarding step 3) ---
+  primaryLanguage    LanguageCode @default(EN)
+  readingLevel       ReadingLevel @default(BEGINNER)
+  initialReadingLevel ReadingLevel? // snapshot at onboarding completion
+  assignedChallenges String[] 
+
+  // --- Interests & story world (onboarding step 4) ---
+  interests             String[] // multi-select + free text themes
+  favoriteCharacterType String? // hero, explorer, inventor, etc.
+  storyTone             String? // funny, adventurous, calm, magical, educational
+
+  // --- Schedule & goals (onboarding step 5) ---
+  storiesPerWeek      Int @default(3)
+  sessionDurationMins Int @default(20) // 10 | 20 | 30 | 60 — drives story sizing
+
+  // --- Onboarding lifecycle ---
+  onboardingCompletedAt DateTime?
+
+  // --- Game economy ---
+  currentLevel Int @default(1)
+  totalStars   Int @default(0)
+
+  // --- Parent notification preferences ---
+  activateNotifications Boolean @default(false)
+
+  // --- Relations ---
+  roadmaps       Roadmap[]
+  readingPlans   ReadingPlan[]
+  dailyActivity  ChildDailyActivity?
+  storyProgress  ChildStoryProgress[]
+  chapterProgress ChildChapterProgress[]
+  badges         ChildBadge[]
+  agentJobs      AgentJob[]
+  aiGenerationLogs AiGenerationLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+}
+
+
+
+/// Last activity timestamp — drives streak and push notification logic.
+model ChildDailyActivity {
+  id           String    @id @default(cuid())
+  childId      String    @unique
+  child        Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  lastActiveAt DateTime?
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// =============================================================================
+// 5. CONTENT MODELS — Reading plan hierarchy
+// =============================================================================
+//
+// Hierarchy (top → bottom):
+//   ReadingPlan  — personalized plan for one child (created at onboarding or regeneration)
+//   Roadmap      — one per child interest / theme (e.g. "dinosaurs", "space")
+//   World        — 2–3 themed zones inside a roadmap
+//   StoryArc     — one connected narrative spanning 8 episodes inside a world
+//   Story        — single reading session / episode (chapters + challenges)
+//   Chapter      — one dyslexia-friendly page of text
+//   Challenge    — learning verification after a page or story
+//
+// =============================================================================
+
+/// Personalized reading plan for a child. Created at onboarding or when a parent
+/// regenerates the path. A child may have many plans over time (older ones SUPERSEDED).
+model ReadingPlan {
+  id       String @id @default(cuid())
+  childId  String
+  child    Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
+  parentId String
+  parent   User   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  status    ReadingPlanStatus @default(DRAFT)
+  isActive  Boolean           @default(false) // at most one ACTIVE plan per child (app-enforced)
+  planNumber Int              @default(1) // increments when parent regenerates
+
+  startedAt   DateTime?
+  activatedAt DateTime?
+  completedAt DateTime?
+
+  // --- Schedule (copied from child profile at plan creation) ---
+  storiesPerWeek      Int @default(3)
+  sessionDurationMins Int @default(20)
+
+  // --- Profile snapshot for the AI agent (frozen at plan creation) ---
+  sourceInterests       String[] // interests selected when plan was built
+  readingLevel          ReadingLevel @default(BEGINNER)
+  primaryLanguage       LanguageCode @default(EN)
+  assignedChallenges    String[]
+  favoriteCharacterType String?
+  storyTone             String?
+
+  // --- Structural targets for generation ---
+  worldsPerRoadmapMin Int @default(2) // each roadmap gets 2–3 worlds
+  worldsPerRoadmapMax Int @default(3)
+  storiesPerWorld     Int @default(8) // 8 connected episodes per world (StoryArc)
+
+  // --- Generation lifecycle ---
+  generationStartedAt   DateTime?
+  generationCompletedAt DateTime?
+  generationError       String?
+  aiPromptSnapshot      String? @db.Text
+
+  roadmaps  Roadmap[]
+  agentJobs AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([childId])
+  @@index([childId, status])
+  @@index([childId, isActive])
+  @@index([parentId])
+}
+
+/// Interest-themed learning path inside a ReadingPlan (one roadmap per child interest).
+/// Example: interest "dinosaurs" → roadmap "Dino Valley Adventure".
+model Roadmap {
+  id            String       @id @default(cuid())
+  childId       String
+  child         Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  readingPlanId String?
+  readingPlan   ReadingPlan? @relation(fields: [readingPlanId], references: [id], onDelete: SetNull)
+
+  /// Single interest slug from the child profile (e.g. "dinosaurs", "space").
+  interest    String
+  displayName String? // optional friendly label for UI
+  order       Int // position among roadmaps inside the plan (1, 2, 3…)
+
+  isActive     Boolean        @default(false) // which interest track the child is currently on
+  title        String?
+  status       ProgressStatus @default(NOT_STARTED)
+  readingLevel ReadingLevel   @default(BEGINNER) // agent-adjusted level for this interest track
+
+  translations RoadmapTranslation[]
+  worlds       World[]
+  agentJobs    AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([readingPlanId, interest])
+  @@index([childId])
+  @@index([readingPlanId])
+  @@index([childId, isActive])
+  @@index([status])
+}
+
+model RoadmapTranslation {
+  id        String  @id @default(cuid())
+  roadmapId String
+  roadmap   Roadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  title        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([roadmapId, languageCode])
+  @@index([roadmapId, languageCode])
+}
+
+/// Themed learning zone inside a roadmap (e.g. Dino Valley, Star Harbor).
+/// Each roadmap contains 2–3 worlds; each world hosts one StoryArc of 8 connected episodes.
+model World {
+  id        String  @id @default(cuid())
+  roadmapId String
+  roadmap   Roadmap @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+
+  name         String
+  description  String?
+  theme        String? // primary theme slug, usually matches roadmap.interest
+  interestTags String[] // ties to child interests from onboarding
+  order        Int // position on the roadmap (1–3)
+  status       ContentStatus @default(LOCKED) // first world unlocked when plan activates
+
+  /// Target episode count — stories in this world form one connected arc.
+  storiesTarget Int @default(8)
+
+  translations WorldTranslation[]
+  storyArc     StoryArc?
+  stories      Story[]
+  agentJobs    AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([roadmapId])
+  @@index([roadmapId, order])
+}
+
+model WorldTranslation {
+  id      String @id @default(cuid())
+  worldId String
+  world   World  @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  name         String
+  description  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([worldId, languageCode])
+  @@index([worldId, languageCode])
+}
+
+/// Connected 8-episode narrative for one world. All stories in the arc share characters and story context,
+/// setting, and plot — each Story is one episode (one reading session).
+model StoryArc {
+  id      String @id @default(cuid())
+  worldId String @unique
+  world   World  @relation(fields: [worldId], references: [id], onDelete: Cascade)
+
+  title    String
+  synopsis String? @db.Text
+
+  /// Target episode count (always 8 for MVP).
+  targetEpisodes Int @default(8)
+
+  /// Continuity bible for AI generation: characters, setting, plot threads, tone hooks.
+  continuityBible Json?
+
+  generationStatus       StoryGenerationStatus @default(PENDING)
+  generationStartedAt    DateTime?
+  generationCompletedAt  DateTime?
+
+  stories   Story[]
+  agentJobs AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([worldId])
+}
+
+/// A single episode within a world's StoryArc — sized to one reading session.
+/// Episodes 1–8 form one continuous story; order + previousStoryId define the chain.
+model Story {
+  id         String    @id @default(cuid())
+  worldId    String
+  world      World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  storyArcId String?
+  storyArc   StoryArc? @relation(fields: [storyArcId], references: [id], onDelete: SetNull)
+
+  title       String
+  description String?
+
+  /// Episode number within the world's arc (1–8). Same as order for arc episodes.
+  order         Int
+  episodeNumber Int?
+  episodeTitle  String?
+
+  /// Cliffhanger / recap handed to the next episode's AI generator.
+  episodeBridge String? @db.Text
+
+  /// Explicit chain link to the prior episode in the same arc.
+  previousStoryId String? @unique
+  previousStory   Story?  @relation("StoryEpisodeChain", fields: [previousStoryId], references: [id], onDelete: SetNull)
+  nextStory       Story?  @relation("StoryEpisodeChain")
+
+  // --- AI generation metadata ---
+  readingLevel        ReadingLevel
+  sessionDurationMins Int // copied from child profile at generation time
+  chaptersPerStory    Int // derived target page count
+  wordsPerChapter     Int // derived target words per page
+  challengesPerStory  Int // derived challenge count (scales with session duration)
+  plannedChallengeTypes String[] // ordered types for this episode, set by planning agent
+  personalization     Json? // child name, branches, tone hooks
+  aiPromptSnapshot    String? @db.Text // prompt sent to the AI agent
+  generatedStoryId    String? // external AI service reference
+
+  generationStatus       StoryGenerationStatus @default(PENDING)
+  scheduledForWeek       Int?
+  generationStartedAt    DateTime?
+  generationCompletedAt  DateTime?
+
+  chapters     Chapter[]
+  challenges   Challenge[]
+  translations StoryTranslation[]
+  progress     ChildStoryProgress[]
+  agentJobs    AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([worldId])
+  @@index([worldId, order])
+  @@index([storyArcId])
+  @@index([storyArcId, episodeNumber])
+}
+
+model StoryTranslation {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  title        String
+  description  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storyId, languageCode])
+  @@index([storyId, languageCode])
+}
+
+/// One story page — a single screen of narrative text (dyslexia-friendly layout).
+model Chapter {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  order    Int // page number within the story (1, 2, 3…)
+  content  String @db.Text // AI-generated text for this page only
+  audioUrl String
+
+  wordCount     Int? // actual generated count
+  targetWordMin Int? // e.g. 70 for 20 min MEDIUM
+  targetWordMax Int? // e.g. 80 for 20 min MEDIUM
+
+  translations    ChapterTranslation[]
+  progress        ChildChapterProgress[]
+  readingMetrics  ChapterReadingMetric[]
+  agentJobs       AgentJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storyId, order])
+  @@index([storyId])
+}
+
+model ChapterTranslation {
+  id        String  @id @default(cuid())
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  content      String @db.Text
+  audioUrl     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([chapterId, languageCode])
+  @@index([chapterId, languageCode])
+}
+
+/// Learning verification layer — typically placed after the final story page.
+/// Multiple challenges per story; all types use predefined correct answers.
+model Challenge {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  type     ChallengeType
+  question String
+  audioUrl String
+  order    Int // order within the story's challenge set
+  baseStars Int @default(20)
+
+  // Type-specific predefined answer fields
+  targetWord           String?  // READ_ALOUD — word child must pronounce
+  correctAnswerBoolean Boolean? // TRUE_FALSE — predefined true | false
+  sentenceTemplate     String?  // FILL_BLANK — e.g. "Mia walked into the ___."
+  blankIndex           Int?     // FILL_BLANK — 0-based word index of the blank token
+  correctAnswerJson    Json?    // optionId, ordered answerIds[], letterIds[], etc.
+
+  placementChapterId      String? // page after which challenge appears (usually last page)
+  requiresStoryComplete   Boolean @default(true) // child must finish all pages before access
+
+  translations ChallengeTranslation[]
+  hints        ChallengeHint[]
+  answers      Answer[]
+  attempts     ChallengeAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storyId])
+  @@index([storyId, order])
+}
+
+model ChallengeTranslation {
+  id          String    @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  question         String
+  audioUrl         String
+  sentenceTemplate String? // FILL_BLANK translation
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([challengeId, languageCode])
+  @@index([challengeId, languageCode])
+}
+
+/// Progressive hints (up to 2): text → audio. Never reveal the full answer.
+model ChallengeHint {
+  id          String    @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  level    HintLevel // TEXT | AUDIO
+  order    Int // 1, 2
+  text     String?
+  audioUrl String?
+
+  translations ChallengeHintTranslation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([challengeId, order])
+  @@index([challengeId])
+}
+
+model ChallengeHintTranslation {
+  id     String        @id @default(cuid())
+  hintId String
+  hint   ChallengeHint @relation(fields: [hintId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  text         String?
+  audioUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hintId, languageCode])
+  @@index([hintId, languageCode])
+}
+
+/// Options / tiles / sequence items for a challenge. One or more marked isCorrect.
+model Answer {
+  id          String    @id @default(cuid())
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  text      String
+  isCorrect Boolean @default(false)
+  order     Int? // display order for MULTIPLE_CHOICE; sequence position for SEQUENCING
+  correctSequence Int? // SEQUENCING: correct 1-indexed position
+
+  audioUrl   String? // SOUND_MATCH phoneme clip
+  letterValue String? // LETTER_DISCRIMINATION / COMPLETE_WORD / WORD_BUILD
+
+  translations AnswerTranslation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([challengeId])
+}
+
+model AnswerTranslation {
+  id       String @id @default(cuid())
+  answerId String
+  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  text         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([answerId, languageCode])
+  @@index([answerId, languageCode])
+}
+
+// =============================================================================
+// 6. PROGRESS MODELS
+// =============================================================================
+// Per-child unlock state and completion across the content hierarchy.
+
+/// Child's progress through a single story (unlock, bookmark, completion).
+model ChildStoryProgress {
+  id      String @id @default(cuid())
+  childId String
+  child   Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  status              ContentStatus @default(LOCKED)
+  currentChapterOrder Int? // bookmark: last page the child was on
+  totalTimeSpentSeconds Int @default(0)
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  gameSessions GameSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, storyId])
+  @@index([childId])
+  @@index([storyId])
+  @@index([childId, status])
+}
+
+/// Child's progress on a single story page (chapter).
+model ChildChapterProgress {
+  id        String  @id @default(cuid())
+  childId   String
+  child     Child   @relation(fields: [childId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  status              ProgressStatus @default(NOT_STARTED)
+  timeSpentSeconds    Int            @default(0)
+  wordHelpCount       Int            @default(0)
+  ttsReplayCount      Int            @default(0)
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, chapterId])
+  @@index([childId])
+  @@index([chapterId])
+}
+
+// =============================================================================
+// 7. SESSION & PERFORMANCE MODELS
+// =============================================================================
+// Runtime telemetry fed to the AI learning agent after each page and story.
+
+/// A single playthrough of a story (may span multiple pause/resume checkpoints).
+model GameSession {
+  id                 String             @id @default(cuid())
+  childStoryProgressId String
+  childStoryProgress ChildStoryProgress @relation(fields: [childStoryProgressId], references: [id], onDelete: Cascade)
+
+  storyId   String // denormalized for querying sessions by story
+  chapterId String? // current page bookmark within the session
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  elapsedTimeSeconds Int @default(0)
+  sessionCount       Int @default(1) // pause/resume cycles within this playthrough
+  totalIdleTime      Int @default(0) // seconds away between checkpoints
+  starsEarned        Int @default(0)
+
+  challengeAttempts ChallengeAttempt[]
+  checkpoints       SessionCheckpoint[]
+  readingMetrics    ChapterReadingMetric[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([childStoryProgressId])
+  @@index([storyId])
+  @@index([chapterId])
+}
+
+/// Pause/resume checkpoint within a game session.
+model SessionCheckpoint {
+  id            String      @id @default(cuid())
+  gameSessionId String
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+
+  firstChapterId String
+  lastChapterId  String?
+
+  startedAt              DateTime  @default(now())
+  pausedAt               DateTime?
+  sessionDurationSeconds Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gameSessionId])
+  @@index([firstChapterId])
+  @@index([lastChapterId])
+}
+
+/// Aggregated reading metrics for one page within a session (fed to AI agent).
+model ChapterReadingMetric {
+  id            String      @id @default(cuid())
+  gameSessionId String
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+  chapterId     String
+  chapter       Chapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  timeSpentSeconds Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([gameSessionId, chapterId])
+  @@index([gameSessionId])
+  @@index([chapterId])
+}
+
+/// A single attempt at one challenge within a game session.
+model ChallengeAttempt {
+  id            String      @id @default(cuid())
+  gameSessionId String
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+  challengeId   String
+  challenge     Challenge   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  status        ChallengeStatus @default(NOT_ATTEMPTED)
+  isCorrect     Boolean?
+  attemptNumber Int
+  hintsUsed     Int             @default(0) // how many of the 2 hints were revealed
+  timeSpentSeconds Int          @default(0)
+
+  // Final submitted answer
+  answerId             String? // single selection: MULTIPLE_CHOICE, TRUE_FALSE, FILL_BLANK, etc.
+  submittedAnswerJson  Json?   // ordered types: SEQUENCING itemIds[], WORD_BUILD letterIds[]
+  textAnswer           String? // READ_ALOUD speech-to-text transcript
+  speechAccuracy       Float?  // READ_ALOUD pronunciation score 0–1
+
+  actions   AttemptAction[]
+  starEvent StarEvent?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gameSessionId])
+  @@index([challengeId])
+  @@index([gameSessionId, challengeId])
+}
+
+/// Detailed action audit trail during a challenge attempt.
+model AttemptAction {
+  id        String           @id @default(cuid())
+  attemptId String
+  attempt   ChallengeAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  selectedAnswerId      String?
+  selectedAnswerText    String?
+  answerText            String? // READ_ALOUD transcript per action
+  submittedOrderJson    Json?   // drag/reorder step: partial order during SEQUENCING / WORD_BUILD
+  isCorrect             Boolean?
+  attemptNumberAtAction Int
+
+  createdAt DateTime @default(now())
+
+  @@index([attemptId])
+  @@index([selectedAnswerId])
+  @@index([createdAt])
+}
+
+// =============================================================================
+// 8. GAMIFICATION MODELS
+// =============================================================================
+
+/// Star reward breakdown for a solved challenge attempt.
+model StarEvent {
+  id        String           @id @default(cuid())
+  attemptId String           @unique
+  attempt   ChallengeAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  challengeId String
+
+  baseStars     Int @default(0)
+  noHintBonus   Int @default(0)
+  firstTryBonus Int @default(0)
+  totalStars    Int
+
+  attemptNumber Int
+  usedHints     Boolean  @default(false)
+  wasCorrect    Boolean?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([attemptId])
+  @@index([challengeId])
+}
+
+/// Global level thresholds (stars required to level up).
+model Level {
+  id            String @id @default(cuid())
+  levelNumber   Int    @unique
+  requiredStars Int
+
+  badge Badge?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Badge earned when a child reaches a level.
+model Badge {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  iconUrl     String?
+  levelId     String  @unique
+  level       Level   @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  translations BadgeTranslation[]
+  earnedBy     ChildBadge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([levelId])
+}
+
+model BadgeTranslation {
+  id      String @id @default(cuid())
+  badgeId String
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  languageCode LanguageCode @default(EN)
+  name         String
+  description  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([badgeId, languageCode])
+  @@index([badgeId, languageCode])
+}
+
+/// Badges a child has earned.
+model ChildBadge {
+  id      String @id @default(cuid())
+  childId String
+  child   Child  @relation(fields: [childId], references: [id], onDelete: Cascade)
+  badgeId String
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  earnedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([childId, badgeId])
+  @@index([childId])
+}
+
+// =============================================================================
+// 9. MEDIA MODELS
+// =============================================================================
+
+/// Cached TTS audio for stories, chapters, challenges, and hints.
+model TTSAudio {
+  id String @id @default(cuid())
+
+  storyId     String?
+  chapterId   String?
+  challengeId String?
+  hintId      String?
+
+  languageCode String?
+  voice        String?
+  prompt       String? @db.Text
+
+  audioUrl String
+  mimeType String @default("audio/wav")
+
+  durationMs Int?
+  sizeBytes  Int?
+
+  generatedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([storyId])
+  @@index([chapterId])
+  @@index([challengeId])
+}
+
+// =============================================================================
+// 10. AI AGENT ORCHESTRATION MODELS
+// =============================================================================
+//
+// Multi-agent pipeline (typical flow):
+//   1. PLANNING agent  — ReadingPlan job → child jobs per Roadmap / World / StoryArc / Story shell
+//   2. STORY agent     — one job per Story episode (depends on arc + previous episode)
+//   3. CHALLENGE agent — one job per Story (depends on STORY job)
+//   4. TTS agent       — jobs per Chapter / Challenge / Hint (depends on content jobs)
+//
+// Use parentJobId for dependency chains. Link jobs to content rows for status UI.
+// AiGenerationLog stores immutable audit entries (survives job cleanup / retries).
+//
+// =============================================================================
+
+/// Orchestrated background work unit for one AI agent invocation.
+/// Persist Inngest (or other worker) run IDs here for resume, retry, and observability.
+model AgentJob {
+  id String @id @default(cuid())
+
+  agentType AgentType
+  status    AgentJobStatus @default(PENDING)
+  trigger   AgentTrigger
+
+  // --- Scope (set the most specific target for this job) ---
+  childId       String?
+  child         Child?       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  readingPlanId String?
+  readingPlan   ReadingPlan? @relation(fields: [readingPlanId], references: [id], onDelete: Cascade)
+  roadmapId     String?
+  roadmap       Roadmap?     @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  worldId       String?
+  world         World?       @relation(fields: [worldId], references: [id], onDelete: Cascade)
+  storyArcId    String?
+  storyArc      StoryArc?    @relation(fields: [storyArcId], references: [id], onDelete: Cascade)
+  storyId       String?
+  story         Story?       @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  chapterId     String?
+  chapter       Chapter?     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  // --- Dependency chain ---
+  parentJobId String?
+  parentJob   AgentJob?  @relation("AgentJobChain", fields: [parentJobId], references: [id], onDelete: SetNull)
+  childJobs   AgentJob[] @relation("AgentJobChain")
+
+  // --- Worker integration ---
+  idempotencyKey String? @unique // prevents duplicate enqueue for same target
+  inngestRunId   String?
+  inngestEventId String?
+
+  // --- Execution ---
+  attemptCount Int @default(0)
+  maxAttempts  Int @default(3)
+  scheduledAt  DateTime?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  error        String? @db.Text
+
+  inputSnapshot  Json?
+  outputSnapshot Json?
+
+  logs AiGenerationLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agentType, status])
+  @@index([childId, status])
+  @@index([readingPlanId, status])
+  @@index([storyArcId, status])
+  @@index([storyId, status])
+  @@index([chapterId, status])
+  @@index([parentJobId])
+  @@index([inngestRunId])
+  @@index([scheduledAt])
+}
+
+/// Immutable audit log for every agent invocation (inputs, outputs, errors).
+/// Used for debugging, adaptive learning feedback, and parent-facing generation history.
+model AiGenerationLog {
+  id String @id @default(cuid())
+
+  agentJobId String?
+  agentJob   AgentJob? @relation(fields: [agentJobId], references: [id], onDelete: SetNull)
+
+  agentType AgentType
+  trigger   AgentTrigger
+
+  childId       String?
+  child         Child?       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  readingPlanId String?
+  storyArcId    String?
+  storyId       String?
+  chapterId     String?
+
+  inputSnapshot  Json?
+  outputSnapshot Json?
+  error          String? @db.Text
+
+  readingLevelBefore ReadingLevel?
+  readingLevelAfter  ReadingLevel?
+
+  durationMs Int?
+  tokenUsage Json? // optional LLM usage metadata
+
+  createdAt DateTime @default(now())
+
+  @@index([childId, createdAt])
+  @@index([readingPlanId, createdAt])
+  @@index([storyArcId, createdAt])
+  @@index([storyId, createdAt])
+  @@index([agentJobId])
+  @@index([agentType, createdAt])
+}
