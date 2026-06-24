@@ -62,6 +62,8 @@ export default function ReadingPlanTab({
     selectedChild?.child?.name ?? selectedChild?.name ?? tDashboard("unknown");
 
   const [plan, setPlan] = useState<ReadingPlanDetailView | null>(null);
+  const [canManuallyGenerateInitialPlan, setCanManuallyGenerateInitialPlan] =
+    useState(false);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
     null,
   );
@@ -80,7 +82,15 @@ export default function ReadingPlanTab({
   const canGeneratePlan =
     userRole === RoleType.PARENT && Boolean(childId && selectedChild);
   const showGeneratePlanButton =
-    canGeneratePlan && !displayPlan && !isGeneratingPlan;
+    canGeneratePlan &&
+    canManuallyGenerateInitialPlan &&
+    !isGeneratingPlan &&
+    (!displayPlan || displayPlan.status === "FAILED");
+  const showAwaitingPlanState =
+    Boolean(childId) &&
+    !isPlanLoading &&
+    !displayPlan &&
+    !canManuallyGenerateInitialPlan;
   const canGenerateStory =
     userRole === RoleType.PARENT &&
     Boolean(childId && displayPlan?.nextStoryToGenerate);
@@ -131,11 +141,20 @@ export default function ReadingPlanTab({
 
   const fetchPlan = useCallback(async () => {
     if (!childId || !requestKey) {
-      return { plan: null as ReadingPlanDetailView | null, key: null as string | null };
+      return {
+        plan: null as ReadingPlanDetailView | null,
+        canManuallyGenerateInitialPlan: false,
+        key: null as string | null,
+      };
     }
 
     const result = await getChildReadingPlanAction(childId);
-    return { plan: result, key: requestKey };
+    return {
+      plan: result?.plan ?? null,
+      canManuallyGenerateInitialPlan:
+        result?.canManuallyGenerateInitialPlan ?? false,
+      key: requestKey,
+    };
   }, [childId, requestKey]);
 
   useEffect(() => {
@@ -145,6 +164,7 @@ export default function ReadingPlanTab({
       if (cancelled) return;
 
       setPlan(result.plan);
+      setCanManuallyGenerateInitialPlan(result.canManuallyGenerateInitialPlan);
       setResolvedRequestKey(result.key);
     });
 
@@ -156,6 +176,7 @@ export default function ReadingPlanTab({
   const refreshPlan = useCallback(() => {
     void fetchPlan().then((result) => {
       setPlan(result.plan);
+      setCanManuallyGenerateInitialPlan(result.canManuallyGenerateInitialPlan);
       setResolvedRequestKey(result.key);
     });
   }, [fetchPlan]);
@@ -200,7 +221,7 @@ export default function ReadingPlanTab({
                 </p>
               </div>
             </div>
-            {showGeneratePlanButton && (
+            {showGeneratePlanButton && !isPlanLoading && (
               <Button
                 className="shrink-0 text-sm"
                 disabled={isGeneratingPlan}
@@ -234,10 +255,12 @@ export default function ReadingPlanTab({
           <div className="rounded-xl border border-dashed border-black/20 bg-card p-6 md:p-8 text-center">
             <Map className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <h3 className="font-heading text-lg text-foreground mb-2">
-              {t("emptyTitle")}
+              {showAwaitingPlanState ? t("awaitingPlanTitle") : t("emptyTitle")}
             </h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
-              {t("emptyDescription", { childName })}
+              {showAwaitingPlanState
+                ? t("awaitingPlanDescription", { childName })
+                : t("emptyDescription", { childName })}
             </p>
             {showGeneratePlanButton && (
               <Button

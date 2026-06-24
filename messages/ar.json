@@ -114,6 +114,8 @@
 			"noChildSelected": "اختر طفلاً لعرض خطة القراءة الخاصة به.",
 			"emptyTitle": "لا توجد خطة قراءة بعد",
 			"emptyDescription": "أنشئ خطة قراءة مخصصة لـ {childName} للبدء.",
+			"awaitingPlanTitle": "جاري إعداد خطة القراءة التالية",
+			"awaitingPlanDescription": "يتم إعداد خطة قراءة مخصصة جديدة لـ {childName} تلقائياً. عد لاحقاً للاطلاع عليها.",
 			"interests": "بناءً على الاهتمامات",
 			"storyTone": "أسلوب القصص",
 			"roadmapsTitle": "{count, plural, one {مسار واحد} other {# مسارات}}",

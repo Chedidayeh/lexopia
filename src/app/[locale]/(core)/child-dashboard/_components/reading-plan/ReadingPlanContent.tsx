@@ -88,9 +88,9 @@ export default function ReadingPlanContent({
 
   const fetchPlan = useCallback(async () => {
     const result = await getChildReadingPlanAction(childId);
-    setPlan(result);
-    if (result?.roadmaps[0] && !activeRoadmapId) {
-      setActiveRoadmapId(result.roadmaps[0].id);
+    setPlan(result?.plan ?? null);
+    if (result?.plan?.roadmaps[0] && !activeRoadmapId) {
+      setActiveRoadmapId(result.plan.roadmaps[0].id);
     }
   }, [activeRoadmapId, childId]);
 

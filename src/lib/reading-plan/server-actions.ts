@@ -3,11 +3,12 @@
 import { AgentTrigger } from "@prisma/client";
 import { auth } from "@/src/auth";
 import { enqueueReadingPlan } from "@/src/lib/reading-plan/enqueue-reading-plan";
+import { canManuallyGenerateInitialPlan } from "@/src/lib/reading-plan/plan-eligibility";
 import { getActiveReadingPlanStatus, getChildReadingPlanDetail } from "@/src/lib/reading-plan/queries";
 import type {
   GeneratePlanResult,
-  ReadingPlanDetailView,
   ReadingPlanStatusView,
+  ReadingPlanTabState,
 } from "@/src/lib/reading-plan/types";
 import { prisma } from "@/src/lib/prisma";
 
@@ -31,9 +32,16 @@ export async function generateReadingPlanAction(
     return { success: false, error: "Child not found" };
   }
 
+  if (!(await canManuallyGenerateInitialPlan(childId))) {
+    return {
+      success: false,
+      error: "Initial reading plan has already been created for this child",
+    };
+  }
+
   return enqueueReadingPlan({
     childId,
-    trigger: AgentTrigger.MANUAL_REGENERATION,
+    trigger: AgentTrigger.ONBOARDING,
   });
 }
 
@@ -59,7 +67,7 @@ export async function getReadingPlanStatusAction(
 
 export async function getChildReadingPlanAction(
   childId: string,
-): Promise<ReadingPlanDetailView | null> {
+): Promise<ReadingPlanTabState | null> {
   const session = await auth();
   if (!session?.user?.id) {
     return null;
@@ -74,5 +82,13 @@ export async function getChildReadingPlanAction(
     return null;
   }
 
-  return getChildReadingPlanDetail(childId);
+  const [plan, canManuallyGenerateInitialPlanFlag] = await Promise.all([
+    getChildReadingPlanDetail(childId),
+    canManuallyGenerateInitialPlan(childId),
+  ]);
+
+  return {
+    plan,
+    canManuallyGenerateInitialPlan: canManuallyGenerateInitialPlanFlag,
+  };
 }

@@ -135,6 +135,8 @@
 			"noChildSelected": "Sélectionnez un enfant pour voir son plan de lecture.",
 			"emptyTitle": "Aucun plan de lecture",
 			"emptyDescription": "Générez un plan de lecture personnalisé pour {childName} pour commencer.",
+			"awaitingPlanTitle": "Préparation du prochain plan de lecture",
+			"awaitingPlanDescription": "Un nouveau plan personnalisé pour {childName} est en cours de préparation automatique. Revenez bientôt.",
 			"interests": "Basé sur les centres d'intérêt",
 			"storyTone": "Ton des histoires",
 			"roadmapsTitle": "{count, plural, one {# parcours} other {# parcours}}",

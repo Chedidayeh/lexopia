@@ -111,7 +111,6 @@ enum StoryGenerationStatus {
 enum AgentType {
   PLANNING // ReadingPlan → roadmaps, worlds, story arcs, story shells
   STORY    // Episode chapters + narrative content
-  CHALLENGE // Challenge set for one story
   TTS      // Audio for chapters, challenges, hints
 }
 

@@ -135,6 +135,8 @@
 			"noChildSelected": "Select a child to view their reading plan.",
 			"emptyTitle": "No reading plan yet",
 			"emptyDescription": "Generate a personalized reading plan for {childName} to get started.",
+			"awaitingPlanTitle": "Preparing the next reading plan",
+			"awaitingPlanDescription": "A new personalized plan for {childName} is being prepared automatically. Check back soon.",
 			"interests": "Based on interests",
 			"storyTone": "Story tone",
 			"roadmapsTitle": "{count, plural, one {# learning path} other {# learning paths}}",

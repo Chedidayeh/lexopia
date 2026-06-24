@@ -68,6 +68,11 @@ export type ReadingPlanDetailView = ReadingPlanStatusView & {
   nextStoryToGenerate: NextStoryToGenerate | null;
 };
 
+export type ReadingPlanTabState = {
+  plan: ReadingPlanDetailView | null;
+  canManuallyGenerateInitialPlan: boolean;
+};
+
 export type PlanningRequestedEvent = {
   readingPlanId: string;
   agentJobId: string;
