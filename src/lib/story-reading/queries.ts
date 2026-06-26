@@ -123,3 +123,38 @@ export async function getStoryByIdForChild(
 
   return toReadingStory(story);
 }
+
+export async function getNextStoryInWorld(
+  storyId: string,
+  childId: string,
+): Promise<string | null> {
+  const currentStory = await prisma.story.findUnique({
+    where: { id: storyId },
+    select: {
+      worldId: true,
+      order: true,
+    },
+  });
+
+  if (!currentStory) {
+    return null;
+  }
+
+  const nextStory = await prisma.story.findFirst({
+    where: {
+      worldId: currentStory.worldId,
+      order: {
+        gt: currentStory.order,
+      },
+      generationStatus: "READY",
+    },
+    orderBy: {
+      order: "asc",
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return nextStory?.id ?? null;
+}

@@ -130,7 +130,8 @@ export default function StoryEpisodeCard({
           <div className="mt-4">
             <Button size="sm" asChild>
               <Link
-                href={`/story-reading-interface/${story.id}?childId=${childId}`}
+                target="_blank"
+                href={`/story-preview-interface/${story.id}?childId=${childId}`}
               >
                 {access.kind === "continue"
                   ? t("readingPlan.continueReading")

@@ -36,9 +36,10 @@ function computeSentenceBoundaries(
 
 interface StoryReadingInteractiveProps {
   story: Story;
+  childId?: string;
 }
 
-const StoryReadingInteractive = ({ story }: StoryReadingInteractiveProps) => {
+const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProps) => {
   const t = useTranslations("StoryReadingInterface");
   const { locale } = useLocale();
 
@@ -241,6 +242,7 @@ const StoryReadingInteractive = ({ story }: StoryReadingInteractiveProps) => {
         handlePlayAudio={handlePlayAudio}
         handleRepeatAudio={handleRepeatAudio}
         onStoryComplete={handleStoryComplete}
+        childId={childId}
       />
       {!showRiddle ? (
         <>

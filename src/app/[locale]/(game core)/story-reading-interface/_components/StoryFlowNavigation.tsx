@@ -32,7 +32,7 @@ interface StoryFlowNavigationProps {
   isLoadingAudio?: boolean;
   handlePlayAudio?: () => void;
   handleRepeatAudio?: () => void;
-  onStoryComplete?: () => void | Promise<void>;
+  onStoryComplete?: () => void | Promise<string | null>;
   childId: string;
   sessionElapsedSeconds?: number;
   sessionTargetSeconds?: number;
@@ -64,6 +64,7 @@ const StoryFlowNavigation = ({
   const t = useTranslations("StoryReadingInterface");
   const { isRTL } = useLocale();
   const [isStoryComplete, setIsStoryComplete] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const router = useRouter();
 
   const formatMinutes = (totalSeconds: number) => {
@@ -92,18 +93,22 @@ const StoryFlowNavigation = ({
     }
   };
 
-  const handleNextPage = () => {
+  const handleNextPage = async () => {
     if (isPlayingAudio) {
       handlePlayAudio?.();
-    } 
+    }
     // Check if this is the last page
     const isLastPage = currentPage === totalPages;
 
     // Handle story completion when on the last page
     if (isLastPage) {
-      setIsStoryComplete(true);
-      void onStoryComplete?.();
-      router.push(`/child-dashboard/${childId}`);
+      setIsCompleting(true);
+      const nextStoryId = await onStoryComplete?.();
+      if (nextStoryId) {
+        router.push(`/story-reading-interface/${nextStoryId}?childId=${childId}`);
+      } else {
+        router.push(`/child-dashboard/${childId}/reading-plan`);
+      }
     }
 
     // Navigate to next page if not on last page
@@ -222,7 +227,7 @@ const StoryFlowNavigation = ({
       </motion.div>
 
       {/* Bottom Navigation Controls */}
-      {!showRiddle && !isStoryComplete && (
+      {!showRiddle && !isStoryComplete && !isCompleting && (
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -336,6 +341,23 @@ const StoryFlowNavigation = ({
                 {isRTL ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
               </span>
             </Button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Loading State for Story Completion */}
+      {isCompleting && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28 }}
+          className={`fixed bottom-0 left-0 right-0 border-t bg-card shadow-warm-md transition-smooth pointer-events-auto z-50`}
+        >
+          <div className="flex items-center justify-center px-4 py-4 min-h-16 sm:min-h-20 gap-3">
+            <Loader size={20} className="animate-spin text-primary" />
+            <span className="text-sm font-medium text-foreground">
+              Fetching next story...
+            </span>
           </div>
         </motion.div>
       )}

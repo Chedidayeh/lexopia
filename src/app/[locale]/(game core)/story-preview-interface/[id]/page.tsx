@@ -19,8 +19,10 @@ export const dynamic = "force-dynamic";
 
 export default async function StoryPreviewPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string; locale: string }>;
+  searchParams: Promise<{ childId?: string }>;
 }) {
   const t = await getTranslations("StoryReadingInterface");
   const session = await auth();
@@ -29,7 +31,7 @@ export default async function StoryPreviewPage({
     redirect("/");
   }
 
-  const { id } = await params;
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!id) {
     return <MissingDataAlert message={t("missingRequiredParameters")} />;
@@ -50,5 +52,5 @@ export default async function StoryPreviewPage({
   }
 
 
-  return <StoryReadingInteractive story={story}  />;
+  return <StoryReadingInteractive story={story} childId={query.childId} />;
 }

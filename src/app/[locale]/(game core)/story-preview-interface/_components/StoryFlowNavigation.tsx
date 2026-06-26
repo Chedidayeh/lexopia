@@ -33,6 +33,7 @@ interface StoryFlowNavigationProps {
   handlePlayAudio?: () => void;
   handleRepeatAudio?: () => void;
   onStoryComplete?: () => void | Promise<void>;
+  childId?: string;
 }
 
 const StoryFlowNavigation = ({
@@ -51,6 +52,7 @@ const StoryFlowNavigation = ({
   handlePlayAudio,
   handleRepeatAudio,
   onStoryComplete,
+  childId,
 }: StoryFlowNavigationProps) => {
   const t = useTranslations("StoryReadingInterface");
   const { isRTL } = useLocale();
@@ -61,7 +63,11 @@ const StoryFlowNavigation = ({
       setShowRiddle(false);
       return;
     }
-    router.push("/parent-dashboard");
+    if (childId) {
+      router.push(`/child-dashboard/${childId}/reading-plan`);
+      return;
+    }
+    router.back();
   };
 
   const handlePreviousPage = () => {
@@ -156,7 +162,7 @@ const StoryFlowNavigation = ({
             </motion.div>
           ) : (
             <div className="flex flex-col items-center">
-              <h1 className="font-heading text-sm sm:text-base md:text-lg lg:text-xl text-foreground truncate max-w-[140px] sm:max-w-xs md:max-w-md px-2">
+              <h1 className="font-heading text-sm sm:text-base md:text-lg lg:text-xl text-foreground truncate max-w-35 sm:max-w-xs md:max-w-md px-2">
                 {storyTitle}
               </h1>
 

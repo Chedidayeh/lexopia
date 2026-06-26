@@ -8,11 +8,23 @@ import {
 import { getChildReadingPlanDetail } from "@/src/lib/reading-plan/queries";
 import ChildDashboardInteractive from "../_components/ChildDashboardInteractive";
 import { validateChildDashboardAccess } from "../_lib/validate-child-access";
-export const metadata: Metadata = {
-  title: "My Dashboard - Readdly",
-  description:
-    "Track your reading progress, discover new stories, and celebrate your achievements in your personalized learning hub.",
-};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ childId: string }>;
+}): Promise<Metadata> {
+  const { childId } = await params;
+  const access = await validateChildDashboardAccess(childId);
+
+  return {
+    title: access
+      ? `${access.childName}'s Dashboard - Readdly`
+      : "My Dashboard - Readdly",
+    description:
+      "Track your reading progress, discover new stories, and celebrate your achievements in your personalized learning hub.",
+  };
+}
 
 export default async function ChildDashboardPage({
   params,

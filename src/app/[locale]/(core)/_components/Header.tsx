@@ -24,16 +24,11 @@ import { Separator } from "@/src/components/ui/separator";
 const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
   const t = useTranslations("CoreHeader");
   const { isRTL } = useLocale();
-  const pathname = usePathname();
 
 
   const session = useSession();
 
-  if (pathname.includes("child-dashboard")) return null;
 
-  const isActive = (href: string) => {
-    return pathname === href || pathname.includes(href);
-  };
 
   return (
     <>
@@ -56,7 +51,6 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
 
             {/* Right - Login component (fixed to the far right) */}
             <div className="flex-shrink-0 flex items-center gap-3">
-              <RoleIndicator role={userRole!} />
               <Profile session={session.data!} />
               <ModeToggle />
               <Switcher />
@@ -77,7 +71,6 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1">
-            <RoleIndicator role={userRole!} />
 
             <Sheet>
               <SheetTrigger asChild>

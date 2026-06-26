@@ -10,6 +10,7 @@ import {
   isStoryAccessibleForChild,
   resolveStoryCheckpoint,
 } from "./queries";
+import { getNextStoryInWorld } from "@/src/lib/story-reading/queries";
 
 async function syncGameSessionCheckpointChapter(
   gameSessionId: string,
@@ -521,9 +522,9 @@ export async function recordChallengeAttemptAction(input: {
 export async function completeStoryAction(input: {
   childId: string;
   storyId: string;
-}): Promise<{ success: boolean }> {
+}): Promise<{ success: boolean; nextStoryId: string | null }> {
   const session = await auth();
-  if (!session?.user?.id) return { success: false };
+  if (!session?.user?.id) return { success: false, nextStoryId: null };
 
   const access = await assertChildStoryAccess(
     input.childId,
@@ -531,7 +532,7 @@ export async function completeStoryAction(input: {
     session.user.id,
     session.user.role,
   );
-  if (!access) return { success: false };
+  if (!access) return { success: false, nextStoryId: null };
 
   const progress = await prisma.childStoryProgress.update({
     where: {
@@ -563,5 +564,7 @@ export async function completeStoryAction(input: {
     console.error("Failed to request post-completion orchestration:", error);
   }
 
-  return { success: true };
+  const nextStoryId = await getNextStoryInWorld(input.storyId, input.childId);
+
+  return { success: true, nextStoryId };
 }
