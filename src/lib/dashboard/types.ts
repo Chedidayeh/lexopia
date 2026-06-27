@@ -199,6 +199,7 @@ export type ChildProfile = {
     avatar?: string | null;
   };
   name?: string;
+  birthDate?: Date | string;
   age?: number;
   gender?: string;
   totalStars?: number;

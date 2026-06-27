@@ -204,7 +204,7 @@ function collectStories(
   return Array.from(stories.values());
 }
 
-function calculateAge(birthDate: Date): number {
+export function calculateAge(birthDate: Date): number {
   const today = new Date();
 
   let age = today.getFullYear() - birthDate.getFullYear();

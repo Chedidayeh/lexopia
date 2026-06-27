@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocale } from "@/src/contexts/LocaleContext";
 import { Link } from "@/src/i18n/navigation";
+import { calculateAge } from "@/src/lib/dashboard/map-child-profile";
 
 interface OverviewTabProps {
   parentName?: string;
@@ -41,10 +42,7 @@ export default function OverviewTab({
     setNotificationToggle(selectedChild?.activateNotifications);
   }, [selectedChild?.activateNotifications, selectedChild?.id]);
 
-  const stats = useMemo(
-    () => getOverviewStats(selectedChild),
-    [selectedChild],
-  );
+  const stats = useMemo(() => getOverviewStats(selectedChild), [selectedChild]);
 
   const readingLevelLabel = selectedChild?.readingLevel
     ? READING_LEVELS.find((level) => level.value === selectedChild.readingLevel)
@@ -119,16 +117,18 @@ export default function OverviewTab({
                 {t("overview.readingLevel")}
               </p>
               <p className="text-sm font-medium mt-1">
-                {readingLevelLabel
-                  ? tOnboarding(readingLevelLabel)
-                  : "—"}
+                {readingLevelLabel ? tOnboarding(readingLevelLabel) : "—"}
               </p>
             </div>
             <div className="rounded-lg border border-black/10 bg-card p-3">
-              <p className="text-xs text-muted-foreground">{t("overview.age")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("overview.age")}
+              </p>
               <p className="text-sm font-medium mt-1">
-                {selectedChild.age
-                  ? t("overview.ageValue", { age: selectedChild.age })
+                {selectedChild.birthDate
+                  ? t("overview.ageValue", {
+                      age: calculateAge(new Date(selectedChild.birthDate)),
+                    })
                   : "—"}
               </p>
             </div>
