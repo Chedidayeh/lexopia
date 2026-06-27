@@ -25,6 +25,7 @@ import {
 } from "./plan-blueprint.schema";
 import { persistPlanScaffold } from "./persist-plan-scaffold";
 import { prisma } from "@/src/lib/prisma";
+import { sendParentReadingPlanGeneratedEmail } from "@/src/lib/notifications/parent-generation-notifications";
 
 const MAX_LLM_ATTEMPTS = 3;
 
@@ -256,5 +257,11 @@ export async function runPlanningAgent(params: {
     );
   } catch (error) {
     console.error("Failed to request post-planning orchestration:", error);
+  }
+
+  try {
+    await sendParentReadingPlanGeneratedEmail(readingPlanId);
+  } catch (error) {
+    console.error("Failed to send reading plan email notification:", error);
   }
 }

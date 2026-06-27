@@ -9,8 +9,10 @@ import {
 import { inngest } from "@/src/lib/inngest/client";
 import { INNGEST_EVENTS } from "@/src/lib/inngest/events";
 import { getChildReadingPlanDetail } from "@/src/lib/reading-plan/queries";
+import { getReadingPlanConfigurationFromChild } from "@/src/lib/onboarding/plan-constraints";
 import { prisma } from "@/src/lib/prisma";
 import { findNextStoryToGenerate } from "./find-next-story";
+import { canGenerateStoryThisWeek } from "./weekly-story-limit";
 import type { GenerateStoryContentResult } from "./types";
 
 async function closeStaleStoryAgentJobs(storyId: string): Promise<void> {
@@ -50,11 +52,22 @@ export async function enqueueStoryContent(params: {
 
   const child = await prisma.child.findUnique({
     where: { id: childId },
-    select: { id: true },
+    select: { id: true, storiesPerWeek: true },
   });
 
   if (!child) {
     return { success: false, error: "Child not found" };
+  }
+
+  // Check weekly story generation limit for manual triggers
+  if (trigger === AgentTrigger.MANUAL_REGENERATION) {
+    const weeklyCheck = await canGenerateStoryThisWeek(childId, child.storiesPerWeek);
+    if (!weeklyCheck.canGenerate) {
+      return {
+        success: false,
+        error: `Weekly story generation limit reached. You have generated ${weeklyCheck.generatedCount} of ${child.storiesPerWeek} stories this week. Please try again next week.`,
+      };
+    }
   }
 
   if (!skipNextStoryValidation) {
@@ -82,6 +95,17 @@ export async function enqueueStoryContent(params: {
             select: {
               id: true,
               readingPlanId: true,
+              child: {
+                select: {
+                  parentSubscriptionPlan: true,
+                  maxThemesAllowed: true,
+                  maxStoriesPerWeekAllowed: true,
+                  maxChallengeTypes: true,
+                  maxWorldsPerRoadmapAllowed: true,
+                  maxEpisodesPerWorldAllowed: true,
+                  maxChaptersPerStoryAllowed: true,
+                },
+              },
             },
           },
         },
@@ -172,6 +196,9 @@ export async function enqueueStoryContent(params: {
           childId,
           storyId,
           episodeNumber: story.episodeNumber,
+          readingPlanConfiguration: getReadingPlanConfigurationFromChild(
+            story.world.roadmap.child,
+          ),
         },
       },
     });

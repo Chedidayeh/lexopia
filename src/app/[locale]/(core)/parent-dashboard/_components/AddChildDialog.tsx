@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, CircleCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -17,10 +17,10 @@ import {
   INITIAL_ONBOARDING_FORM,
   type OnboardingFormState,
   validateStep2,
-  validateStep3,
-  validateStep4,
-  validateStep5,
-  validateOnboardingForm,
+  validateStep3WithPlan,
+  validateStep4WithPlan,
+  validateStep5WithPlan,
+  validateOnboardingFormWithPlan,
 } from "@/src/lib/onboarding/schemas";
 import {
   ChildBasicsStep,
@@ -28,7 +28,13 @@ import {
   InterestsStep,
   ReadingProfileStep,
 } from "@/src/lib/onboarding/onboarding-steps";
+import {
+  getPlanConstraints,
+  type PlanConstraints,
+} from "@/src/lib/onboarding/plan-constraints";
+import { SubscriptionPlan } from "@/src/types/types";
 import { addChildAction } from "../actions/add-child-actions";
+import { getChildProfilesByParentAction } from "@/src/lib/progress-service/server-actions";
 import type { User } from "@/src/lib/dashboard/types";
 
 const TOTAL_STEPS = 4;
@@ -60,6 +66,7 @@ interface AddChildDialogProps {
 export default function AddChildDialog({
   open,
   onOpenChange,
+  parentData,
   onChildAdded,
 }: AddChildDialogProps) {
   const t = useTranslations("Onboarding");
@@ -68,7 +75,39 @@ export default function AddChildDialog({
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [childCount, setChildCount] = useState(0);
   const [form, setForm] = useState<OnboardingFormState>(INITIAL_ONBOARDING_FORM);
+  const [planConstraints, setPlanConstraints] = useState<PlanConstraints>(
+    getPlanConstraints(SubscriptionPlan.FREE),
+  );
+
+  useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const [subscriptionResponse, profiles] = await Promise.all([
+          fetch("/api/user/subscription"),
+          parentData?.id ? getChildProfilesByParentAction(parentData.id) : Promise.resolve([]),
+        ]);
+
+        if (subscriptionResponse.ok) {
+          const data = await subscriptionResponse.json();
+          setPlanConstraints(getPlanConstraints(data.subscriptionPlan));
+        }
+
+        if (Array.isArray(profiles)) {
+          setChildCount(profiles.length);
+        }
+      } catch (error) {
+        console.error("Failed to fetch subscription plan:", error);
+        setPlanConstraints(getPlanConstraints(SubscriptionPlan.FREE));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPlan();
+  }, [parentData.id]);
 
   function updateForm<K extends keyof OnboardingFormState>(
     key: K,
@@ -90,9 +129,33 @@ export default function AddChildDialog({
   function validateCurrentStep(): boolean {
     const validators = [
       () => validateStep2(form),
-      () => validateStep3(form),
-      () => validateStep4(form),
-      () => validateStep5(form),
+      () =>
+        validateStep3WithPlan(
+          {
+            primaryLanguage: form.primaryLanguage,
+            readingLevel: form.readingLevel,
+            assignedChallenges: form.assignedChallenges,
+          },
+          planConstraints,
+        ),
+      () =>
+        validateStep4WithPlan(
+          {
+            interests: form.interests,
+            favoriteCharacterType: form.favoriteCharacterType,
+            storyTone: form.storyTone,
+          },
+          planConstraints,
+        ),
+      () =>
+        validateStep5WithPlan(
+          {
+            storiesPerWeek: form.storiesPerWeek,
+            sessionDurationMins: form.sessionDurationMins,
+            activateNotifications: form.activateNotifications,
+          },
+          planConstraints,
+        ),
     ];
     const result = validators[step - 1]();
     if (!result.valid) {
@@ -128,9 +191,14 @@ export default function AddChildDialog({
   }
 
   async function handleComplete() {
-    const validation = validateOnboardingForm(form);
+    const validation = validateOnboardingFormWithPlan(form, planConstraints);
     if (!validation.valid) {
       toast.error(t(validation.message));
+      return;
+    }
+
+    if (childCount >= planConstraints.maxChildProfiles) {
+      toast.error("You have reached the child profile limit for your subscription plan");
       return;
     }
 
@@ -159,6 +227,19 @@ export default function AddChildDialog({
   const BackIcon = isRTL ? ChevronRight : ChevronLeft;
   const NextIcon = isRTL ? ChevronLeft : ChevronRight;
   const progressPercentage = (step / TOTAL_STEPS) * 100;
+  const childLimitReached = childCount >= planConstraints.maxChildProfiles;
+
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-center py-12">
+            <p className="text-muted-foreground">{t("loading") || "Loading..."}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -168,6 +249,12 @@ export default function AddChildDialog({
         </DialogHeader>
 
         <div className="py-2">
+          {childLimitReached && (
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+              You have reached the child profile limit for your subscription plan.
+            </div>
+          )}
+
           <div className="mb-6">
             <div className="flex justify-between mb-3">
               {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
@@ -213,6 +300,7 @@ export default function AddChildDialog({
                   form={form}
                   updateForm={updateForm}
                   toggleChallenge={toggleArrayItem}
+                  planConstraints={planConstraints}
                 />
               )}
               {step === 3 && (
@@ -221,10 +309,16 @@ export default function AddChildDialog({
                   form={form}
                   updateForm={updateForm}
                   toggleInterest={toggleArrayItem}
+                  planConstraints={planConstraints}
                 />
               )}
               {step === 4 && (
-                <GoalsLaunchStep t={t} form={form} updateForm={updateForm} />
+                <GoalsLaunchStep
+                  t={t}
+                  form={form}
+                  updateForm={updateForm}
+                  planConstraints={planConstraints}
+                />
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -256,12 +350,16 @@ export default function AddChildDialog({
                     type="button"
                     className="w-full sm:flex-1"
                     onClick={handleComplete}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || childLimitReached}
                   >
                     {isSubmitting
                       ? tDashboard("addChildDialog.step3.creating")
-                      : tDashboard("addChildDialog.step3.createButton")}
-                    {!isSubmitting && <NextIcon className="w-4 h-4 ml-2" />}
+                      : childLimitReached
+                        ? "Plan limit reached"
+                        : tDashboard("addChildDialog.step3.createButton")}
+                    {!isSubmitting && !childLimitReached && (
+                      <NextIcon className="w-4 h-4 ml-2" />
+                    )}
                   </Button>
                 )}
               </div>

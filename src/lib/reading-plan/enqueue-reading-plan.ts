@@ -9,6 +9,10 @@ import {
 import { inngest } from "@/src/lib/inngest/client";
 import { INNGEST_EVENTS } from "@/src/lib/inngest/events";
 import { prisma } from "@/src/lib/prisma";
+import {
+  getReadingPlanConfigurationFromChild,
+  getReadingPlanStructureFromChild,
+} from "@/src/lib/onboarding/plan-constraints";
 import type { GeneratePlanResult } from "./types";
 
 export async function enqueueReadingPlan(params: {
@@ -69,6 +73,8 @@ export async function enqueueReadingPlan(params: {
   });
 
   const planNumber = (latestPlan?.planNumber ?? 0) + 1;
+  const readingPlanConfiguration = getReadingPlanConfigurationFromChild(child);
+  const readingPlanStructure = getReadingPlanStructureFromChild(child);
 
   const result = await prisma.$transaction(async (tx) => {
     await tx.readingPlan.updateMany({
@@ -101,6 +107,9 @@ export async function enqueueReadingPlan(params: {
         assignedChallenges: child.assignedChallenges,
         favoriteCharacterType: child.favoriteCharacterType,
         storyTone: child.storyTone,
+        worldsPerRoadmapMin: readingPlanStructure.worldsPerRoadmapMin,
+        worldsPerRoadmapMax: readingPlanStructure.worldsPerRoadmapMax,
+        storiesPerWorld: readingPlanStructure.storiesPerWorld,
       },
     });
 
@@ -116,6 +125,8 @@ export async function enqueueReadingPlan(params: {
           childId,
           planNumber,
           sourceInterests: child.interests,
+          readingPlanConfiguration,
+          readingPlanStructure,
         },
       },
     });

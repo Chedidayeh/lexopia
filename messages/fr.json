@@ -480,6 +480,8 @@
 			"viewButton": "Voir le parcours"
 		},
 		"readingPlan": {
+			"selectPlan": "Sélectionner un plan de lecture",
+			"planNumber": "Version du plan {number}",
 			"title": "Ton plan de lecture",
 			"noPlanTitle": "Pas encore de plan de lecture",
 			"noPlanDescription": "Demande à ton parent de créer un plan de lecture pour {childName} depuis le tableau de bord parent.",
@@ -696,6 +698,7 @@
 		"welcomeCapabilityDashboard": "Tableau de bord parent",
 		"welcomeReassurance": "Lexopia soutient les styles d'apprentissage variés et aide les enfants à gagner en confiance grâce à une pratique de lecture positive et sans pression.",
 		"letsStart": "Commençons",
+		"loading": "Chargement...",
 		"titleReadingSettings": "Objectifs de lecture et rappels",
 		"summaryTitle": "Vérifiez le profil de votre enfant",
 		"summaryDesc": "Confirmez les informations ci-dessous avant de créer le profil.",
@@ -712,6 +715,7 @@
 		"childNamePlaceholder": "Emma",
 		"ageGroupLabel": "Tranche d'âge",
 		"ageGroupPlaceholder": "Sélectionnez une tranche d'âge",
+		"birthDatePlaceholder": "JJ/MM/AAAA",
 		"availableThemesEmpty": "Veuillez d'abord sélectionner une tranche d'âge pour voir les thèmes disponibles",
 		"favoriteThemesLabel": "Thèmes préférés",
 		"selectAllApply": "Sélectionnez tout ce qui s'applique",
@@ -730,6 +734,8 @@
 		"stepOf": "Étape {step} sur {total}",
 		"genderLabel": "Genre de l'enfant",
 		"selectGender": "Veuillez sélectionner un genre",
+		"selected": "Sélectionné :",
+		"tapToSelect": "Touchez pour sélectionner",
 		"storiesPerWeekLabel": "Combien d'histoires {childName} devrait-il lire par semaine ?",
 		"storiesPerWeekOption": "{count} histoires par semaine",
 		"selectReadingFrequency": "Sélectionnez une fréquence de lecture qui convient à votre enfant",
@@ -825,7 +831,8 @@
 		"gender": {
 			"boy": "Garçon",
 			"girl": "Fille"
-		}
+		},
+		"maxThemesReached": "Maximum de {max} thèmes atteint"
 	},
 	"OnboardingStorytelling": {
 		"Arabic": "Arabe",
@@ -842,6 +849,16 @@
 		"childNameLabel": "Nom de l'enfant (ou surnom)",
 		"childNamePlaceholder": "par ex. Emma ou un surnom,",
 		"childNameDesc": "Ce nom apparaîtra comme personnage principal dans les histoires générées de votre enfant",
+		"ageLabel": "Âge",
+		"birthDateLabel": "Date de naissance",
+		"invalidBirthDate": "La date de naissance doit correspondre à un âge entre 5 et 14 ans",
+		"weeklyStoryLimit": "Limite hebdomadaire d'histoires",
+		"storiesGeneratedThisWeek": "histoires générées cette semaine",
+		"weeklyLimitReached": "Limite hebdomadaire atteinte. Vous pourrez générer plus d'histoires la semaine prochaine.",
+		"planCompletedTitle": "Plan de lecture terminé !",
+		"planCompletedDescription": "Félicitations ! {childName} a terminé le plan de lecture. Voulez-vous générer un nouveau plan ?",
+		"generateNextPlanButton": "Générer un nouveau plan",
+		"selectPlan": "Sélectionner un plan de lecture",
 		"childLanguageLabel": "Langue préférée pour les histoires",
 		"selectLanguagePlaceholder": "Sélectionnez une langue",
 		"selectLanguageRequired": "Veuillez sélectionner une langue pour les histoires de votre enfant",
@@ -850,6 +867,11 @@
 		"availableThemesEmpty": "Aucun thème disponible",
 		"favoriteThemesLabel": "Thèmes préférés",
 		"selectAllApply": "Sélectionnez tout ce qui s'applique",
+		"addCustomThemeLabel": "Ajouter un thème personnalisé",
+		"addCustomThemePlaceholder": "Saisissez un thème personnalisé...",
+		"addCustomThemeButton": "Ajouter",
+		"addCustomThemeHint": "Appuyez sur Entrée ou sur Ajouter pour l'inclure.",
+		"customThemesSelected": "Thèmes personnalisés",
 		"addCustomThemePlaceholder": "Ajouter un thème personnalisé pour votre enfant...",
 		"learningObjectivesLabel": "Objectifs d'apprentissage",
 		"selectObjectivesDesc": "Choisissez ce que vous aimeriez que votre enfant améliore",

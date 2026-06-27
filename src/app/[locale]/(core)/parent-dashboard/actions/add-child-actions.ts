@@ -4,6 +4,8 @@ import { auth, unstable_update } from "@/src/auth";
 import { createChildProfile } from "@/src/app/[locale]/onboarding/actions/onboarding-actions";
 import { parseOnboardingForm } from "@/src/lib/onboarding/schemas";
 import type { OnboardingFormState } from "@/src/lib/onboarding/schemas";
+import { getPlanConstraints, getReadingPlanConfiguration } from "@/src/lib/onboarding/plan-constraints";
+import { SubscriptionPlan } from "@/src/types/types";
 import type {
   OnboardingActionResult,
   OnboardingCompleteData,
@@ -37,7 +39,18 @@ export async function addChildAction(
   }
 
   try {
-    const result = await createChildProfile(session.user.id, parsed.data);
+    const subscriptionPlan =
+      session.user.subscriptionPlan ?? SubscriptionPlan.FREE;
+    const readingPlanConfiguration = getReadingPlanConfiguration(
+      subscriptionPlan,
+    );
+
+    const result = await createChildProfile(
+      session.user.id,
+      parsed.data,
+      readingPlanConfiguration,
+      getPlanConstraints(subscriptionPlan).maxChildProfiles,
+    );
 
     await unstable_update({
       user: {
@@ -48,6 +61,12 @@ export async function addChildAction(
     return { success: true, data: result };
   } catch (error) {
     console.error("[addChildAction]", error);
+    if (error instanceof Error && error.message === "CHILD_PROFILE_LIMIT_REACHED") {
+      return fail(
+        "VALIDATION_ERROR",
+        "You have reached the child profile limit for your subscription plan",
+      );
+    }
     return fail("ONBOARDING_FAILED", "An error occurred while creating the child profile");
   }
 }

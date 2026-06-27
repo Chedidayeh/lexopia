@@ -7,6 +7,13 @@ const SUCCESSFUL_PLAN_STATUSES: ReadingPlanStatus[] = [
   ReadingPlanStatus.SUPERSEDED,
 ];
 
+/**
+ * Check if a new plan can be generated based on existing plan history
+ * Returns true if:
+ * - No plans exist (first plan)
+ * - Latest plan is FAILED (retry after failure)
+ * - Latest plan is COMPLETED (generate next plan after completion)
+ */
 export function evaluateInitialPlanEligibility(
   plans: { status: ReadingPlanStatus }[],
 ): boolean {
@@ -14,14 +21,32 @@ export function evaluateInitialPlanEligibility(
     return true;
   }
 
-  const hasSuccessfulPlanHistory = plans.some((plan) =>
-    SUCCESSFUL_PLAN_STATUSES.includes(plan.status),
-  );
-  if (hasSuccessfulPlanHistory) {
+  const latestPlan = plans[0];
+
+  // Allow generating new plan if latest plan is completed
+  if (latestPlan.status === ReadingPlanStatus.COMPLETED) {
+    return true;
+  }
+
+  // Allow retry if latest plan failed
+  if (latestPlan.status === ReadingPlanStatus.FAILED) {
+    return true;
+  }
+
+  // Don't allow if plan is still active or generating
+  if (latestPlan.status === ReadingPlanStatus.ACTIVE ||
+      latestPlan.status === ReadingPlanStatus.GENERATING ||
+      latestPlan.status === ReadingPlanStatus.PAUSED ||
+      latestPlan.status === ReadingPlanStatus.DRAFT) {
     return false;
   }
 
-  return plans[0].status === ReadingPlanStatus.FAILED;
+  // Don't allow if plan was superseded (already has a newer plan)
+  if (latestPlan.status === ReadingPlanStatus.SUPERSEDED) {
+    return false;
+  }
+
+  return false;
 }
 
 export async function canManuallyGenerateInitialPlan(

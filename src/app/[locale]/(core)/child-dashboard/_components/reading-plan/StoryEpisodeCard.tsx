@@ -131,7 +131,11 @@ export default function StoryEpisodeCard({
             <Button size="sm" asChild>
               <Link
                 target="_blank"
-                href={`/story-preview-interface/${story.id}?childId=${childId}`}
+                href={
+                  access.kind === "completed"
+                    ? `/story-preview-interface/${story.id}?childId=${childId}`
+                    : `/story-reading-interface/${story.id}?childId=${childId}`
+                }
               >
                 {access.kind === "continue"
                   ? t("readingPlan.continueReading")

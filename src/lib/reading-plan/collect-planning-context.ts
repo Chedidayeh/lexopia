@@ -1,13 +1,13 @@
 import type { Child, ReadingPlan } from "@prisma/client";
-import {
-  deriveStorySizing,
-  type StorySizing,
-} from "@/src/lib/onboarding/story-sizing";
+import { deriveStorySizing, type StorySizing } from "@/src/lib/onboarding/story-sizing";
 import { prisma } from "@/src/lib/prisma";
+import type { ReadingPlanConfiguration } from "@/src/lib/onboarding/plan-constraints";
+import { getReadingPlanConfigurationFromChild } from "@/src/lib/onboarding/plan-constraints";
 
 export type PlanningContext = {
   readingPlan: ReadingPlan;
   child: Child;
+  readingPlanConfiguration: ReadingPlanConfiguration;
   sizing: StorySizing;
 };
 
@@ -23,20 +23,25 @@ export async function collectPlanningContext(
     return null;
   }
 
+  const readingPlanConfiguration = getReadingPlanConfigurationFromChild(
+    readingPlan.child,
+  );
   const sizing = deriveStorySizing(
     readingPlan.sessionDurationMins,
     readingPlan.readingLevel,
+    readingPlanConfiguration,
   );
 
   return {
     readingPlan,
     child: readingPlan.child,
+    readingPlanConfiguration,
     sizing,
   };
 }
 
 export function buildPlanningInputSnapshot(context: PlanningContext) {
-  const { readingPlan, child, sizing } = context;
+  const { readingPlan, child, readingPlanConfiguration, sizing } = context;
 
   return {
     child: {
@@ -64,6 +69,7 @@ export function buildPlanningInputSnapshot(context: PlanningContext) {
       storyTone: readingPlan.storyTone,
       storiesPerWeek: readingPlan.storiesPerWeek,
       sessionDurationMins: readingPlan.sessionDurationMins,
+      readingPlanConfiguration,
       worldsPerRoadmapMin: readingPlan.worldsPerRoadmapMin,
       worldsPerRoadmapMax: readingPlan.worldsPerRoadmapMax,
       storiesPerWorld: readingPlan.storiesPerWorld,

@@ -13,7 +13,7 @@ import { usePusherBeams } from "@/src/hooks/use-pusher";
 
 export default function Hero({ session }: { session: Session | null }) {
   const t = useTranslations("Hero");
-  const { locale, isRTL } = useLocale();
+  const { isRTL } = useLocale();
   const words = [t("words.0"), t("words.1"), t("words.2"), t("words.3")];
 
   const router = useRouter();
@@ -41,23 +41,23 @@ export default function Hero({ session }: { session: Session | null }) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6 sm:pt-12">
           <Link
             href={
-              session?.user?.newUser
-                ? "/onboarding"
-                : session?.user?.newUser === false
-                  ? "/parent-dashboard"
-                  : ""
+              !session
+                ? ""
+                : session.user.newUser
+                  ? "/onboarding"
+                  : "/parent-dashboard"
             }
           >
             <Button
               className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4"
               size={"responsive"}
               onClick={() => {
-                if (session?.user.newUser) {
-                  router.push("/onboarding");
-                } else if (session?.user.newUser === false) {
-                  router.push("/parent-dashboard");
-                } else {
+                if (!session) {
                   loginModal.open();
+                } else if (session.user.newUser) {
+                  router.push("/onboarding");
+                } else if (session.user.newUser === false) {
+                  router.push("/parent-dashboard");
                 }
               }}
             >
@@ -66,6 +66,16 @@ export default function Hero({ session }: { session: Session | null }) {
                 : session.user.newUser
                   ? t("cta.startAdventure")
                   : t("cta.parentDashboard")}
+            </Button>
+          </Link>
+
+          <Link href="#pricing">
+            <Button
+            variant="outline"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border border-white/20 bg-white/10 text-white hover:bg-white/15"
+              size={"responsive"}
+            >
+              See plans
             </Button>
           </Link>
         </div>

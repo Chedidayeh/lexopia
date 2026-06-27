@@ -5,7 +5,7 @@ import {
   getBadges,
   getChildProfileById,
 } from "@/src/lib/dashboard/queries";
-import { getChildReadingPlanDetail } from "@/src/lib/reading-plan/queries";
+import { getChildReadingPlanDetail, getChildReadingPlans } from "@/src/lib/reading-plan/queries";
 import ChildDashboardInteractive from "../_components/ChildDashboardInteractive";
 import { validateChildDashboardAccess } from "../_lib/validate-child-access";
 
@@ -39,9 +39,10 @@ export default async function ChildDashboardPage({
     return <MissingDataAlert message={t("childNotFound")} />;
   }
 
-  const [child, readingPlan, badges] = await Promise.all([
+  const [child, readingPlan, allReadingPlans, badges] = await Promise.all([
     getChildProfileById(childId),
     getChildReadingPlanDetail(childId),
+    getChildReadingPlans(childId),
     getBadges().catch(() => []),
   ]);
 
@@ -55,6 +56,7 @@ export default async function ChildDashboardPage({
         allBadges={badges}
         child={child}
         readingPlan={readingPlan}
+        allReadingPlans={allReadingPlans}
         userRole={access.session.user.role}
       />
     </div>

@@ -20,6 +20,7 @@ export type User = {
   name: string | null;
   role: string;
   newUser?: boolean;
+  subscriptionPlan?: string;
 };
 
 export type ParentUser = User;

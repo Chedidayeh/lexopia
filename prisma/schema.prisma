@@ -36,6 +36,12 @@ enum RoleType {
   ADMIN
 }
 
+enum SubscriptionPlan {
+  FREE
+  PRO
+  PRO_PLUS
+}
+
 enum LanguageCode {
   EN
   AR
@@ -144,6 +150,7 @@ model User {
   image    String?
   role     RoleType @default(PARENT)
   newUser  Boolean  @default(true)
+  subscriptionPlan SubscriptionPlan @default(FREE)
 
   emailVerified DateTime?
 
@@ -211,7 +218,8 @@ model Child {
 
   // --- Identity (onboarding step 2) ---
   name      String
-  age       Int
+  age       Int?
+  birthDate DateTime?
   gender    String
 
   // --- Reading profile (onboarding step 3) ---
@@ -227,7 +235,16 @@ model Child {
 
   // --- Schedule & goals (onboarding step 5) ---
   storiesPerWeek      Int @default(3)
-  sessionDurationMins Int @default(20) // 10 | 20 | 30 | 60 — drives story sizing
+  sessionDurationMins Int @default(10) // 10 | 20 | 30 | 60 — drives story sizing
+
+  // --- Reading plan configuration (based on parent subscription plan at child creation) ---
+  parentSubscriptionPlan SubscriptionPlan @default(FREE) // snapshot of parent's plan when child was created
+  maxThemesAllowed       Int @default(1) // 1 (FREE) | 3 (PRO) | 5 (PRO_PLUS)
+  maxStoriesPerWeekAllowed Int @default(1) // 1 (FREE) | 3 (PRO) | 7 (PRO_PLUS)
+  maxChallengeTypes      Int @default(3) // 3 basic (FREE) | 6 core (PRO) | 9 all (PRO_PLUS)
+  maxWorldsPerRoadmapAllowed Int @default(1) // 1 (FREE) | 2-3 (PRO) | 2-3 (PRO_PLUS)
+  maxEpisodesPerWorldAllowed Int @default(4) // 4 (FREE) | 6 (PRO) | 8 (PRO_PLUS)
+  maxChaptersPerStoryAllowed Int @default(6) // 6 (FREE) | 8 (PRO) | 10 (PRO_PLUS)
 
   // --- Onboarding lifecycle ---
   onboardingCompletedAt DateTime?

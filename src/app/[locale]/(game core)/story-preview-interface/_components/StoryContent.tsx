@@ -56,7 +56,7 @@ const StoryContent = ({
               key={idx}
               className={
                 idx === highlightedSentence
-                  ? "bg-accent text-accent-foreground rounded-lg px-0.5 py-0.5 font-medium"
+                  ? "bg-accent rounded-lg"
                   : ""
               }
             >

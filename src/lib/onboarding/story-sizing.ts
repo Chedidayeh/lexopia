@@ -1,4 +1,5 @@
 import type { ReadingLevel } from "@/src/types/types";
+import type { ReadingPlanConfiguration } from "@/src/lib/onboarding/plan-constraints";
 
 type SessionDuration = 10 | 20 | 30 | 60;
 
@@ -42,11 +43,15 @@ export type StorySizing = {
 export function deriveStorySizing(
   sessionDurationMins: number,
   readingLevel: ReadingLevel,
+  readingPlanConfiguration?: ReadingPlanConfiguration,
 ): StorySizing {
   const duration = normalizeSessionDuration(sessionDurationMins);
   const adjustment = LEVEL_ADJUSTMENTS[readingLevel];
 
-  const chaptersPerStory = CHAPTERS_BY_DURATION[duration];
+  const chaptersPerStory = Math.min(
+    CHAPTERS_BY_DURATION[duration],
+    readingPlanConfiguration?.maxChaptersPerStoryAllowed ?? CHAPTERS_BY_DURATION[duration],
+  );
   const wordsPerChapter = Math.round(
     WORDS_BY_DURATION[duration] * adjustment.wordsMultiplier,
   );
@@ -54,6 +59,7 @@ export function deriveStorySizing(
   const challengesPerStory = Math.min(
     MAX_CHALLENGES_PER_STORY,
     (duration / 10) * 2,
+    readingPlanConfiguration?.maxChallengeTypes ?? MAX_CHALLENGES_PER_STORY,
   );
 
   return {
@@ -68,8 +74,9 @@ export function deriveStorySizing(
 export function getStorySizingForPlan(
   sessionDurationMins: number,
   readingLevel: ReadingLevel,
+  readingPlanConfiguration?: ReadingPlanConfiguration,
 ): StorySizing {
-  return deriveStorySizing(sessionDurationMins, readingLevel);
+  return deriveStorySizing(sessionDurationMins, readingLevel, readingPlanConfiguration);
 }
 
 function normalizeSessionDuration(mins: number): SessionDuration {

@@ -4,11 +4,12 @@ import { AgentTrigger } from "@prisma/client";
 import { auth } from "@/src/auth";
 import { enqueueReadingPlan } from "@/src/lib/reading-plan/enqueue-reading-plan";
 import { canManuallyGenerateInitialPlan } from "@/src/lib/reading-plan/plan-eligibility";
-import { getActiveReadingPlanStatus, getChildReadingPlanDetail } from "@/src/lib/reading-plan/queries";
+import { getActiveReadingPlanStatus, getChildReadingPlanDetail, getChildReadingPlanById, getChildReadingPlans } from "@/src/lib/reading-plan/queries";
 import type {
   GeneratePlanResult,
   ReadingPlanStatusView,
   ReadingPlanTabState,
+  ReadingPlanDetailView,
 } from "@/src/lib/reading-plan/types";
 import { prisma } from "@/src/lib/prisma";
 
@@ -30,13 +31,6 @@ export async function generateReadingPlanAction(
 
   if (!child) {
     return { success: false, error: "Child not found" };
-  }
-
-  if (!(await canManuallyGenerateInitialPlan(childId))) {
-    return {
-      success: false,
-      error: "Initial reading plan has already been created for this child",
-    };
   }
 
   return enqueueReadingPlan({
@@ -91,4 +85,45 @@ export async function getChildReadingPlanAction(
     plan,
     canManuallyGenerateInitialPlan: canManuallyGenerateInitialPlanFlag,
   };
+}
+
+export async function getChildReadingPlansAction(
+  childId: string,
+): Promise<Awaited<ReturnType<typeof getChildReadingPlans>> | null> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return null;
+  }
+
+  const child = await prisma.child.findFirst({
+    where: { id: childId, parentId: session.user.id },
+    select: { id: true },
+  });
+
+  if (!child) {
+    return null;
+  }
+
+  return getChildReadingPlans(childId);
+}
+
+export async function getChildReadingPlanByIdAction(
+  planId: string,
+  childId: string,
+): Promise<ReadingPlanDetailView | null> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return null;
+  }
+
+  const child = await prisma.child.findFirst({
+    where: { id: childId, parentId: session.user.id },
+    select: { id: true },
+  });
+
+  if (!child) {
+    return null;
+  }
+
+  return getChildReadingPlanById(planId, childId);
 }

@@ -33,7 +33,7 @@ const WelcomeBanner = ({
 }: WelcomeBannerProps) => {
   const t = useTranslations("ChildDashboard");
   return (
-    <div className="rounded-xl bg-card border border-black/30 p-4 lg:p-6 shadow-warm-lg">
+    <div className="rounded-xl bg-card border border-black/10 p-4 lg:p-6 shadow-warm-lg">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
         {/* Avatar */}
         <div className="flex justify-center lg:justify-start">

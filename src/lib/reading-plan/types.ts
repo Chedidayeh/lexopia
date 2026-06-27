@@ -66,6 +66,11 @@ export type ReadingPlanDetailView = ReadingPlanStatusView & {
   storyTone: string | null;
   roadmaps: ReadingPlanRoadmapView[];
   nextStoryToGenerate: NextStoryToGenerate | null;
+  weeklyStoryLimit: {
+    generatedThisWeek: number;
+    remaining: number;
+    canGenerate: boolean;
+  };
 };
 
 export type ReadingPlanTabState = {

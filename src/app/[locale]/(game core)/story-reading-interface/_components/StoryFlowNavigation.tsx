@@ -191,12 +191,6 @@ const StoryFlowNavigation = ({
                   total: totalPages,
                 })}
               </span>
-              {sessionTargetSeconds > 0 && (
-                <span className="font-caption text-xs text-muted-foreground">
-                  {formatMinutes(sessionElapsedSeconds)} /{" "}
-                  {formatMinutes(sessionTargetSeconds)}
-                </span>
-              )}
             </div>
           )}
 

@@ -19,6 +19,8 @@ import {
 import {
   generateReadingPlanAction,
   getChildReadingPlanAction,
+  getChildReadingPlanByIdAction,
+  getChildReadingPlansAction,
 } from "@/src/lib/reading-plan/server-actions";
 import { generateStoryContentAction } from "@/src/lib/story-content/server-actions";
 import { planHasGeneratingStory } from "@/src/lib/story-content/find-next-story";
@@ -38,6 +40,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
+import { cn } from "@/src/lib/utils";
+import type { ReadingPlanSummary } from "@/src/lib/reading-plan/queries";
 
 
 interface ReadingPlanTabProps {
@@ -62,6 +66,8 @@ export default function ReadingPlanTab({
     selectedChild?.child?.name ?? selectedChild?.name ?? tDashboard("unknown");
 
   const [plan, setPlan] = useState<ReadingPlanDetailView | null>(null);
+  const [plans, setPlans] = useState<ReadingPlanSummary[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [canManuallyGenerateInitialPlan, setCanManuallyGenerateInitialPlan] =
     useState(false);
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
@@ -78,14 +84,22 @@ export default function ReadingPlanTab({
     requestKey !== null && resolvedRequestKey !== requestKey;
   const displayPlan =
     resolvedRequestKey === requestKey ? plan : null;
+  const activePlan = plans.find((item) => item.id === selectedPlanId) ?? plans[0] ?? null;
+  const hasDisplayPlan = Boolean(displayPlan);
 
   const canGeneratePlan =
     userRole === RoleType.PARENT && Boolean(childId && selectedChild);
   const showGeneratePlanButton =
     canGeneratePlan &&
-    canManuallyGenerateInitialPlan &&
     !isGeneratingPlan &&
-    (!displayPlan || displayPlan.status === "FAILED");
+    !isPlanLoading &&
+    !hasDisplayPlan;
+  const showGenerateNewPlanButton =
+    canGeneratePlan &&
+    !isGeneratingPlan &&
+    !isPlanLoading &&
+    hasDisplayPlan &&
+    displayPlan?.status === "COMPLETED";
   const showAwaitingPlanState =
     Boolean(childId) &&
     !isPlanLoading &&
@@ -93,7 +107,42 @@ export default function ReadingPlanTab({
     !canManuallyGenerateInitialPlan;
   const canGenerateStory =
     userRole === RoleType.PARENT &&
-    Boolean(childId && displayPlan?.nextStoryToGenerate);
+    Boolean(childId && displayPlan?.nextStoryToGenerate && displayPlan?.weeklyStoryLimit?.canGenerate);
+
+  const formatPlanStatus = (status: ReadingPlanSummary["status"]) => {
+    switch (status) {
+      case "ACTIVE":
+        return "Active";
+      case "GENERATING":
+        return "Generating";
+      case "FAILED":
+        return "Failed";
+      case "SUPERSEDED":
+        return "Archived";
+      case "COMPLETED":
+        return "Completed";
+      case "DRAFT":
+        return "Draft";
+      case "PAUSED":
+        return "Paused";
+      default:
+        return status;
+    }
+  };
+
+  const selectPlan = useCallback(
+    async (planId: string) => {
+      if (!childId || planId === selectedPlanId) return;
+
+      setSelectedPlanId(planId);
+      const detail = await getChildReadingPlanByIdAction(planId, childId);
+      if (detail) {
+        setPlan(detail);
+        setResolvedRequestKey(requestKey);
+      }
+    },
+    [childId, requestKey, selectedPlanId],
+  );
 
   const handleGeneratePlan = async () => {
     if (!childId) return;
@@ -143,16 +192,27 @@ export default function ReadingPlanTab({
     if (!childId || !requestKey) {
       return {
         plan: null as ReadingPlanDetailView | null,
+        plans: [] as ReadingPlanSummary[],
         canManuallyGenerateInitialPlan: false,
         key: null as string | null,
       };
     }
 
-    const result = await getChildReadingPlanAction(childId);
+    const [result, planList] = await Promise.all([
+      getChildReadingPlanAction(childId),
+      getChildReadingPlansAction(childId),
+    ]);
+
+    const nextPlans = planList ?? [];
+    const nextPlan = result?.plan ?? null;
+    const nextPlanId = nextPlan?.planId ?? nextPlans[0]?.id ?? null;
+
     return {
-      plan: result?.plan ?? null,
+      plan: nextPlan,
+      plans: nextPlans,
       canManuallyGenerateInitialPlan:
         result?.canManuallyGenerateInitialPlan ?? false,
+      selectedPlanId: nextPlanId,
       key: requestKey,
     };
   }, [childId, requestKey]);
@@ -164,6 +224,8 @@ export default function ReadingPlanTab({
       if (cancelled) return;
 
       setPlan(result.plan);
+      setPlans(result.plans);
+      setSelectedPlanId(result.selectedPlanId ?? result.plan?.planId ?? result.plans[0]?.id ?? null);
       setCanManuallyGenerateInitialPlan(result.canManuallyGenerateInitialPlan);
       setResolvedRequestKey(result.key);
     });
@@ -176,6 +238,8 @@ export default function ReadingPlanTab({
   const refreshPlan = useCallback(() => {
     void fetchPlan().then((result) => {
       setPlan(result.plan);
+      setPlans(result.plans);
+      setSelectedPlanId(result.selectedPlanId ?? result.plan?.planId ?? result.plans[0]?.id ?? null);
       setCanManuallyGenerateInitialPlan(result.canManuallyGenerateInitialPlan);
       setResolvedRequestKey(result.key);
     });
@@ -221,7 +285,7 @@ export default function ReadingPlanTab({
                 </p>
               </div>
             </div>
-            {showGeneratePlanButton && !isPlanLoading && (
+            {showGenerateNewPlanButton && !isPlanLoading && (
               <Button
                 className="shrink-0 text-sm"
                 disabled={isGeneratingPlan}
@@ -238,6 +302,76 @@ export default function ReadingPlanTab({
             )}
           </div>
         </div>
+
+        {plans.length > 0 && (
+          <div className="rounded-xl border border-black/10 bg-card p-4 md:p-5 shadow-warm">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <h3 className="font-heading text-base text-foreground">Plan history</h3>
+                <p className="text-sm text-muted-foreground">Switch between saved plans for this child.</p>
+              </div>
+              <div className="rounded-full border border-black/10 bg-background px-3 py-1 text-xs text-muted-foreground">
+                {plans.length} plans
+              </div>
+            </div>
+
+            <div className="flex gap-3 overflow-x-auto pb-1 pr-1 scrollbar-thin">
+              {plans.map((item) => {
+                const isSelected = item.id === (selectedPlanId ?? activePlan?.id);
+
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    onClick={() => void selectPlan(item.id)}
+                    disabled={isPlanLoading}
+                    aria-pressed={isSelected}
+                    className={cn(
+                      "group h-auto min-w-52 shrink-0 justify-start rounded-2xl border p-0 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
+                      isSelected
+                        ? "border-primary/40 bg-primary/5 ring-2 ring-primary/20"
+                        : "border-black/10 bg-background/80 hover:border-primary/20",
+                    )}
+                  >
+                    <div className="flex w-full items-start gap-3 p-4">
+                      <div className={cn(
+                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold transition-colors",
+                        isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+                      )}>
+                        {item.planNumber}
+                      </div>
+
+                      <div className="min-w-0 flex-1 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-foreground">
+                              {t("meta.planNumber")} #{item.planNumber}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {item.readyStories}/{item.totalStories} ready
+                            </p>
+                          </div>
+                          <Badge
+                            variant={item.isActive ? "default" : "secondary"}
+                            className="rounded-full text-[10px] uppercase tracking-wide"
+                          >
+                            {item.isActive ? "Current" : formatPlanStatus(item.status)}
+                          </Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+                          <span className="truncate">
+                            {item.sourceInterests.slice(0, 2).join(" • ") || "Personalized path"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {childId && (
           <ReadingPlanStatusCard childId={childId} refreshKey={planRefreshKey} />
@@ -273,6 +407,29 @@ export default function ReadingPlanTab({
                   <Sparkles className="h-4 w-4 mr-1" />
                 )}
                 {tDashboard("overview.generateReadingPlanButton")}
+              </Button>
+            )}
+          </div>
+        ) : displayPlan.status === "COMPLETED" ? (
+          <div className="rounded-xl border border-green-200/50 dark:border-green-800/50 bg-linear-to-r from-green-50/80 to-emerald-50/80 dark:from-green-950/30 dark:to-emerald-950/30 p-6 md:p-8 text-center">
+            <GraduationCap className="h-10 w-10 text-green-600 dark:text-green-400 mx-auto mb-3" />
+            <h3 className="font-heading text-lg text-foreground mb-2">
+              {t("planCompletedTitle")}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
+              {t("planCompletedDescription", { childName })}
+            </p>
+            {showGenerateNewPlanButton && (
+              <Button
+                disabled={isGeneratingPlan}
+                onClick={() => setShowPlanConfirm(true)}
+              >
+                {isGeneratingPlan ? (
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 mr-1" />
+                )}
+                {t("generateNextPlanButton")}
               </Button>
             )}
           </div>
@@ -341,6 +498,20 @@ export default function ReadingPlanTab({
               <div className="rounded-xl border border-black/10 bg-card p-4 md:p-5">
                 <p className="text-sm text-muted-foreground mb-1">{t("storyTone")}</p>
                 <p className="text-sm">{displayPlan.storyTone}</p>
+              </div>
+            )}
+
+            {displayPlan.weeklyStoryLimit && (
+              <div className="rounded-xl border border-black/10 bg-card p-4 md:p-5">
+                <p className="text-sm text-muted-foreground mb-1">{t("weeklyStoryLimit")}</p>
+                <p className="text-sm font-medium">
+                  {displayPlan.weeklyStoryLimit.generatedThisWeek} / {displayPlan.storiesPerWeek} {t("storiesGeneratedThisWeek")}
+                </p>
+                {!displayPlan.weeklyStoryLimit.canGenerate && (
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                    {t("weeklyLimitReached")}
+                  </p>
+                )}
               </div>
             )}
 

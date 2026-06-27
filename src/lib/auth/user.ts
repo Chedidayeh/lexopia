@@ -10,6 +10,7 @@ export function toAuthUser(user: User): NextAuthUser {
     name: user.name ?? user.email,
     role: user.role as RoleType,
     newUser: user.newUser,
+    subscriptionPlan: user.subscriptionPlan,
     parentId: user.id,
   };
 }

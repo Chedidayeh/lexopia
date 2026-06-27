@@ -7,7 +7,12 @@ import type {
   World,
 } from "@prisma/client";
 import { prisma } from "@/src/lib/prisma";
-import { deriveStorySizing } from "@/src/lib/onboarding/story-sizing";
+import {
+  deriveStorySizing,
+  type StorySizing,
+} from "@/src/lib/onboarding/story-sizing";
+import type { ReadingPlanConfiguration } from "@/src/lib/onboarding/plan-constraints";
+import { getReadingPlanConfigurationFromChild } from "@/src/lib/onboarding/plan-constraints";
 import { resolvePlannedChallengeTypes } from "./story-content.schema";
 import {
   buildPriorEpisodeRecapEntry,
@@ -32,12 +37,13 @@ export type StoryContentContext = {
   roadmap: Roadmap;
   child: Child;
   readingPlan: ReadingPlan;
+  readingPlanConfiguration: ReadingPlanConfiguration;
   assignedChallenges: string[];
   plannedChallengeTypes: string[];
   personalization: StoryPersonalization;
   previousEpisodeBridge: string | null;
   priorEpisodesRecap: PriorEpisodeRecapEntry[];
-  sizing: ReturnType<typeof deriveStorySizing>;
+  sizing: StorySizing;
 };
 
 function readStoryPlannedChallengeTypes(story: Story): string[] {
@@ -122,9 +128,13 @@ export async function collectStoryContext(
       })
     : null;
 
+  const readingPlanConfiguration = getReadingPlanConfigurationFromChild(
+    story.world.roadmap.child,
+  );
   const sizing = deriveStorySizing(
     story.sessionDurationMins,
     story.readingLevel,
+    readingPlanConfiguration,
   );
 
   const plannedChallengeTypes = resolvePlannedChallengeTypes(
@@ -142,6 +152,7 @@ export async function collectStoryContext(
     roadmap: story.world.roadmap,
     child: story.world.roadmap.child,
     readingPlan: story.world.roadmap.readingPlan,
+    readingPlanConfiguration,
     assignedChallenges,
     plannedChallengeTypes,
     personalization,
@@ -159,6 +170,7 @@ export function buildStoryContentInputSnapshot(context: StoryContentContext) {
     roadmap,
     child,
     readingPlan,
+    readingPlanConfiguration,
     assignedChallenges,
     plannedChallengeTypes,
   } = context;
@@ -197,6 +209,7 @@ export function buildStoryContentInputSnapshot(context: StoryContentContext) {
       id: readingPlan.id,
       primaryLanguage: readingPlan.primaryLanguage,
       storyTone: readingPlan.storyTone,
+      readingPlanConfiguration,
     },
     assignedChallenges,
     plannedChallengeTypes,

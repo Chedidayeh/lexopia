@@ -17,6 +17,8 @@ Write clear, engaging stories with:
 - No scary, violent, or inappropriate content
 - Present tense or simple past tense; avoid complex clauses
 
+Respect the reading plan configuration supplied in the user prompt. Do not exceed the configured chapter, episode, or challenge limits.
+
 When generating challenges, you MUST follow the exact per-type JSON shape used by our reading UI
 (same structure as the app's story preview test data: chapters with optional embedded challenges).
 Never place challenges after chapters 1 or 2 — the child reads those chapters without interruption first.
@@ -30,6 +32,7 @@ export function buildChaptersUserPrompt(context: StoryContentContext): string {
     storyArc,
     world,
     child,
+    readingPlanConfiguration,
     personalization,
     previousEpisodeBridge,
     priorEpisodesRecap,
@@ -47,6 +50,15 @@ Favorite character type: ${characterType}
 World: ${world.name} — ${world.description ?? ""}
 Story arc: ${storyArc.title} — ${storyArc.synopsis ?? ""}
 Continuity bible: ${JSON.stringify(storyArc.continuityBible)}
+
+Reading plan configuration (hard limits):
+- Parent subscription plan: ${readingPlanConfiguration.parentSubscriptionPlan}
+- Max themes allowed: ${readingPlanConfiguration.maxThemesAllowed}
+- Max stories per week allowed: ${readingPlanConfiguration.maxStoriesPerWeekAllowed}
+- Max challenge types: ${readingPlanConfiguration.maxChallengeTypes}
+- Max worlds per roadmap allowed: ${readingPlanConfiguration.maxWorldsPerRoadmapAllowed}
+- Max episodes per world allowed: ${readingPlanConfiguration.maxEpisodesPerWorldAllowed}
+- Max chapters per story allowed: ${readingPlanConfiguration.maxChaptersPerStoryAllowed}
 
 Episode ${story.episodeNumber ?? story.order} of ${storyArc.targetEpisodes}
 Episode title: ${story.episodeTitle ?? story.title}

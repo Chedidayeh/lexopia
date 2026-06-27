@@ -18,11 +18,7 @@ export async function persistPlanScaffold(
   context: PlanningContext,
   blueprint: PlanBlueprint,
 ): Promise<PersistPlanResult> {
-  const { readingPlan, child } = context;
-  const sizing = deriveStorySizing(
-    readingPlan.sessionDurationMins,
-    readingPlan.readingLevel,
-  );
+  const { readingPlan, child, sizing } = context;
   const languageCode = readingPlan.primaryLanguage;
 
   return prisma.$transaction(

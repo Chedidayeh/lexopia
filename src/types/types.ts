@@ -18,6 +18,15 @@ export const RoleType = {
 } as const;
 export type RoleType = (typeof RoleType)[keyof typeof RoleType];
 
+export const SubscriptionPlan = {
+  FREE: "FREE",
+  PRO: "PRO",
+  PRO_PLUS: "PRO_PLUS",
+} as const;
+
+export type SubscriptionPlan =
+  (typeof SubscriptionPlan)[keyof typeof SubscriptionPlan];
+
 export const LanguageCode = {
   EN: "EN",
   AR: "AR",

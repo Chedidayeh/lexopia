@@ -470,6 +470,8 @@
 			"viewButton": "عرض المسار"
 		},
 		"readingPlan": {
+			"selectPlan": "اختر خطة القراءة",
+			"planNumber": "إصدار الخطة {number}",
 			"title": "خطة القراءة",
 			"noPlanTitle": "لا توجد خطة قراءة بعد",
 			"noPlanDescription": "اطلب من والدك إنشاء خطة قراءة لـ {childName} من لوحة تحكم الوالدين.",
@@ -698,6 +700,7 @@
 		"welcomeCapabilityDashboard": "لوحة تحكم الوالدين",
 		"welcomeReassurance": "يدعم Lexopia أنماط التعلم المختلفة ويساعد الأطفال على بناء الثقة من خلال ممارسة قراءة إيجابية وخالية من الضغط.",
 		"letsStart": "لنبدأ",
+		"loading": "جاري التحميل...",
 		"titleReadingSettings": "أهداف القراءة والتذكيرات",
 		"summaryTitle": "راجع ملف طفلك",
 		"summaryDesc": "أكد التفاصيل أدناه قبل إنشاء الملف الشخصي.",
@@ -714,6 +717,7 @@
 		"childNamePlaceholder": "إيما",
 		"ageGroupLabel": "فئة العمر",
 		"ageGroupPlaceholder": "اختر فئة عمرية",
+		"birthDatePlaceholder": "يوم/شهر/سنة",
 		"availableThemesEmpty": "يرجى تحديد فئة عمرية أولاً لعرض الموضوعات المتاحة",
 		"favoriteThemesLabel": "الموضوعات المفضلة",
 		"selectAllApply": "حدد كل ما ينطبق",
@@ -732,6 +736,8 @@
 		"stepOf": "الخطوة {step} من {total}",
 		"genderLabel": "جنس الطفل",
 		"selectGender": "يرجى اختيار",
+		"selected": "المحدد:",
+		"tapToSelect": "اضغط للاختيار",
 		"storiesPerWeekLabel": "كم قصة يجب أن يقرأ {childName} في الأسبوع؟",
 		"storiesPerWeekOption": "{count} قصص في الأسبوع",
 		"selectReadingFrequency": "اختر تكراراً للقراءة يناسب طفلك",
@@ -827,7 +833,8 @@
 		"gender": {
 			"boy": "ولد",
 			"girl": "بنت"
-		}
+		},
+		"maxThemesReached": "تم الوصول إلى الحد الأقصى {max} للموضوعات"
 	},
 	"OnboardingStorytelling": {
 		"Arabic": "العربية",
@@ -844,6 +851,16 @@
 		"childNameLabel": "اسم الطفل (أو كنيته)",
 		"childNamePlaceholder": "مثل إيما أو كنية,",
 		"childNameDesc": "سيظهر هذا الاسم كشخصية رئيسية في القصص المولدة  لطفلك",
+		"ageLabel": "العمر",
+		"birthDateLabel": "تاريخ الميلاد",
+		"invalidBirthDate": "يجب أن يؤدي تاريخ الميلاد إلى عمر بين 5 و 14 سنة",
+		"weeklyStoryLimit": "الحد الأسبوعي للقصص",
+		"storiesGeneratedThisWeek": "قصص مولدة هذا الأسبوع",
+		"weeklyLimitReached": "تم الوصول إلى الحد الأسبوعي. يمكنك توليد المزيد من القصص الأسبوع القادم.",
+		"planCompletedTitle": "اكتمل خطة القراءة!",
+		"planCompletedDescription": "تهانينا! أكمل {childName} خطة القراءة. هل تريد توليد خطة جديدة؟",
+		"generateNextPlanButton": "توليد خطة جديدة",
+		"selectPlan": "اختر خطة القراءة",
 		"childLanguageLabel": "اللغة المفضلة للقصص",
 		"selectLanguagePlaceholder": "اختر لغة",
 		"selectLanguageRequired": "يرجى اختيار لغة لقصص طفلك",
@@ -852,6 +869,11 @@
 		"availableThemesEmpty": "لا توجد موضوعات متاحة",
 		"favoriteThemesLabel": "الموضوعات المفضلة",
 		"selectAllApply": "حدد كل ما ينطبق",
+		"addCustomThemeLabel": "إضافة موضوع مخصص",
+		"addCustomThemePlaceholder": "أدخل موضوعاً مخصصاً...",
+		"addCustomThemeButton": "إضافة",
+		"addCustomThemeHint": "اضغط Enter أو اختر إضافة لتضمينه.",
+		"customThemesSelected": "الموضوعات المخصصة",
 		"addCustomThemePlaceholder": "أضف موضوعاً مخصصاً لطفلك...",
 		"learningObjectivesLabel": "أهداف التعلم",
 		"selectObjectivesDesc": "اختر ما تود أن يحسّنه طفلك",

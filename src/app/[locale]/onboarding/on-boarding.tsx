@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "@/src/i18n/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,10 +15,10 @@ import {
   INITIAL_ONBOARDING_FORM,
   type OnboardingFormState,
   validateStep2,
-  validateStep3,
-  validateStep4,
-  validateStep5,
-  validateOnboardingForm,
+  validateStep3WithPlan,
+  validateStep4WithPlan,
+  validateStep5WithPlan,
+  validateOnboardingFormWithPlan,
 } from "@/src/lib/onboarding/schemas";
 import {
   ChildBasicsStep,
@@ -28,6 +28,8 @@ import {
 } from "@/src/lib/onboarding/onboarding-steps";
 import { completeOnboardingAction } from "./actions/onboarding-actions";
 import { StepIndicator, TOTAL_STEPS } from "./_components/step-indicator";
+import { getPlanConstraints, type PlanConstraints } from "@/src/lib/onboarding/plan-constraints";
+import { SubscriptionPlan } from "@/src/types/types";
 
 const ONBOARDING_ERROR_KEYS = new Set([
   "childNameRequired",
@@ -53,7 +55,33 @@ export default function ParentOnboarding() {
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState<OnboardingFormState>(INITIAL_ONBOARDING_FORM);
+  const [planConstraints, setPlanConstraints] = useState<PlanConstraints>(
+    getPlanConstraints(SubscriptionPlan.FREE)
+  );
+
+  // Fetch user's subscription plan on mount
+  useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const response = await fetch("/api/user/subscription");
+        if (response.ok) {
+          const data = await response.json();
+          const constraints = getPlanConstraints(data.subscriptionPlan);
+          setPlanConstraints(constraints);
+        }
+      } catch (error) {
+        console.error("Failed to fetch subscription plan:", error);
+        // Default to FREE plan
+        setPlanConstraints(getPlanConstraints(SubscriptionPlan.FREE));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPlan();
+  }, []);
 
   function updateForm<K extends keyof OnboardingFormState>(
     key: K,
@@ -75,9 +103,30 @@ export default function ParentOnboarding() {
   function validateCurrentStep(): boolean {
     const validators = [
       () => validateStep2(form),
-      () => validateStep3(form),
-      () => validateStep4(form),
-      () => validateStep5(form),
+      () => validateStep3WithPlan(
+        {
+          primaryLanguage: form.primaryLanguage,
+          readingLevel: form.readingLevel,
+          assignedChallenges: form.assignedChallenges,
+        },
+        planConstraints
+      ),
+      () => validateStep4WithPlan(
+        {
+          interests: form.interests,
+          favoriteCharacterType: form.favoriteCharacterType,
+          storyTone: form.storyTone,
+        },
+        planConstraints
+      ),
+      () => validateStep5WithPlan(
+        {
+          storiesPerWeek: form.storiesPerWeek,
+          sessionDurationMins: form.sessionDurationMins,
+          activateNotifications: form.activateNotifications,
+        },
+        planConstraints
+      ),
     ];
     const result = validators[step - 1]();
     if (!result.valid) {
@@ -101,7 +150,7 @@ export default function ParentOnboarding() {
   }
 
   async function handleComplete() {
-    const validation = validateOnboardingForm(form);
+    const validation = validateOnboardingFormWithPlan(form, planConstraints);
     if (!validation.valid) {
       toast.error(t(validation.message));
       return;
@@ -125,6 +174,16 @@ export default function ParentOnboarding() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-muted-foreground">{t("loading") || "Loading..."}</p>
+        </div>
+      </div>
+    );
   }
 
   const BackIcon = isRTL ? ChevronRight : ChevronLeft;
@@ -154,6 +213,7 @@ export default function ParentOnboarding() {
                   form={form}
                   updateForm={updateForm}
                   toggleChallenge={toggleArrayItem}
+                  planConstraints={planConstraints}
                 />
               )}
               {step === 3 && (
@@ -162,10 +222,16 @@ export default function ParentOnboarding() {
                   form={form}
                   updateForm={updateForm}
                   toggleInterest={toggleArrayItem}
+                  planConstraints={planConstraints}
                 />
               )}
               {step === 4 && (
-                <GoalsLaunchStep t={t} form={form} updateForm={updateForm} />
+                <GoalsLaunchStep
+                  t={t}
+                  form={form}
+                  updateForm={updateForm}
+                  planConstraints={planConstraints}
+                />
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">

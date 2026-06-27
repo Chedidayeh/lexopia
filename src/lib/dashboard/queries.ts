@@ -19,6 +19,7 @@ export async function getParentById(parentId: string): Promise<User | null> {
       name: true,
       role: true,
       newUser: true,
+      subscriptionPlan: true,
     },
   });
 
@@ -30,6 +31,7 @@ export async function getParentById(parentId: string): Promise<User | null> {
     name: user.name,
     role: user.role,
     newUser: user.newUser,
+    subscriptionPlan: user.subscriptionPlan,
   };
 }
 

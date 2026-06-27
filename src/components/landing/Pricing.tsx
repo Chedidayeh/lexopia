@@ -1,241 +1,240 @@
-"use client";
+import { Check, Crown, Sparkles, Zap, Rocket } from "lucide-react";
+import { selectSubscriptionPlanAction } from "@/src/actions/auth-actions";
+import { auth } from "@/src/auth";
+import { SubscriptionPlan } from "@/src/types/types";
+import { PricingPlanButton } from "./pricing-plan-button";
 
-import { Check } from "lucide-react";
-import { useState } from "react";
-
-interface PricingTier {
-  id: string;
+type Plan = {
+  key: SubscriptionPlan;
   name: string;
-  subtitle: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  description: string;
+  badge?: string;
+  tagline: string;
+  price: string;
+  priceNote: string;
+  tone: string;
   features: string[];
-  cta: string;
-  popular?: boolean;
-  highlight?: string;
-}
+  summary: string;
+};
 
-const pricingTiers: PricingTier[] = [
+const plans: Plan[] = [
   {
-    id: "free",
+    key: SubscriptionPlan.FREE,
     name: "Free",
-    subtitle: "For curious readers",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    description: "Perfect for getting started with reading adventures",
+    tagline: "A simple start for every family.",
+    price: "Free",
+    priceNote: "Try the core learning journey.",
+    tone: "from-emerald-400/20 via-cyan-400/10 to-transparent",
+    summary: "A simple starting point for families trying the app.",
     features: [
-      "5 free stories to start",
-      "3 riddle attempts per story",
-      "1 hint level available",
-      "Basic progress tracking",
-      "Community forum access",
-      "Safari mode for uninterrupted reading",
+      "1 child profile",
+      "1 story per week",
+      "1 selected theme",
+      "Basic reading plan generation with 1 roadmap and 1 world",
+      "Try the core reading journey",
+      "Simple challenge set",
     ],
-    cta: "Get Started",
   },
   {
-    id: "student",
-    name: "Premium Student",
-    subtitle: "For serious readers",
-    monthlyPrice: 9.99,
-    yearlyPrice: 99,
-    description: "Unlock the full reading library with AI-powered guidance",
+    key: SubscriptionPlan.PRO,
+    name: "Pro",
+    badge: "Most balanced",
+    tagline: "The everyday family plan.",
+    price: "Pro",
+    priceNote: "More variety without added complexity.",
+    tone: "from-amber-400/25 via-orange-400/15 to-transparent",
+    summary: "The everyday family plan with broader personalization.",
     features: [
-      "Access to 50+ stories",
-      "Unlimited riddle attempts",
-      "3 hint levels with visual hints",
-      "Adaptive difficulty algorithm",
-      "Detailed reading analytics",
-      "Offline story downloads",
-      "Reading streak tracker",
-      "Monthly achievements unlocked",
+      "Up to 3 child profiles",
+      "3 stories per week",
+      "Up to 3 selected themes",
+      "More themes and story variety",
+      "All core challenge types",
+      "Enhanced reading plan generation",
+      "Progress insights for growing readers",
     ],
-    cta: "Start Free Trial",
-    popular: true,
-    highlight: "Most Popular",
   },
   {
-    id: "educator",
-    name: "Premium Educator",
-    subtitle: "For teachers & schools",
-    monthlyPrice: 19.99,
-    yearlyPrice: 199,
-    description: "Manage classrooms and monitor student progress",
+    key: SubscriptionPlan.PRO_PLUS,
+    name: "Pro Plus",
+    badge: "Premium",
+    tagline: "Advanced flexibility and performance.",
+    price: "Pro Plus",
+    priceNote: "For children who read often and need more variety.",
+    tone: "from-sky-400/25 via-indigo-400/15 to-transparent",
+    summary: "The premium tier for maximum flexibility and variety.",
     features: [
-      "Everything in Premium Student",
-      "Classroom management tools",
-      "Assign stories to students",
-      "Real-time progress monitoring",
-      "Class-wide analytics dashboard",
-      "Advanced student segmentation",
-      "Monthly educator insights report",
-      "Priority email support",
-      "Bulk student account creation",
+      "Up to 5 child profiles",
+      "7 stories per week",
+      "Up to 5 selected themes",
+      "The fullest reading experience",
+      "Highest usage flexibility",
+      "Priority support for families",
     ],
-    cta: "Start Free Trial",
   },
 ];
 
-interface PricingCardProps {
-  tier: PricingTier;
-  isYearly: boolean;
-  isPopular: boolean;
-}
+const featureMatrix: Array<{ label: string; free: string; pro: string; proPlus: string }> = [
+  { label: "Themes", free: "1", pro: "3", proPlus: "5" },
+  { label: "Stories per week", free: "1", pro: "3", proPlus: "7" },
+  { label: "Challenge types", free: "3", pro: "6", proPlus: "9" },
+  { label: "Worlds per roadmap", free: "1", pro: "2-3", proPlus: "2-3" },
+  { label: "Episodes per world", free: "4", pro: "6", proPlus: "8" },
+  { label: "Chapters per story", free: "6", pro: "8", proPlus: "10" },
+];
 
-function PricingCard({ tier, isYearly, isPopular }: PricingCardProps) {
-  const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
-  const savings = isYearly
-    ? Math.round(
-        ((tier.monthlyPrice * 12 - tier.yearlyPrice) /
-          (tier.monthlyPrice * 12)) *
-          100,
-      )
-    : 0;
+function PlanCard({
+  plan,
+  index,
+  currentPlan,
+  isLoggedIn,
+}: {
+  plan: Plan;
+  index: number;
+  currentPlan?: SubscriptionPlan;
+  isLoggedIn: boolean;
+}) {
+  const isFeatured = index === 1;
+  const isCurrentPlan = currentPlan === plan.key;
 
   return (
-    <div className={`relative transition-all duration-300 h-full`}>
-      {/* Card */}
+    <article
+      className={`relative overflow-hidden rounded-3xl border p-6 sm:p-7 backdrop-blur-md transition-transform duration-300 hover:-translate-y-1 ${
+        isFeatured
+          ? "border-amber-300/40 bg-white/12 shadow-[0_24px_80px_rgba(251,191,36,0.14)]"
+          : "border-white/10 bg-white/8"
+      }`}
+    >
       <div
-        className={`
-          relative p-8 rounded-2xl h-full
-          flex flex-col
-          transition-all duration-300
-          ${
-            isPopular
-              ? "bg-gradient-to-br from-amber-500/20 to-orange-500/30 border-2 border-amber-400/50 shadow-2xl scale-100 md:scale-105 z-10"
-              : "bg-gradient-to-br from-slate-800/70 to-slate-900/80 border border-slate-700/50 hover:border-slate-600/50 hover:shadow-xl"
-          }
-          backdrop-blur-sm
-        `}
-      >
-        {/* Highlight Badge */}
-        {tier.highlight && (
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full text-white text-xs drop-shadow-lg">
-            {tier.highlight}
-          </div>
-        )}
+        className={`absolute inset-x-0 top-0 h-28 bg-linear-to-b ${plan.tone} pointer-events-none`}
+      />
 
-        {/* Header */}
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-white mb-1">{tier.name}</h3>
-          <p className="text-sm text-slate-400">{tier.subtitle}</p>
+      <div className="relative flex h-full flex-col">
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-2xl font-semibold text-white">{plan.name}</h3>
+              {plan.name === "Pro" ? (
+                <Crown className="h-5 w-5 text-amber-300" />
+              ) : plan.name === "Pro Plus" ? (
+                <Sparkles className="h-5 w-5 text-sky-300" />
+              ) : null}
+            </div>
+            <p className="mt-2 text-sm text-white/70">{plan.tagline}</p>
+          </div>
+
+          {plan.badge ? (
+            <div className="flex flex-col gap-1">
+              {plan.name === "Pro" ? (
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(251, 146, 60, 0.9), rgba(249, 115, 22, 0.9))", borderColor: "rgba(251, 146, 60, 0.5)", boxShadow: "0 4px 12px rgba(251, 146, 60, 0.3)" }}>
+                  <Zap className="h-3.5 w-3.5" />
+                  {plan.badge}
+                </div>
+              ) : plan.name === "Pro Plus" ? (
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(59, 130, 246, 0.9), rgba(99, 102, 241, 0.9))", borderColor: "rgba(59, 130, 246, 0.5)", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)" }}>
+                  <Rocket className="h-3.5 w-3.5" />
+                  {plan.badge}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
-        {/* Price */}
-        <div className="mb-6">
-          <div className="flex items-baseline gap-1 mb-1">
-            <span className="text-5xl font-bold text-white">${price}</span>
-            <span className="text-slate-400">
-              {isYearly ? "/year" : "/month"}
+        <div className="mb-6 rounded-2xl border border-white/10 bg-black/15 p-5">
+          <div className="flex items-end gap-3">
+            <span className="text-4xl font-bold text-white sm:text-5xl">
+              {plan.price}
             </span>
           </div>
-          {isYearly && savings > 0 && (
-            <p className="text-xs text-green-400 font-semibold">
-              Save {savings}% with yearly billing
-            </p>
-          )}
-          <p className="text-xs text-slate-500 mt-2">{tier.description}</p>
+          <p className="mt-2 text-sm text-white/70">{plan.priceNote}</p>
         </div>
 
-        {/* CTA Button */}
-        <button
-          className={`
-            w-full py-3 px-4 rounded-xl mb-8
-            transition-all duration-300
-            ${
-              isPopular
-                ? "bg-gradient-to-r from-amber-400 to-orange-400 text-white hover:shadow-2xl hover:scale-105 active:scale-95"
-                : "bg-slate-700/50 text-white hover:bg-slate-600 active:scale-95"
-            }
-          `}
-        >
-          {tier.cta}
-        </button>
+        <p className="mb-5 text-sm leading-6 text-white/75">{plan.summary}</p>
 
-        {/* Features List */}
-        <div className="space-y-4 flex-1">
-          {tier.features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <Check
-                className={`
-                  w-5 h-5 flex-shrink-0 mt-0.5
-                  ${isPopular ? "text-amber-400" : "text-cyan-400"}
-                `}
-              />
-              <span className="text-sm text-slate-300">{feature}</span>
+        <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
+          <PricingPlanButton
+            isLoggedIn={isLoggedIn}
+            isCurrentPlan={isCurrentPlan}
+            isFeatured={isFeatured}
+          />
+        </form>
+
+        <div className="space-y-3">
+          {plan.features.map((feature) => (
+            <div key={feature} className="flex items-start gap-3 text-sm text-white/80">
+              <Check className="mt-0.5 h-4 w-4 flex-none text-emerald-300" />
+              <span>{feature}</span>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
-export function Pricing() {
-  const [isYearly, setIsYearly] = useState(false);
+export async function Pricing() {
+  const session = await auth();
+  const currentPlan = session?.user?.subscriptionPlan;
+  const isLoggedIn = Boolean(session);
 
   return (
-    <section
-      className="relative  py-20"
-    >
+    <section className="relative overflow-hidden py-20 sm:py-24">
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,158,11,0.18),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.12),transparent_30%)] pointer-events-none" /> */}
 
-      <div className="relative max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <h1 className="text-4xl sm:text-5xl text-white font-bold">
-            Simple, Transparent Pricing
-          </h1>
-          <p className="text-lg md:text-xl mt-2 text-slate-300 max-w-2xl mx-auto drop-shadow-md mb-8">
-            Choose the perfect plan for your reading journey. Always flexible.
-            Always fair.
-          </p>
-
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4">
-            <span
-              className={`text-sm font-medium ${
-                !isYearly ? "text-white" : "text-slate-400"
-              }`}
-            >
-              Monthly
-            </span>
-            <button
-              onClick={() => setIsYearly(!isYearly)}
-              className={`
-                relative w-14 h-8 rounded-full p-1
-                transition-all duration-300
-                ${isYearly ? "bg-primary" : "bg-slate-700"}
-              `}
-            >
-              <div
-                className={`
-                  w-6 h-6 rounded-full bg-white
-                  transition-all duration-300
-                  ${isYearly ? "translate-x-6" : "translate-x-0"}
-                `}
-              />
-            </button>
-            <span
-              className={`text-sm font-medium ${
-                isYearly ? "text-white" : "text-slate-400"
-              }`}
-            >
-              Yearly
-            </span>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/80 backdrop-blur-sm">
+            <Sparkles className="h-4 w-4 text-amber-300" />
+            Subscription plans for families
           </div>
+          <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+            Pick the plan that matches your child’s reading journey
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
+            Free gives families a meaningful start, Pro expands personalization,
+            and Pro Plus unlocks the fullest reading experience.
+          </p>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {pricingTiers.map((tier) => (
-            <PricingCard
-              key={tier.id}
-              tier={tier}
-              isYearly={isYearly}
-              isPopular={tier.popular || false}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {plans.map((plan, index) => (
+            <PlanCard
+              key={plan.name}
+              plan={plan}
+              index={index}
+              currentPlan={currentPlan}
+              isLoggedIn={isLoggedIn}
             />
           ))}
+        </div>
+
+        <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-black/20 backdrop-blur-md">
+          <div className="border-b border-white/10 px-6 py-5 sm:px-8">
+            <h3 className="text-xl font-semibold text-white">Feature comparison</h3>
+            <p className="mt-1 text-sm text-white/65">
+              A quick view of what each plan includes at a glance.
+            </p>
+          </div>
+
+          <div className="grid gap-4 p-6 sm:p-8">
+            <div className="grid grid-cols-4 gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/45">
+              <div>Feature</div>
+              <div className="text-center">Free</div>
+              <div className="text-center">Pro</div>
+              <div className="text-center">Pro Plus</div>
+            </div>
+
+            {featureMatrix.map((feature) => (
+              <div
+                key={feature.label}
+                className="grid grid-cols-4 gap-3 rounded-2xl border border-white/8 bg-white/5 px-4 py-4 text-sm text-white/80"
+              >
+                <div className="font-medium text-white">{feature.label}</div>
+                <div className="text-center font-semibold text-emerald-300">{feature.free}</div>
+                <div className="text-center font-semibold text-amber-300">{feature.pro}</div>
+                <div className="text-center font-semibold text-sky-300">{feature.proPlus}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -90,26 +90,26 @@ function ReadingPlanStatusCardContent({ childId }: { childId: string }) {
     );
   }
 
-  if (status.status === "ACTIVE" && status.isActive) {
-    return (
-      <div className="rounded-xl border border-green-200/50 dark:border-green-800/50 bg-green-50/80 dark:bg-green-950/30 p-4 md:p-6">
-        <div className="flex items-start gap-3">
-          <CheckCircle2 className="h-5 w-5 mt-0.5 text-green-600 dark:text-green-400 shrink-0" />
-          <div>
-            <h3 className="font-heading text-lg text-green-900 dark:text-green-100">
-              {t("readyTitle")}
-            </h3>
-            <p className="text-sm text-green-800 dark:text-green-200 mt-1">
-              {t("readyDescription", {
-                ready: status.readyStories,
-                total: status.totalStories,
-              })}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (status.status === "ACTIVE" && status.isActive) {
+  //   return (
+  //     <div className="rounded-xl border border-green-200/50 dark:border-green-800/50 bg-green-50/80 dark:bg-green-950/30 p-4 md:p-6">
+  //       <div className="flex items-start gap-3">
+  //         <CheckCircle2 className="h-5 w-5 mt-0.5 text-green-600 dark:text-green-400 shrink-0" />
+  //         <div>
+  //           <h3 className="font-heading text-lg text-green-900 dark:text-green-100">
+  //             {t("readyTitle")}
+  //           </h3>
+  //           <p className="text-sm text-green-800 dark:text-green-200 mt-1">
+  //             {t("readyDescription", {
+  //               ready: status.readyStories,
+  //               total: status.totalStories,
+  //             })}
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="rounded-xl border border-black/10 bg-card p-4 md:p-6">

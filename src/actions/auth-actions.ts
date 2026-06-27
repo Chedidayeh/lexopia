@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/src/auth";
+import { auth, signIn, unstable_update } from "@/src/auth";
 import { hashPassword } from "@/src/lib/password";
 import { prisma } from "@/src/lib/prisma";
 import type {
@@ -16,6 +16,7 @@ import {
   validatePassword,
 } from "@/src/lib/auth/validators";
 import { findUserByEmail } from "@/src/lib/auth/user";
+import type { SubscriptionPlan } from "@/src/types/types";
 
 function fail<T = void>(
   code: AuthErrorCode,
@@ -61,6 +62,7 @@ export async function registerAction(
         password: hashedPassword,
         role: "PARENT",
         newUser: true,
+        subscriptionPlan: "FREE",
       },
     });
 
@@ -69,6 +71,27 @@ export async function registerAction(
     console.error("[registerAction]", error);
     return fail("REGISTRATION_FAILED", "Registration failed");
   }
+}
+
+export async function selectSubscriptionPlanAction(
+  plan: SubscriptionPlan,
+): Promise<void> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return;
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { subscriptionPlan: plan },
+  });
+
+  await unstable_update({
+    user: {
+      subscriptionPlan: plan,
+    },
+  });
 }
 
 export async function credentialsSignInAction(

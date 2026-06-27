@@ -1,7 +1,7 @@
 "use server";
 import type { OnboardingFormData } from "@/src/lib/onboarding/schemas";
 import { auth, unstable_update } from "@/src/auth";
-import { parseOnboardingForm } from "@/src/lib/onboarding/schemas";
+import { parseOnboardingForm, validateOnboardingFormWithPlan } from "@/src/lib/onboarding/schemas";
 import type { OnboardingFormState } from "@/src/lib/onboarding/schemas";
 import type {
   OnboardingActionResult,
@@ -9,6 +9,11 @@ import type {
   OnboardingErrorCode,
 } from "@/src/lib/onboarding/types";
 import { prisma } from "@/src/lib/prisma";
+import {
+  getPlanConstraints,
+  getReadingPlanConfiguration,
+  type ReadingPlanConfiguration,
+} from "@/src/lib/onboarding/plan-constraints";
 
 function fail<T = void>(
   code: OnboardingErrorCode,
@@ -25,6 +30,27 @@ export async function completeOnboardingAction(
   if (!session?.user?.id) {
     return fail("UNAUTHORIZED", "You must be logged in to complete onboarding");
   }
+
+  // Get user's subscription plan
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { subscriptionPlan: true },
+  });
+
+  if (!user) {
+    return fail("UNAUTHORIZED", "User not found");
+  }
+
+  // Get plan constraints and validate
+  const constraints = getPlanConstraints(user.subscriptionPlan);
+  const planValidation = validateOnboardingFormWithPlan(input, constraints);
+  if (!planValidation.valid) {
+    return fail("VALIDATION_ERROR", planValidation.message, planValidation.field);
+  }
+
+  const readingPlanConfiguration = getReadingPlanConfiguration(
+    user.subscriptionPlan,
+  );
 
   const parsed = parseOnboardingForm(input);
   if (!parsed.success) {
@@ -50,7 +76,12 @@ export async function completeOnboardingAction(
   }
 
   try {
-    const result = await createChildProfile(session.user.id, data);
+    const result = await createChildProfile(
+      session.user.id,
+      data,
+      readingPlanConfiguration,
+      constraints.maxChildProfiles,
+    );
 
     await prisma.user.update({
       where: { id: session.user.id },
@@ -84,7 +115,16 @@ export type CreatedChildProfile = {
 export async function createChildProfile(
   parentId: string,
   data: OnboardingFormData,
+  readingPlanConfiguration: ReadingPlanConfiguration,
+  maxChildProfiles: number,
 ): Promise<CreatedChildProfile> {
+  const childCount = await prisma.child.count({
+    where: { parentId },
+  });
+
+  if (childCount >= maxChildProfiles) {
+    throw new Error("CHILD_PROFILE_LIMIT_REACHED");
+  }
 
   const result = await prisma.$transaction(
     async (tx) => {
@@ -92,7 +132,7 @@ export async function createChildProfile(
         data: {
           parentId,
           name: data.name,
-          age: data.age,
+          birthDate: data.birthDate,
           gender: data.gender,
           primaryLanguage: data.primaryLanguage,
           readingLevel: data.readingLevel,
@@ -104,6 +144,18 @@ export async function createChildProfile(
           storiesPerWeek: data.storiesPerWeek,
           sessionDurationMins: data.sessionDurationMins,
           activateNotifications: data.activateNotifications,
+          parentSubscriptionPlan:
+            readingPlanConfiguration.parentSubscriptionPlan,
+          maxThemesAllowed: readingPlanConfiguration.maxThemesAllowed,
+          maxStoriesPerWeekAllowed:
+            readingPlanConfiguration.maxStoriesPerWeekAllowed,
+          maxChallengeTypes: readingPlanConfiguration.maxChallengeTypes,
+          maxWorldsPerRoadmapAllowed:
+            readingPlanConfiguration.maxWorldsPerRoadmapAllowed,
+          maxEpisodesPerWorldAllowed:
+            readingPlanConfiguration.maxEpisodesPerWorldAllowed,
+          maxChaptersPerStoryAllowed:
+            readingPlanConfiguration.maxChaptersPerStoryAllowed,
           onboardingCompletedAt: new Date(),
         },
       });

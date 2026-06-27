@@ -5,6 +5,8 @@ export function buildPlanningSystemPrompt(): string {
 
 Design a personalized reading plan as structured JSON matching the required schema.
 
+You must respect the reading plan configuration provided in the user prompt. Do not exceed any configured plan limits.
+
 Rules:
 - Create exactly one roadmap per child interest (no more, no fewer).
 - Each roadmap must have between worldsPerRoadmapMin and worldsPerRoadmapMax worlds (inclusive).
@@ -20,7 +22,7 @@ Rules:
 }
 
 export function buildPlanningUserPrompt(context: PlanningContext): string {
-  const { readingPlan, child, sizing } = context;
+  const { readingPlan, child, readingPlanConfiguration, sizing } = context;
   const minStories =
     readingPlan.sourceInterests.length *
     readingPlan.worldsPerRoadmapMin *
@@ -44,6 +46,15 @@ Child profile:
 - Story tone: ${readingPlan.storyTone ?? "adventurous"}
 - Session duration (minutes): ${readingPlan.sessionDurationMins}
 - Stories per week: ${readingPlan.storiesPerWeek}
+
+Reading plan configuration (hard limits from the parent's subscription tier):
+- Parent subscription plan: ${readingPlanConfiguration.parentSubscriptionPlan}
+- Max themes allowed: ${readingPlanConfiguration.maxThemesAllowed}
+- Max stories per week allowed: ${readingPlanConfiguration.maxStoriesPerWeekAllowed}
+- Max challenge types: ${readingPlanConfiguration.maxChallengeTypes}
+- Max worlds per roadmap allowed: ${readingPlanConfiguration.maxWorldsPerRoadmapAllowed}
+- Max episodes per world allowed: ${readingPlanConfiguration.maxEpisodesPerWorldAllowed}
+- Max chapters per story allowed: ${readingPlanConfiguration.maxChaptersPerStoryAllowed}
 
 Story length per episode (one session = one episode; fixed targets for content generation):
 - Session duration: ${readingPlan.sessionDurationMins} minutes
