@@ -204,8 +204,27 @@ function collectStories(
   return Array.from(stories.values());
 }
 
-export function toChildProfile(child: ChildWithDashboardRelations): ChildProfile {
-  const ageGroup = getAgeGroupForChildAge(child.age);
+function calculateAge(birthDate: Date): number {
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const hasHadBirthdayThisYear =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate());
+
+  if (!hasHadBirthdayThisYear) {
+    age--;
+  }
+
+  return Math.max(age, 0);
+}
+
+export function toChildProfile(
+  child: ChildWithDashboardRelations,
+): ChildProfile {
+  const age = child.birthDate ? calculateAge(child.birthDate) : 0;
 
   const activeStoryIds = new Set(
     child.roadmaps.flatMap((roadmap) =>
@@ -226,7 +245,7 @@ export function toChildProfile(child: ChildWithDashboardRelations): ChildProfile
       avatar: null,
     },
     name: child.name,
-    age: child.age,
+    age: age,
     gender: child.gender,
     totalStars: child.totalStars,
     currentLevel: child.currentLevel,
@@ -236,8 +255,6 @@ export function toChildProfile(child: ChildWithDashboardRelations): ChildProfile
     activateWeeklyReports: false,
     storiesPerWeek: child.storiesPerWeek,
     sessionDurationMins: child.sessionDurationMins,
-    ageGroupId: ageGroup.id,
-    ageGroupName: ageGroup.name,
     favoriteThemes: child.interests,
     interests: child.interests,
     progress: filteredStoryProgress.map(mapStoryProgressToProgress),

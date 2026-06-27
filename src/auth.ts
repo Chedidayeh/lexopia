@@ -33,7 +33,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+declare module "@auth/core/jwt" {
   interface JWT {
     id?: string;
     email?: string;
@@ -125,7 +125,8 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       session.user.parentId = token.parentId as string | undefined;
       session.user.token = token.accessToken as string | undefined;
       session.user.newUser = token.newUser as boolean;
-      session.user.subscriptionPlan = token.subscriptionPlan as SubscriptionPlan;
+      session.user.subscriptionPlan =
+        token.subscriptionPlan as SubscriptionPlan;
       return session;
     },
   },

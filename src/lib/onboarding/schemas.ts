@@ -9,8 +9,16 @@ import {
   STORIES_PER_WEEK_OPTIONS,
   STORY_TONES,
 } from "./constants";
-import { LanguageCode, ReadingLevel, SubscriptionPlan } from "@/src/types/types";
-import { getPlanConstraints, getAvailableChallengesByPlan, type PlanConstraints } from "./plan-constraints";
+import {
+  LanguageCode,
+  ReadingLevel,
+  SubscriptionPlan,
+} from "@/src/types/types";
+import {
+  getPlanConstraints,
+  getAvailableChallengesByPlan,
+  type PlanConstraints,
+} from "./plan-constraints";
 
 const languageCodeSchema = z.enum(
   [LanguageCode.EN, LanguageCode.FR, LanguageCode.AR],
@@ -47,10 +55,9 @@ const characterTypeSchema = z.enum(
 );
 
 const storyToneValues = STORY_TONES.map((t) => t.value);
-const storyToneSchema = z.enum(
-  storyToneValues as [string, ...string[]],
-  { message: "selectStoryTone" },
-);
+const storyToneSchema = z.enum(storyToneValues as [string, ...string[]], {
+  message: "selectStoryTone",
+});
 
 export const onboardingStep2Schema = z.object({
   name: z
@@ -58,15 +65,13 @@ export const onboardingStep2Schema = z.object({
     .trim()
     .min(2, "childNameRequired")
     .max(30, "childNameRequired"),
-  birthDate: z
-    .date({ message: "invalidBirthDate" })
-    .refine(
-      (date) => {
-        const age = calculateAgeFromDate(date);
-        return age >= MIN_CHILD_AGE && age <= MAX_CHILD_AGE;
-      },
-      { message: "invalidBirthDate" }
-    ),
+  birthDate: z.date({ message: "invalidBirthDate" }).refine(
+    (date) => {
+      const age = calculateAgeFromDate(date);
+      return age >= MIN_CHILD_AGE && age <= MAX_CHILD_AGE;
+    },
+    { message: "invalidBirthDate" },
+  ),
   gender: z.enum(["boy", "girl"], { message: "selectGender" }),
 });
 
@@ -74,7 +79,10 @@ export function calculateAgeFromDate(birthDate: Date): number {
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
   return age;
@@ -100,7 +108,8 @@ export const onboardingStep4Schema = z.object({
 // Plan-aware schema builders
 export function createStep3SchemaWithPlan(constraints: PlanConstraints) {
   // Map constraints to the corresponding plan to get available challenges
-  let plan = SubscriptionPlan.FREE;
+  let plan: SubscriptionPlan = SubscriptionPlan.FREE;
+
   if (constraints.challengeTypesCount === "core") {
     plan = SubscriptionPlan.PRO;
   } else if (constraints.challengeTypesCount === "all") {
@@ -116,8 +125,9 @@ export function createStep3SchemaWithPlan(constraints: PlanConstraints) {
       .array(challengeTypeSchema)
       .min(1, "selectAtLeastOneChallenge")
       .refine(
-        (challenges) => challenges.every((c) => availableChallenges.includes(c)),
-        "invalidChallenge"
+        (challenges) =>
+          challenges.every((c) => availableChallenges.includes(c)),
+        "invalidChallenge",
       ),
   });
 }
@@ -138,7 +148,9 @@ export function createStep5SchemaWithPlan(constraints: PlanConstraints) {
     storiesPerWeek: z
       .number({ message: "selectReadingFrequency" })
       .refine(
-        (v) => v <= constraints.maxStoriesPerWeek && (STORIES_PER_WEEK_OPTIONS as readonly number[]).includes(v),
+        (v) =>
+          v <= constraints.maxStoriesPerWeek &&
+          (STORIES_PER_WEEK_OPTIONS as readonly number[]).includes(v),
         "selectReadingFrequency",
       ),
     sessionDurationMins: z
@@ -312,7 +324,7 @@ export function validateOnboardingFormWithPlan(
       readingLevel: data.readingLevel,
       assignedChallenges: data.assignedChallenges,
     },
-    constraints
+    constraints,
   );
   if (!step3Valid.valid) return step3Valid;
 
@@ -322,7 +334,7 @@ export function validateOnboardingFormWithPlan(
       favoriteCharacterType: data.favoriteCharacterType,
       storyTone: data.storyTone,
     },
-    constraints
+    constraints,
   );
   if (!step4Valid.valid) return step4Valid;
 
@@ -332,7 +344,7 @@ export function validateOnboardingFormWithPlan(
       sessionDurationMins: data.sessionDurationMins,
       activateNotifications: data.activateNotifications,
     },
-    constraints
+    constraints,
   );
   return step5Valid;
 }
