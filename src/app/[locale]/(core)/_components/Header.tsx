@@ -98,7 +98,7 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
               )}
               <Profile session={session.data!} />
               <ModeToggle />
-              <Switcher />
+              {/* <Switcher /> */}
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
                   <div className="flex items-center gap-2 pt-2">
                     <Profile session={session.data!} />
 
-                    <Switcher />
+                    {/* <Switcher /> */}
                     <ModeToggle />
                   </div>
                 </nav>

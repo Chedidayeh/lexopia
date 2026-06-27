@@ -59,7 +59,7 @@ const Header = ({ session }: { session: Session | null }) => {
                 </Link>
               )}
               <ModeToggle />
-              <Switcher />
+              {/* <Switcher /> */}
               {user ? <Profile session={session} /> : <LoginForm />}{" "}
             </div>
           </div>
@@ -81,7 +81,7 @@ const Header = ({ session }: { session: Session | null }) => {
 
           <div className="flex items-center gap-2">
             <ModeToggle />
-            <Switcher />
+            {/* <Switcher /> */}
             {user ? <Profile session={session} /> : <LoginForm />}{" "}
           </div>
         </div>
