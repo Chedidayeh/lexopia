@@ -52,7 +52,7 @@ export function Switcher() {
           <DropdownMenuItem
             key={l.code}
             onClick={() => handleChange(l.code)}
-            className={l.code === locale ? "font-bold bg-slate-200 dark:bg-slate-600/50 text-primary " : "cursor-pointer"}
+            className={l.code === locale ? "font-semibold bg-slate-200 dark:bg-slate-600/50 text-primary " : "cursor-pointer"}
           >
             {l.label}
             {l.code === locale && <span className="ml-auto text-primary">✓</span>}

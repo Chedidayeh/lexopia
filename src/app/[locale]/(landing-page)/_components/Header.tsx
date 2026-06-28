@@ -46,7 +46,7 @@ const Header = ({ session }: { session: Session | null }) => {
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <span className="font-heading text-white text-2xl font-bold">
+              <span className="font-heading text-white text-2xl font-semibold">
                 Lexopia
               </span>
             </Link>
@@ -58,7 +58,7 @@ const Header = ({ session }: { session: Session | null }) => {
                   <Button size={"sm"}>Admin</Button>
                 </Link>
               )}
-              <ModeToggle />
+              {/* <ModeToggle /> */}
               {/* <Switcher /> */}
               {user ? <Profile session={session} /> : <LoginForm />}{" "}
             </div>
@@ -74,13 +74,13 @@ const Header = ({ session }: { session: Session | null }) => {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             onClick={() => setMobileOpen(false)}
           >
-            <span className="font-heading text-white text-lg font-bold">
+            <span className="font-heading text-white text-lg font-semibold">
               Lexopia
             </span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <ModeToggle />
+            {/* <ModeToggle /> */}
             {/* <Switcher /> */}
             {user ? <Profile session={session} /> : <LoginForm />}{" "}
           </div>

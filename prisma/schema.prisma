@@ -1,5 +1,5 @@
 // =============================================================================
-// Dyslexia App — Prisma Schema
+// Lexopia App — Prisma Schema
 // =============================================================================
 // Supports the learning-path model:
 //   Child → ReadingPlan (many) → Roadmap (per interest) → World (2–3) → StoryArc → Story (8 episodes)
@@ -256,6 +256,9 @@ model Child {
   // --- Parent notification preferences ---
   activateNotifications Boolean @default(false)
 
+  // --- Content history for uniqueness and creativity ---
+  contentHistory Json @default("{}") // Tracks used worlds, characters, story arcs, and completed content
+
   // --- Relations ---
   roadmaps       Roadmap[]
   readingPlans   ReadingPlan[]
@@ -297,7 +300,7 @@ model ChildDailyActivity {
 //   World        — 2–3 themed zones inside a roadmap
 //   StoryArc     — one connected narrative spanning 8 episodes inside a world
 //   Story        — single reading session / episode (chapters + challenges)
-//   Chapter      — one dyslexia-friendly page of text
+//   Chapter      — one Lexopia-friendly page of text
 //   Challenge    — learning verification after a page or story
 //
 // =============================================================================
@@ -548,7 +551,7 @@ model StoryTranslation {
   @@index([storyId, languageCode])
 }
 
-/// One story page — a single screen of narrative text (dyslexia-friendly layout).
+/// One story page — a single screen of narrative text (Lexopia-friendly layout).
 model Chapter {
   id      String @id @default(cuid())
   storyId String

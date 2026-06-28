@@ -245,6 +245,7 @@ export function toChildProfile(
       avatar: null,
     },
     name: child.name,
+    birthDate: child.birthDate || undefined,
     age: age,
     gender: child.gender,
     totalStars: child.totalStars,

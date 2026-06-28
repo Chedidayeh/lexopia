@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { StoryPage, splitSentences } from "./storyDataTransform";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 interface StoryContentProps {
   currentPage: StoryPage;
   textSize: "small" | "medium" | "large";
@@ -22,10 +23,33 @@ const StoryContent = ({
   };
 
   const sentences = splitSentences(currentPage.text);
+  const storyContainerRef = useRef<HTMLDivElement>(null);
+  const sentenceRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  // Scroll to top when page changes (for mobile view)
+  useEffect(() => {
+    if (window.innerWidth < 768 && storyContainerRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [currentPage.pageNumber]);
+
+  // Scroll to highlighted sentence when audio is playing
+  useEffect(() => {
+    if (highlightedSentence !== undefined && sentenceRefs.current[highlightedSentence]) {
+      const highlightedElement = sentenceRefs.current[highlightedSentence];
+      if (highlightedElement) {
+        highlightedElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+  }, [highlightedSentence]);
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
+        ref={storyContainerRef}
         key={currentPage.pageNumber}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -54,9 +78,12 @@ const StoryContent = ({
           {sentences.map((sentence, idx) => (
             <span
               key={idx}
+              ref={(el) => {
+                sentenceRefs.current[idx] = el;
+              }}
               className={
                 idx === highlightedSentence
-                  ? "bg-accent rounded-lg"
+                  ? "bg-accent rounded-sm"
                   : ""
               }
             >

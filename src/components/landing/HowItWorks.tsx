@@ -93,7 +93,7 @@ function StepCard({ step, isHovered, onHover, index }: StepCardProps) {
           className={`
             absolute -top-4 -left-4
             w-10 h-10 rounded-full
-            flex items-center justify-center font-bold text-lg bg-primary
+            flex items-center justify-center font-semibold text-lg bg-primary
             text-white
             transition-all duration-300
             ${isHovered ? "scale-125 shadow-2xl" : ""}
@@ -118,7 +118,7 @@ function StepCard({ step, isHovered, onHover, index }: StepCardProps) {
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
+          <h3 className="text-xl font-semibold text-white mb-2">{step.title}</h3>
 
           {/* Description */}
           <p className="text-sm text-slate-300 mb-4 flex-1">
@@ -165,7 +165,7 @@ export function HowItWorks() {
       <div className="relative  max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16 md:mb-20">
-          <h1 className="text-4xl sm:text-5xl text-white font-bold">
+          <h1 className="text-4xl sm:text-5xl text-white font-semibold">
             How It Works
           </h1>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">

@@ -1,11 +1,20 @@
-import type { PlanningContext } from "./collect-planning-context";
+import type { PlanningContext, ContentHistory } from "./collect-planning-context";
 
 export function buildPlanningSystemPrompt(): string {
-  return `You are a children's reading curriculum planning agent for dyslexia-friendly learning.
+  return `You are a children's reading curriculum planning agent for Lexopia-friendly learning.
 
 Design a personalized reading plan as structured JSON matching the required schema.
 
 You must respect the reading plan configuration provided in the user prompt. Do not exceed any configured plan limits.
+
+CREATIVITY AND UNIQUENESS REQUIREMENTS (CRITICAL):
+- Every new reading plan MUST be creative and different from previous plans
+- Avoid reusing world names, character names, or story arc concepts from the content history
+- Create fresh, original content that expands the child's reading experience
+- Vary story tones, settings, character types, and narrative structures
+- Be imaginative and innovative while staying age-appropriate
+- If the child has completed certain interests, explore new angles or fresh perspectives
+- The goal is to provide variety and prevent content fatigue
 
 Rules:
 - Create exactly one roadmap per child interest (no more, no fewer).
@@ -16,13 +25,13 @@ Rules:
 - Episode summaries should flow as a serial narrative with clear continuity.
 - Every episode must include a challengeTypes array with the planned challenge types for that story.
 - Each episode is sized for one reading session (chapter count and word targets are fixed per session duration).
-- Titles and descriptions must be age-appropriate, dyslexia-friendly, and match the child's story tone and character preference.
+- Titles and descriptions must be age-appropriate, Lexopia-friendly, and match the child's story tone and character preference.
 - Use the child's primary language context for naming style (content will be translated later).
 - Do not include markdown or extra keys outside the schema.`;
 }
 
 export function buildPlanningUserPrompt(context: PlanningContext): string {
-  const { readingPlan, child, readingPlanConfiguration, sizing } = context;
+  const { readingPlan, child, readingPlanConfiguration, sizing, contentHistory } = context;
   const minStories =
     readingPlan.sourceInterests.length *
     readingPlan.worldsPerRoadmapMin *
@@ -31,6 +40,8 @@ export function buildPlanningUserPrompt(context: PlanningContext): string {
     readingPlan.sourceInterests.length *
     readingPlan.worldsPerRoadmapMax *
     readingPlan.storiesPerWorld;
+
+  const contentHistorySection = buildContentHistorySection(contentHistory);
 
   return `Create a reading plan blueprint for this child.
 
@@ -68,6 +79,8 @@ Structural requirements:
 - Episodes per world (connected arc): exactly ${readingPlan.storiesPerWorld}
 - Total stories in plan: approximately ${minStories} to ${maxStories}
 
+${contentHistorySection}
+
 Challenge distribution (required on every episode):
 - Each episode must include challengeTypes: an array of exactly ${sizing.challengesPerStory} challenge type strings
 - Only use types from the assigned list: ${readingPlan.assignedChallenges.join(", ")}
@@ -79,4 +92,33 @@ Challenge distribution (required on every episode):
 For each roadmap, pick the matching interest slug from the interests list.
 For each world, provide a storyArc with title, synopsis, continuityBible (characters, setting, plotThreads, tone), and ${readingPlan.storiesPerWorld} episodes.
 Each episode needs: episodeNumber, episodeTitle, episodeSummary, and challengeTypes.`;
+}
+
+function buildContentHistorySection(contentHistory: ContentHistory): string {
+  const sections: string[] = [];
+
+  if (contentHistory.usedWorlds.length > 0) {
+    sections.push(`PREVIOUSLY USED WORDS (avoid these names): ${contentHistory.usedWorlds.join(", ")}`);
+  }
+
+  if (contentHistory.usedCharacters.length > 0) {
+    sections.push(`PREVIOUSLY USED CHARACTERS (avoid these names): ${contentHistory.usedCharacters.join(", ")}`);
+  }
+
+  if (contentHistory.usedStoryArcs.length > 0) {
+    sections.push(`PREVIOUSLY USED STORY ARCS (avoid these concepts): ${contentHistory.usedStoryArcs.join(", ")}`);
+  }
+
+  if (contentHistory.completedInterests.length > 0) {
+    sections.push(`COMPLETED INTERESTS (explore fresh perspectives): ${contentHistory.completedInterests.join(", ")}`);
+  }
+
+  if (sections.length === 0) {
+    return "CONTENT HISTORY: This is the child's first reading plan. Be creative and original!";
+  }
+
+  return `CONTENT HISTORY:
+${sections.join("\n")}
+
+Use this history to create fresh, original content that differs from previous plans while still matching the child's interests and preferences.`;
 }

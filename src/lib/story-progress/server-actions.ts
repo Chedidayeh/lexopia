@@ -522,6 +522,7 @@ export async function recordChallengeAttemptAction(input: {
 export async function completeStoryAction(input: {
   childId: string;
   storyId: string;
+  timeSpentSeconds?: number;
 }): Promise<{ success: boolean; nextStoryId: string | null }> {
   const session = await auth();
   if (!session?.user?.id) return { success: false, nextStoryId: null };
@@ -534,7 +535,36 @@ export async function completeStoryAction(input: {
   );
   if (!access) return { success: false, nextStoryId: null };
 
-  const progress = await prisma.childStoryProgress.update({
+  const { progress, session: gameSession } = await getOrCreateGameSession(
+    input.childId,
+    input.storyId,
+  );
+
+  // Record final time checkpoint if time is provided
+  if (input.timeSpentSeconds && input.timeSpentSeconds > 0 && progress.currentChapterOrder) {
+    const currentChapter = await prisma.chapter.findFirst({
+      where: { storyId: input.storyId, order: progress.currentChapterOrder },
+      select: { id: true },
+    });
+
+    if (currentChapter) {
+      await recordSessionTimeCheckpoint(
+        gameSession.id,
+        currentChapter.id,
+        input.timeSpentSeconds,
+      );
+    }
+
+    // Update total time spent on story progress
+    await prisma.childStoryProgress.update({
+      where: { id: progress.id },
+      data: {
+        totalTimeSpentSeconds: { increment: input.timeSpentSeconds },
+      },
+    });
+  }
+
+  const updatedProgress = await prisma.childStoryProgress.update({
     where: {
       childId_storyId: {
         childId: input.childId,
@@ -549,11 +579,13 @@ export async function completeStoryAction(input: {
 
   await prisma.gameSession.updateMany({
     where: {
-      childStoryProgressId: progress.id,
+      childStoryProgressId: updatedProgress.id,
       endedAt: null,
     },
     data: { endedAt: new Date() },
   });
+
+  await syncChildDailyActivity(input.childId);
 
   try {
     await requestChildOrchestration(

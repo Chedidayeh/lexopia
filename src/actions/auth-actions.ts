@@ -17,6 +17,7 @@ import {
 } from "@/src/lib/auth/validators";
 import { findUserByEmail } from "@/src/lib/auth/user";
 import type { SubscriptionPlan } from "@/src/types/types";
+import { getReadingPlanConfiguration, getAvailableChallengesByPlan } from "@/src/lib/onboarding/plan-constraints";
 
 function fail<T = void>(
   code: AuthErrorCode,
@@ -82,9 +83,30 @@ export async function selectSubscriptionPlanAction(
     return;
   }
 
+  // Get the new reading plan configuration for this plan
+  const newConfig = getReadingPlanConfiguration(plan);
+  const newChallenges = getAvailableChallengesByPlan(plan);
+
+  // Update user's subscription plan
   await prisma.user.update({
     where: { id: session.user.id },
     data: { subscriptionPlan: plan },
+  });
+
+  // Update all children's reading plan configuration to match the new plan
+  await prisma.child.updateMany({
+    where: { parentId: session.user.id },
+    data: {
+      parentSubscriptionPlan: newConfig.parentSubscriptionPlan,
+      maxThemesAllowed: newConfig.maxThemesAllowed,
+      maxStoriesPerWeekAllowed: newConfig.maxStoriesPerWeekAllowed,
+      storiesPerWeek: newConfig.maxStoriesPerWeekAllowed,
+      maxChallengeTypes: newConfig.maxChallengeTypes,
+      assignedChallenges: newChallenges,
+      maxWorldsPerRoadmapAllowed: newConfig.maxWorldsPerRoadmapAllowed,
+      maxEpisodesPerWorldAllowed: newConfig.maxEpisodesPerWorldAllowed,
+      maxChaptersPerStoryAllowed: newConfig.maxChaptersPerStoryAllowed,
+    },
   });
 
   await unstable_update({

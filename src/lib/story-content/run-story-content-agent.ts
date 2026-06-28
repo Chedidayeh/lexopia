@@ -60,15 +60,23 @@ async function markStoryContentFailed(params: {
     outputSnapshot,
   } = params;
 
+  // Ensure errorMessage is a string
+  const safeErrorMessage = String(errorMessage || "Unknown error");
+
+  // Use inputSnapshot directly but ensure it's an object
+  const safeInputSnapshot = inputSnapshot && typeof inputSnapshot === 'object' ? inputSnapshot : { error: "Invalid input snapshot" };
+
+  const safeOutputSnapshot = outputSnapshot ?? { error: safeErrorMessage };
+
   await prisma.$transaction([
     prisma.agentJob.update({
       where: { id: agentJobId },
       data: {
         status: AgentJobStatus.FAILED,
         completedAt: new Date(),
-        error: errorMessage,
-        inputSnapshot,
-        outputSnapshot: outputSnapshot ?? { error: errorMessage },
+        error: safeErrorMessage,
+        inputSnapshot: safeInputSnapshot,
+        outputSnapshot: safeOutputSnapshot,
       },
     }),
     prisma.story.update({
@@ -87,9 +95,9 @@ async function markStoryContentFailed(params: {
         readingPlanId,
         storyArcId,
         storyId,
-        inputSnapshot,
-        outputSnapshot: outputSnapshot ?? { error: errorMessage },
-        error: errorMessage,
+        inputSnapshot: safeInputSnapshot,
+        outputSnapshot: safeOutputSnapshot,
+        error: safeErrorMessage,
         durationMs: Date.now() - startedAt,
       },
     }),
@@ -161,10 +169,10 @@ async function generateAllChallengesWithLlm(
   const mergedChallenges: StoryChallengesBlueprint["challenges"] = [];
 
   for (const batch of batches) {
-    const batchTypes = context.plannedChallengeTypes.slice(
+    const batchTypes = context.plannedChallengeTypes?.slice(
       batch.startIndex,
       batch.startIndex + batch.count,
-    );
+    ) ?? [];
     let lastBatchError: string | undefined;
     let batchBlueprint: StoryChallengesBlueprint | null = null;
 
@@ -237,42 +245,71 @@ export async function runStoryContentAgent(params: {
     throw new Error(`Story ${storyId} not found`);
   }
 
-  const inputSnapshot = buildStoryContentInputSnapshot(context);
+  let inputSnapshot: object;
+  try {
+    inputSnapshot = buildStoryContentInputSnapshot(context);
+  } catch (error) {
+    console.error("Error building input snapshot:", error);
+    inputSnapshot = { error: "Failed to build input snapshot", contextError: String(error) };
+  }
   let chaptersBlueprint: StoryChaptersBlueprint | null = null;
   let lastChaptersError: string | undefined;
 
   for (let attempt = 1; attempt <= MAX_LLM_ATTEMPTS; attempt += 1) {
     try {
-      const candidate = normalizeChaptersBlueprint(
-        await generateChaptersWithLlm(context, lastChaptersError),
-      );
+      const rawResult = await generateChaptersWithLlm(context, lastChaptersError);
+      if (!rawResult) {
+        lastChaptersError = "LLM returned no result";
+        continue;
+      }
+      const candidate = normalizeChaptersBlueprint(rawResult);
+      if (!candidate?.chapters) {
+        lastChaptersError = "Normalized blueprint has no chapters";
+        continue;
+      }
       const validation = validateChaptersBlueprint(candidate, context);
       if (!validation.valid) {
-        lastChaptersError = validation.error;
+        // Ensure validation.error is a string
+        lastChaptersError = typeof validation.error === 'string' ? validation.error : "Validation failed";
         continue;
       }
       chaptersBlueprint = candidate;
       break;
     } catch (error) {
-      lastChaptersError = formatStoryLlmError(error);
+      const formattedError = formatStoryLlmError(error);
+      lastChaptersError = typeof formattedError === 'string' ? formattedError : "Unknown LLM error";
     }
   }
 
   if (!chaptersBlueprint) {
-    const errorMessage =
-      lastChaptersError ?? "Story content agent failed to produce valid chapters";
+    const errorMessage = "Story content agent failed to produce valid chapters";
 
-    await markStoryContentFailed({
-      agentJobId,
-      storyId,
-      childId: context.child.id,
-      readingPlanId: context.readingPlan.id,
-      storyArcId: context.storyArc.id,
-      inputSnapshot,
-      errorMessage,
-      startedAt,
-      outputSnapshot: { validationError: errorMessage },
-    });
+    try {
+      // Log context for debugging
+      console.log("Context properties:", {
+        hasChild: !!context.child,
+        hasReadingPlan: !!context.readingPlan,
+        hasStoryArc: !!context.storyArc,
+        childId: context.child?.id,
+        readingPlanId: context.readingPlan?.id,
+        storyArcId: context.storyArc?.id,
+        lastChaptersError: String(lastChaptersError || "none"),
+      });
+
+      await markStoryContentFailed({
+        agentJobId,
+        storyId,
+        childId: context.child.id,
+        readingPlanId: context.readingPlan?.id ?? null,
+        storyArcId: context.storyArc?.id ?? null,
+        inputSnapshot,
+        errorMessage,
+        startedAt,
+        outputSnapshot: { validationError: errorMessage, lastError: String(lastChaptersError || "none") },
+      });
+    } catch (markError) {
+      console.error("Failed to mark story content as failed:", markError);
+    }
 
     throw new Error(errorMessage);
   }
@@ -300,8 +337,8 @@ export async function runStoryContentAgent(params: {
       agentJobId,
       storyId,
       childId: context.child.id,
-      readingPlanId: context.readingPlan.id,
-      storyArcId: context.storyArc.id,
+      readingPlanId: context.readingPlan?.id ?? null,
+      storyArcId: context.storyArc?.id ?? null,
       inputSnapshot,
       errorMessage,
       startedAt,
@@ -334,8 +371,8 @@ export async function runStoryContentAgent(params: {
       agentJobId,
       storyId,
       childId: context.child.id,
-      readingPlanId: context.readingPlan.id,
-      storyArcId: context.storyArc.id,
+      readingPlanId: context.readingPlan?.id ?? null,
+      storyArcId: context.storyArc?.id ?? null,
       inputSnapshot,
       errorMessage,
       startedAt,
@@ -370,8 +407,8 @@ export async function runStoryContentAgent(params: {
         agentType: AgentType.STORY,
         trigger: AgentTrigger.MANUAL_REGENERATION,
         childId: context.child.id,
-        readingPlanId: context.readingPlan.id,
-        storyArcId: context.storyArc.id,
+        readingPlanId: context.readingPlan?.id ?? null,
+        storyArcId: context.storyArc?.id ?? null,
         storyId,
         inputSnapshot,
         outputSnapshot: {

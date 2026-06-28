@@ -21,6 +21,7 @@ interface OverviewTabProps {
   selectedChild: ChildProfile | undefined;
   handleChildAdded: () => void;
   userRole: RoleType;
+  parentSubscriptionPlan?: string;
 }
 
 export default function OverviewTab({
@@ -28,6 +29,7 @@ export default function OverviewTab({
   selectedChild,
   handleChildAdded,
   userRole,
+  parentSubscriptionPlan,
 }: OverviewTabProps) {
   const t = useTranslations("ParentDashboard");
   const tOnboarding = useTranslations("Onboarding");
@@ -237,6 +239,7 @@ export default function OverviewTab({
         notificationToggle={notificationToggle}
         setNotificationToggle={setNotificationToggle}
         handleChildAdded={handleChildAdded}
+        parentSubscriptionPlan={parentSubscriptionPlan as any}
       />
     </>
   );

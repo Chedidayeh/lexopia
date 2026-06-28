@@ -31,7 +31,7 @@ const plans: Plan[] = [
       "1 selected theme",
       "Basic reading plan generation with 1 roadmap and 1 world",
       "Try the core reading journey",
-      "Simple challenge set",
+      "Simple challenge types",
     ],
   },
   {
@@ -48,9 +48,8 @@ const plans: Plan[] = [
       "3 stories per week",
       "Up to 3 selected themes",
       "More themes and story variety",
-      "All core challenge types",
+      "Only core challenge types",
       "Enhanced reading plan generation",
-      "Progress insights for growing readers",
     ],
   },
   {
@@ -66,8 +65,7 @@ const plans: Plan[] = [
       "Up to 5 child profiles",
       "7 stories per week",
       "Up to 5 selected themes",
-      "The fullest reading experience",
-      "Highest usage flexibility",
+      "The fullest reading experience, all challenge types included",
       "Priority support for families",
     ],
   },
@@ -141,7 +139,7 @@ function PlanCard({
 
         <div className="mb-6 rounded-2xl border border-white/10 bg-black/15 p-5">
           <div className="flex items-end gap-3">
-            <span className="text-4xl font-bold text-white sm:text-5xl">
+            <span className="text-4xl font-semibold text-white sm:text-5xl">
               {plan.price}
             </span>
           </div>
@@ -186,7 +184,7 @@ export async function Pricing() {
             <Sparkles className="h-4 w-4 text-amber-300" />
             Subscription plans for families
           </div>
-          <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
             Pick the plan that matches your child’s reading journey
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">

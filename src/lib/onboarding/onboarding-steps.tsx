@@ -190,7 +190,7 @@ export function ChildBasicsStep({ t, form, updateForm }: StepProps) {
 
         <span
           className={cn(
-            "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold transition-all",
+            "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-semibold transition-all",
             selected
               ? colorClasses.check
               : "border-border text-transparent"
@@ -562,7 +562,7 @@ export function GoalsLaunchStep({ t, form, updateForm, planConstraints }: StepPr
       <div className="space-y-2">
         <Label>
           {t("storiesPerWeekLabel", {
-            childName: form.name || t("childNamePlaceholder"),
+            childName: form.name || "your child",
           })}
         </Label>
         {planNote && (
@@ -598,7 +598,7 @@ export function GoalsLaunchStep({ t, form, updateForm, planConstraints }: StepPr
           <p className="text-sm font-medium">{t("enableReadingReminders")}</p>
           <p className="text-xs text-muted-foreground mt-1">
             {t("enableRemindersDescription", {
-              childName: form.name || t("childNamePlaceholder"),
+              childName: form.name || "your child",
             })}
           </p>
         </div>

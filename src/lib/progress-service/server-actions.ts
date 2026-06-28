@@ -76,8 +76,16 @@ export async function updateNotificationSettingsAction(
 export async function updateChildGeneralSettingsAction(input: {
   childId: string;
   name?: string;
-  storiesPerWeek?: number;
+  birthDate?: Date | null;
+  gender?: string;
+  primaryLanguage?: string;
+  readingLevel?: string;
+  assignedChallenges?: string[];
   interests?: string[];
+  favoriteCharacterType?: string;
+  storyTone?: string;
+  storiesPerWeek?: number;
+  sessionDurationMins?: number;
 }): Promise<{ success: boolean }> {
   const session = await auth();
   if (!session?.user?.id) return { success: false };
@@ -95,10 +103,16 @@ export async function updateChildGeneralSettingsAction(input: {
     where: { id: input.childId },
     data: {
       ...(input.name !== undefined ? { name: input.name } : {}),
-      ...(input.storiesPerWeek !== undefined
-        ? { storiesPerWeek: input.storiesPerWeek }
-        : {}),
+      ...(input.birthDate !== undefined ? { birthDate: input.birthDate } : {}),
+      ...(input.gender !== undefined ? { gender: input.gender } : {}),
+      ...(input.primaryLanguage !== undefined ? { primaryLanguage: input.primaryLanguage as any } : {}),
+      ...(input.readingLevel !== undefined ? { readingLevel: input.readingLevel as any } : {}),
+      ...(input.assignedChallenges !== undefined ? { assignedChallenges: input.assignedChallenges } : {}),
       ...(input.interests !== undefined ? { interests: input.interests } : {}),
+      ...(input.favoriteCharacterType !== undefined ? { favoriteCharacterType: input.favoriteCharacterType } : {}),
+      ...(input.storyTone !== undefined ? { storyTone: input.storyTone } : {}),
+      ...(input.storiesPerWeek !== undefined ? { storiesPerWeek: input.storiesPerWeek } : {}),
+      ...(input.sessionDurationMins !== undefined ? { sessionDurationMins: input.sessionDurationMins } : {}),
     },
   });
 

@@ -299,9 +299,13 @@ export function useStoryReadingSession(
 
   const handleStoryComplete = useCallback(async () => {
     await persistChapterVisit(currentPage, currentPage, "complete");
-    const result = await completeStoryAction({ childId, storyId: story.id });
+    const result = await completeStoryAction({ 
+      childId, 
+      storyId: story.id,
+      timeSpentSeconds: sessionElapsedSeconds,
+    });
     return result.nextStoryId;
-  }, [childId, currentPage, persistChapterVisit, story.id]);
+  }, [childId, currentPage, persistChapterVisit, sessionElapsedSeconds, story.id]);
 
   return {
     currentPage,

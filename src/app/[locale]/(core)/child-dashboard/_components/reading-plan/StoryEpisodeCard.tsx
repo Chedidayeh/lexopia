@@ -66,7 +66,7 @@ export default function StoryEpisodeCard({
     <div className="relative flex gap-4">
       <div className="flex flex-col items-center shrink-0">
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${
+          className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold ${
             access.kind === "completed"
               ? "border-primary bg-primary text-primary-foreground"
               : access.kind === "continue"

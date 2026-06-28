@@ -1,9 +1,10 @@
 "use client";
 
-import { Lightbulb, X } from "lucide-react";
+import { Lightbulb, X, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 
 interface ReadingSettingsProps {
   textSize: "small" | "medium" | "large";
@@ -25,6 +26,7 @@ const ReadingSettings = ({
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const locale = useLocale();
+    const { setTheme, resolvedTheme } = useTheme();
   
     const handleChange = (newLocale: string) => {
       if (newLocale === locale) return;
@@ -39,6 +41,10 @@ const ReadingSettings = ({
       // Force a hard reload after changing the locale:
       router.replace(newPathWithParams); // ensures new page fetches fresh data instantly
       router.refresh(); // forces a refresh for server-side data
+    };
+
+    const handleThemeChange = (theme: "light" | "dark") => {
+      setTheme(theme);
     };
 
   const t = useTranslations("StoryReadingInterface");
@@ -98,36 +104,40 @@ const ReadingSettings = ({
           </div>
         </div>
 
-        {/* Language Selection */}
-        <div className="mb-4 sm:mb-6">
+        {/* Theme Selection */}
+        {/* <div className="mb-4 sm:mb-6">
           <label className="block font-body font-semibold text-sm sm:text-base text-foreground mb-2 sm:mb-3">
-            {t("readingSettings.language")}
+            {t("readingSettings.theme")}
           </label>
           <div className="flex gap-2 sm:gap-3">
-            {(["en", "fr", "ar"] as const).map((lang) => {
-              const languageLabels = {
-                en: t("readingSettings.english"),
-                fr: t("readingSettings.french"),
-                ar: t("readingSettings.arabic"),
+            {(["light", "dark"] as const).map((theme) => {
+              const themeLabels = {
+                light: t("readingSettings.light"),
+                dark: t("readingSettings.dark"),
               };
               return (
                 <button
-                  key={lang}
-                  onClick={() => handleChange(lang)}
-                  className={`flex-1 px-2 sm:px-4 py-2 sm:py-3 rounded-lg font-body font-medium text-xs sm:text-sm transition-smooth ${
-                    locale === lang
+                  key={theme}
+                  onClick={() => handleThemeChange(theme)}
+                  className={`flex-1 px-2 sm:px-4 py-2 sm:py-3 rounded-lg font-body font-medium text-xs sm:text-sm transition-smooth flex items-center justify-center gap-2 ${
+                    resolvedTheme === theme
                       ? "bg-accent text-accent-foreground shadow-warm"
                       : "bg-muted hover:bg-accent/20"
                   }`}
                 >
+                  {theme === "light" ? (
+                    <Sun className="w-4 h-4 sm:w-5 sm:h-5" />
+                  ) : (
+                    <Moon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
                   <span className="text-xs sm:text-base">
-                    {languageLabels[lang]}
+                    {themeLabels[theme]}
                   </span>
                 </button>
               );
             })}
           </div>
-        </div>
+        </div> */}
 
         {/* High Contrast */}
         {/* <div className="mb-6">

@@ -107,7 +107,7 @@ const StoryFlowNavigation = ({
       if (nextStoryId) {
         router.push(`/story-reading-interface/${nextStoryId}?childId=${childId}`);
       } else {
-        router.push(`/child-dashboard/${childId}/reading-plan`);
+        router.push(`/child-dashboard/${childId}`);
       }
     }
 
@@ -182,7 +182,7 @@ const StoryFlowNavigation = ({
                 {storyTitle}
               </h1>
 
-              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-bold text-primary">
+              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-semibold text-primary">
                 {currentPage}
               </span> */}
               <span className="font-caption text-xs sm:text-sm text-muted-foreground">

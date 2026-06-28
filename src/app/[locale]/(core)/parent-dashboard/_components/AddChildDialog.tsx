@@ -16,18 +16,25 @@ import { useLocale } from "@/src/contexts/LocaleContext";
 import {
   INITIAL_ONBOARDING_FORM,
   type OnboardingFormState,
-  validateStep2,
   validateStep3WithPlan,
-  validateStep4WithPlan,
   validateStep5WithPlan,
   validateOnboardingFormWithPlan,
+  calculateAgeFromDate,
 } from "@/src/lib/onboarding/schemas";
 import {
-  ChildBasicsStep,
-  GoalsLaunchStep,
+  NameStep,
+  BirthDateStep,
+  GenderStep,
+  LanguageStep,
+  ReadingLevelStep,
+  ChallengesStep,
   InterestsStep,
-  ReadingProfileStep,
-} from "@/src/lib/onboarding/onboarding-steps";
+  CharacterTypeStep,
+  StoryToneStep,
+  StoriesPerWeekStep,
+  NotificationsStep,
+  OverviewStep,
+} from "@/src/lib/onboarding/element-steps";
 import {
   getPlanConstraints,
   type PlanConstraints,
@@ -37,7 +44,7 @@ import { addChildAction } from "../actions/add-child-actions";
 import { getChildProfilesByParentAction } from "@/src/lib/progress-service/server-actions";
 import type { User } from "@/src/lib/dashboard/types";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 12;
 
 const ONBOARDING_ERROR_KEYS = new Set([
   "childNameRequired",
@@ -128,35 +135,94 @@ export default function AddChildDialog({
 
   function validateCurrentStep(): boolean {
     const validators = [
-      () => validateStep2(form),
-      () =>
-        validateStep3WithPlan(
-          {
-            primaryLanguage: form.primaryLanguage,
-            readingLevel: form.readingLevel,
-            assignedChallenges: form.assignedChallenges,
-          },
-          planConstraints,
-        ),
-      () =>
-        validateStep4WithPlan(
-          {
-            interests: form.interests,
-            favoriteCharacterType: form.favoriteCharacterType,
-            storyTone: form.storyTone,
-          },
-          planConstraints,
-        ),
-      () =>
-        validateStep5WithPlan(
-          {
-            storiesPerWeek: form.storiesPerWeek,
-            sessionDurationMins: form.sessionDurationMins,
-            activateNotifications: form.activateNotifications,
-          },
-          planConstraints,
-        ),
+      // Step 1: Name
+      () => {
+        if (!form.name || form.name.trim().length === 0) {
+          return { valid: false, message: "childNameRequired" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 2: Birth date
+      () => {
+        if (!form.birthDate) {
+          return { valid: false, message: "invalidAge" };
+        }
+        const age = calculateAgeFromDate(form.birthDate);
+        if (age < 3 || age > 12) {
+          return { valid: false, message: "invalidAge" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 3: Gender
+      () => {
+        if (!form.gender) {
+          return { valid: false, message: "selectGender" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 4: Language
+      () => {
+        if (!form.primaryLanguage) {
+          return { valid: false, message: "selectLanguageRequired" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 5: Reading level
+      () => {
+        if (!form.readingLevel) {
+          return { valid: false, message: "selectReadingLevel" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 6: Challenges
+      () => validateStep3WithPlan(
+        {
+          primaryLanguage: form.primaryLanguage,
+          readingLevel: form.readingLevel,
+          assignedChallenges: form.assignedChallenges,
+        },
+        planConstraints
+      ),
+      // Step 7: Interests
+      () => {
+        if (form.interests.length === 0) {
+          return { valid: false, message: "selectAtLeastOneTheme" };
+        }
+        const maxThemes = planConstraints?.maxThemes ?? 5;
+        if (form.interests.length > maxThemes) {
+          return { valid: false, message: "maxInterests" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 8: Character type
+      () => {
+        if (!form.favoriteCharacterType) {
+          return { valid: false, message: "selectCharacterType" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 9: Story tone
+      () => {
+        if (!form.storyTone) {
+          return { valid: false, message: "selectStoryTone" };
+        }
+        return { valid: true, message: "" };
+      },
+      // Step 10: Stories per week
+      () => validateStep5WithPlan(
+        {
+          storiesPerWeek: form.storiesPerWeek,
+          sessionDurationMins: form.sessionDurationMins,
+          activateNotifications: form.activateNotifications,
+        },
+        planConstraints
+      ),
+      // Step 11: Notifications (no validation needed, it's optional)
+      () => ({ valid: true, message: "" }),
+      // Step 12: Overview (no validation needed)
+      () => ({ valid: true, message: "" }),
     ];
+    
     const result = validators[step - 1]();
     if (!result.valid) {
       toast.error(t(result.message));
@@ -255,33 +321,6 @@ export default function AddChildDialog({
             </div>
           )}
 
-          <div className="mb-6">
-            <div className="flex justify-between mb-3">
-              {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
-                <motion.div
-                  key={s}
-                  className={`h-8 w-8 rounded-full flex items-center justify-center font-medium text-sm transition-all ${
-                    s < step
-                      ? "bg-primary text-primary-foreground"
-                      : s === step
-                        ? "bg-primary/70 text-primary-foreground border-2 border-primary"
-                        : "bg-muted text-muted-foreground"
-                  }`}
-                  animate={{ scale: s === step ? 1.1 : 1 }}
-                >
-                  {s < step ? <CircleCheck className="w-4 h-4" /> : s}
-                </motion.div>
-              ))}
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-primary rounded-full"
-                animate={{ width: `${progressPercentage}%` }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-              />
-            </div>
-          </div>
-
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -289,13 +328,27 @@ export default function AddChildDialog({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="space-y-4"
+              className="space-y-8"
             >
-              {step === 1 && (
-                <ChildBasicsStep t={t} form={form} updateForm={updateForm} />
-              )}
-              {step === 2 && (
-                <ReadingProfileStep
+              <div className="flex justify-start">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleOpenChange(false)}
+                  className="rounded-full"
+                >
+                  <ChevronLeft className="w-5 h-5 mr-2" />
+                  {t("cancel")}
+                </Button>
+              </div>
+              {step === 1 && <NameStep t={t} form={form} updateForm={updateForm} />}
+              {step === 2 && <BirthDateStep t={t} form={form} updateForm={updateForm} />}
+              {step === 3 && <GenderStep t={t} form={form} updateForm={updateForm} />}
+              {step === 4 && <LanguageStep t={t} form={form} updateForm={updateForm} />}
+              {step === 5 && <ReadingLevelStep t={t} form={form} updateForm={updateForm} />}
+              {step === 6 && (
+                <ChallengesStep
                   t={t}
                   form={form}
                   updateForm={updateForm}
@@ -303,7 +356,7 @@ export default function AddChildDialog({
                   planConstraints={planConstraints}
                 />
               )}
-              {step === 3 && (
+              {step === 7 && (
                 <InterestsStep
                   t={t}
                   form={form}
@@ -312,35 +365,38 @@ export default function AddChildDialog({
                   planConstraints={planConstraints}
                 />
               )}
-              {step === 4 && (
-                <GoalsLaunchStep
+              {step === 8 && <CharacterTypeStep t={t} form={form} updateForm={updateForm} />}
+              {step === 9 && <StoryToneStep t={t} form={form} updateForm={updateForm} />}
+              {step === 10 && (
+                <StoriesPerWeekStep
                   t={t}
                   form={form}
                   updateForm={updateForm}
                   planConstraints={planConstraints}
                 />
               )}
+              {step === 11 && <NotificationsStep t={t} form={form} updateForm={updateForm} />}
+              {step === 12 && <OverviewStep t={t} form={form} updateForm={updateForm} />}
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full sm:flex-1"
-                  onClick={handleBack}
-                  disabled={isSubmitting}
-                >
-                  <BackIcon className="w-4 h-4 mr-2" />
-                  {step === 1
-                    ? tDashboard("addChildDialog.buttons.cancel")
-                    : t("previous")}
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                {step > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full sm:flex-1"
+                    onClick={handleBack}
+                    disabled={isSubmitting}
+                  >
+                    <BackIcon className="w-4 h-4 mr-2" />
+                    {step === 1 ? t("cancel") : t("previous")}
+                  </Button>
+                )}
 
                 {step < TOTAL_STEPS ? (
                   <Button
                     type="button"
                     className="w-full sm:flex-1"
                     onClick={handleNext}
-                    disabled={isSubmitting}
                   >
                     {t("next")}
                     <NextIcon className="w-4 h-4 ml-2" />
@@ -350,25 +406,15 @@ export default function AddChildDialog({
                     type="button"
                     className="w-full sm:flex-1"
                     onClick={handleComplete}
-                    disabled={isSubmitting || childLimitReached}
+                    disabled={isSubmitting}
                   >
-                    {isSubmitting
-                      ? tDashboard("addChildDialog.step3.creating")
-                      : childLimitReached
-                        ? "Plan limit reached"
-                        : tDashboard("addChildDialog.step3.createButton")}
-                    {!isSubmitting && !childLimitReached && (
-                      <NextIcon className="w-4 h-4 ml-2" />
-                    )}
+                    {isSubmitting ? t("settingUp") : t("startExploring")}
+                    {!isSubmitting && <NextIcon className="w-4 h-4 ml-2" />}
                   </Button>
                 )}
               </div>
             </motion.div>
           </AnimatePresence>
-
-          <p className="text-center text-xs text-muted-foreground mt-4">
-            {t("stepOf", { step, total: TOTAL_STEPS })}
-          </p>
         </div>
       </DialogContent>
     </Dialog>

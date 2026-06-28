@@ -26,7 +26,7 @@ const FloatingItems = ({
           <p className="font-caption text-xs sm:text-xs text-muted-foreground uppercase tracking-wider">
             {t("floatingItems.attemptsLabel")}
           </p>
-          <p className="font-data text-base sm:text-lg font-bold text-foreground">
+          <p className="font-data text-base sm:text-lg font-semibold text-foreground">
             {attempts}
           </p>
         </div>
@@ -40,7 +40,7 @@ const FloatingItems = ({
           <p className="font-caption text-xs sm:text-xs text-muted-foreground uppercase tracking-wider">
             {t("floatingItems.hintsUsedLabel")}
           </p>
-          <p className="font-data text-base sm:text-lg font-bold text-foreground">
+          <p className="font-data text-base sm:text-lg font-semibold text-foreground">
             {hintsUsed}/{totalHints}
           </p>
         </div>

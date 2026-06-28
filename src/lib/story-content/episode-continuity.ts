@@ -5,6 +5,31 @@ export type PriorEpisodeRecapEntry = {
   ending: string | null;
 };
 
+export type CharacterContinuityEntry = {
+  name: string;
+  role: string;
+  traits: string[];
+  firstAppearanceEpisode: number;
+  lastAppearanceEpisode: number;
+  status: string; // "active", "inactive", "resolved"
+};
+
+export type PlotThreadContinuityEntry = {
+  id: string;
+  name: string;
+  description: string;
+  introducedEpisode: number;
+  status: string; // "ongoing", "paused", "resolved"
+  lastMentionedEpisode: number;
+};
+
+export type WorldElementContinuityEntry = {
+  name: string;
+  type: string; // "location", "object", "rule", "lore"
+  description: string;
+  introducedEpisode: number;
+};
+
 const RECAP_SUMMARY_MAX_CHARS = 200;
 const RECAP_ENDING_MAX_CHARS = 300;
 const DEFAULT_CLIFFHANGER_MAX_CHARS = 600;
@@ -90,7 +115,7 @@ export function buildPriorEpisodeRecapEntry(params: {
 export function formatPriorEpisodesRecap(
   entries: PriorEpisodeRecapEntry[],
 ): string | null {
-  if (entries.length === 0) {
+  if (!entries || entries.length === 0) {
     return null;
   }
 
@@ -104,6 +129,49 @@ export function formatPriorEpisodesRecap(
         lines.push(`Ended with: ${episode.ending}`);
       }
       return lines.join(" ");
+    })
+    .join("\n");
+}
+
+export function formatCharacterContinuity(
+  characters: CharacterContinuityEntry[],
+): string | null {
+  if (!characters || characters.length === 0) {
+    return null;
+  }
+
+  return characters
+    .map((char) => {
+      const traits = char.traits && char.traits.length > 0 ? ` (traits: ${char.traits.join(", ")})` : "";
+      return `- ${char.name}: ${char.role}${traits} [ep ${char.firstAppearanceEpisode}-${char.lastAppearanceEpisode}, status: ${char.status}]`;
+    })
+    .join("\n");
+}
+
+export function formatPlotThreadContinuity(
+  threads: PlotThreadContinuityEntry[],
+): string | null {
+  if (!threads || threads.length === 0) {
+    return null;
+  }
+
+  return threads
+    .map((thread) => {
+      return `- ${thread.name}: ${thread.description} [introduced ep ${thread.introducedEpisode}, status: ${thread.status}]`;
+    })
+    .join("\n");
+}
+
+export function formatWorldElementContinuity(
+  elements: WorldElementContinuityEntry[],
+): string | null {
+  if (!elements || elements.length === 0) {
+    return null;
+  }
+
+  return elements
+    .map((elem) => {
+      return `- ${elem.name} (${elem.type}): ${elem.description} [introduced ep ${elem.introducedEpisode}]`;
     })
     .join("\n");
 }

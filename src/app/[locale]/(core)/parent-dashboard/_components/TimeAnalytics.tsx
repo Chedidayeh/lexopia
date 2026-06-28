@@ -35,7 +35,7 @@ export default function TimeAnalytics({
             {t("timeAnalytics.stats.totalReadingTime")}
           </p>
           <div className="flex items-baseline gap-1 flex-wrap">
-            <p className="text-3xl font-data font-bold text-pink-600">
+            <p className="text-3xl font-data font-semibold text-pink-600">
               {allTime.totalMinutes}
             </p>
             <span className="text-sm text-pink-500">
@@ -53,7 +53,7 @@ export default function TimeAnalytics({
             {t("timeAnalytics.stats.averagePerDay")}
           </p>
           <div className="flex items-baseline gap-1 flex-wrap">
-            <p className="text-3xl font-data font-bold text-violet-600">
+            <p className="text-3xl font-data font-semibold text-violet-600">
               {allTime.avgMinutesPerDay}
             </p>
             <span className="text-sm text-violet-500">
@@ -74,7 +74,7 @@ export default function TimeAnalytics({
             {t("timeAnalytics.stats.currentStreak")}
           </p>
           <div className="flex items-baseline gap-1">
-            <p className="text-3xl font-data font-bold text-cyan-600">
+            <p className="text-3xl font-data font-semibold text-cyan-600">
               {allTime.currentStreak}
             </p>
             <p className="text-sm text-cyan-500">
@@ -89,7 +89,7 @@ export default function TimeAnalytics({
           <p className="text-sm text-muted-foreground mb-2">
             {t("timeAnalytics.stats.readingActivityRate")}
           </p>
-          <p className="text-2xl font-data font-bold text-foreground">
+          <p className="text-2xl font-data font-semibold text-foreground">
             {activityRate.daysRead}/{activityRate.totalDays}
           </p>
           <div className="flex items-center justify-between mt-3">
@@ -112,7 +112,7 @@ export default function TimeAnalytics({
           <p className="text-sm text-muted-foreground mb-2">
             {t("timeAnalytics.stats.totalStoriesRead")}
           </p>
-          <p className="text-2xl font-data font-bold text-foreground">
+          <p className="text-2xl font-data font-semibold text-foreground">
             {allTime.storiesWithReading}
           </p>
           <p className="text-xs text-muted-foreground mt-3">
@@ -151,8 +151,7 @@ export default function TimeAnalytics({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filledTimeEntries.length === 0 ||
-            !analytics.hasReadingActivity ? (
+            {filledTimeEntries.every((entry) => entry.minutes === 0) ? (
               <TableRow>
                 <TableCell
                   colSpan={3}

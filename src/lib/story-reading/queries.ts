@@ -77,9 +77,6 @@ export async function getStoryByIdForUser(
     if (role !== RoleType.PARENT) {
       return null;
     }
-    if (story.world?.roadmap && !story.world.roadmap.isActive) {
-      return null;
-    }
   }
 
   return toReadingStory(story);

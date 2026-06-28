@@ -35,6 +35,7 @@ interface ChildSidebarProps {
   onChildAdded: () => void;
   userRole: RoleType;
   parentData: User;
+  maxChildProfiles?: number;
 }
 
 export default function ChildSidebar({
@@ -46,9 +47,12 @@ export default function ChildSidebar({
   onChildAdded,
   userRole,
   parentData,
+  maxChildProfiles,
 }: ChildSidebarProps) {
   const t = useTranslations("ParentDashboard");
   const [addChildDialogOpen, setAddChildDialogOpen] = useState(false);
+
+  const childLimitReached = maxChildProfiles !== undefined && childProfiles.length >= maxChildProfiles;
 
   return (
     <div className="flex flex-col items-start gap-4 w-full lg:w-auto">
@@ -101,9 +105,10 @@ export default function ChildSidebar({
             variant="outline"
             className="w-full lg:w-auto"
             onClick={() => setAddChildDialogOpen(true)}
+            disabled={childLimitReached}
           >
             <Plus className="h-4 w-4 mr-1" />
-            {t("addChild")}
+            {childLimitReached ? t("childLimitReached") : t("addChild")}
           </Button>
         )}
       </div>

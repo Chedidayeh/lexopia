@@ -60,7 +60,7 @@ export function About() {
           {/* Left: Mission + Stats */}
           <div>
             <div className="text-left mb-8 md:mb-12">
-              <h1 className="text-4xl sm:text-5xl text-white font-bold">
+              <h1 className="text-4xl sm:text-5xl text-white font-semibold">
                 Built for Educators,
                 <br />
                 Loved by Children
@@ -82,7 +82,7 @@ export function About() {
               <div className="grid grid-cols-2 gap-4">
                 {stats.map((s, i) => (
                   <div key={i} className="text-left">
-                    <p className="text-2xl font-bold text-white">{s.value}</p>
+                    <p className="text-2xl font-semibold text-white">{s.value}</p>
                     <p className="text-sm text-slate-400">{s.label}</p>
                   </div>
                 ))}
@@ -121,7 +121,7 @@ export function About() {
                       {prop.icon}
                     </div>
 
-                    <h3 className="text-xl font-bold text-white mb-2">
+                    <h3 className="text-xl font-semibold text-white mb-2">
                       {prop.title}
                     </h3>
                     <p className="text-slate-300 text-sm leading-relaxed">
@@ -137,7 +137,7 @@ export function About() {
         {/* Core Values */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 backdrop-blur-md">
-            <h4 className="text-xl font-bold text-amber-300 mb-3">
+            <h4 className="text-xl font-semibold text-amber-300 mb-3">
               For Educators
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed">
@@ -149,7 +149,7 @@ export function About() {
           </div>
 
           <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 backdrop-blur-md">
-            <h4 className="text-xl font-bold text-purple-300 mb-3">
+            <h4 className="text-xl font-semibold text-purple-300 mb-3">
               For Children
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed">

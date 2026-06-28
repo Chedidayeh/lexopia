@@ -22,6 +22,8 @@ import {
 } from "@/src/lib/progress-service/server-actions";
 import { Loader2 } from "lucide-react";
 import { usePusherBeams } from "@/src/hooks/use-pusher";
+import { getPlanConstraints } from "@/src/lib/onboarding/plan-constraints";
+import { SubscriptionPlan } from "@/src/types/types";
 
 export default function ParentDashboardInteractive({
   childProfiles: intialChildProfiles,
@@ -54,6 +56,12 @@ export default function ParentDashboardInteractive({
 
   // On-demand child profile fetching state
   const [isLoadingChildProfile, setIsLoadingChildProfile] = useState(false);
+
+  // Get plan constraints for child limit
+  const planConstraints = getPlanConstraints(
+    (parentData.subscriptionPlan as SubscriptionPlan) || SubscriptionPlan.FREE
+  );
+  const maxChildProfiles = planConstraints.maxChildProfiles;
 
   /**
    * Automatically fetch child profile when selected child ID changes
@@ -173,6 +181,7 @@ export default function ParentDashboardInteractive({
             onChildAdded={handleChildAdded}
             userRole={userRole}
             parentData={parentData}
+            maxChildProfiles={maxChildProfiles}
           />
           <div className="flex-1 w-full">
             <DashboardTabs activeTab={activeTab} onTabChange={setActiveTab}>
@@ -187,6 +196,7 @@ export default function ParentDashboardInteractive({
                     selectedChild={fetchedChild}
                     handleChildAdded={handleChildAdded}
                     userRole={userRole}
+                    parentSubscriptionPlan={parentData.subscriptionPlan}
                   />
                   <ReadingPlanTab
                     selectedChild={fetchedChild}

@@ -29,6 +29,62 @@ import { sendParentReadingPlanGeneratedEmail } from "@/src/lib/notifications/par
 
 const MAX_LLM_ATTEMPTS = 3;
 
+async function updateChildContentHistory(params: {
+  childId: string;
+  blueprint: PlanBlueprint;
+}): Promise<void> {
+  const { childId, blueprint } = params;
+
+  // Extract content from the blueprint
+  const usedWorlds: string[] = [];
+  const usedCharacters: string[] = [];
+  const usedStoryArcs: string[] = [];
+
+  for (const roadmap of blueprint.roadmaps) {
+    for (const world of roadmap.worlds) {
+      usedWorlds.push(world.name);
+      usedStoryArcs.push(world.storyArc.title);
+      
+      // Extract characters from continuity bible
+      const continuityBible = world.storyArc.continuityBible as Record<string, any> || {};
+      const characters = continuityBible.characters || [];
+      for (const char of characters) {
+        if (char.name) {
+          usedCharacters.push(char.name);
+        }
+      }
+    }
+  }
+
+  // Get current content history
+  const child = await prisma.child.findUnique({
+    where: { id: childId },
+  });
+
+  if (!child) return;
+
+  const childWithHistory = child as typeof child & { contentHistory?: Record<string, any> };
+  const currentHistory = childWithHistory.contentHistory || {};
+  const currentUsedWorlds = currentHistory.usedWorlds || [];
+  const currentUsedCharacters = currentHistory.usedCharacters || [];
+  const currentUsedStoryArcs = currentHistory.usedStoryArcs || [];
+  const currentCompletedInterests = currentHistory.completedInterests || [];
+
+  // Merge with new content, avoiding duplicates
+  const updatedHistory = {
+    usedWorlds: [...new Set([...currentUsedWorlds, ...usedWorlds])],
+    usedCharacters: [...new Set([...currentUsedCharacters, ...usedCharacters])],
+    usedStoryArcs: [...new Set([...currentUsedStoryArcs, ...usedStoryArcs])],
+    completedInterests: currentCompletedInterests,
+    lastPlanGeneration: new Date().toISOString(),
+  };
+
+  await prisma.child.update({
+    where: { id: childId },
+    data: { contentHistory: updatedHistory as any },
+  });
+}
+
 async function markPlanningFailed(params: {
   agentJobId: string;
   readingPlanId: string;
@@ -249,6 +305,12 @@ export async function runPlanningAgent(params: {
       },
     }),
   ]);
+
+  // Update child's content history with new content from this plan
+  await updateChildContentHistory({
+    childId: context.child.id,
+    blueprint,
+  });
 
   try {
     await requestChildOrchestration(

@@ -5,6 +5,7 @@ export type ChallengeScriptInput = {
   question: string;
   targetWord?: string | null;
   sentenceTemplate?: string | null;
+  answers?: Array<{ text: string; isCorrect?: boolean }> | null;
 };
 
 /** Extract quoted reference word from SOUND_MATCH questions, e.g. "...as 'seed'?". */
@@ -55,6 +56,22 @@ export function buildChallengeQuestionScript(
         return question;
       }
       return `${question} ${targetWord}`;
+    }
+
+    case "WORD_BUILD": {
+      // Extract the correct word from answers (letters with isCorrect: true)
+      const correctLetters = challenge.answers
+        ?.filter((a) => a.isCorrect === true)
+        .map((a) => a.text.trim())
+        .join("")
+        .toUpperCase();
+      
+      if (correctLetters) {
+        // Spell out the word letter by letter
+        const spelledWord = correctLetters.split("").join(", ");
+        return `${question}. Spell the word: ${correctLetters}. The letters are: ${spelledWord}`;
+      }
+      return question;
     }
 
     default:

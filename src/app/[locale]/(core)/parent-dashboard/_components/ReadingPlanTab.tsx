@@ -481,6 +481,10 @@ export default function ReadingPlanTab({
               ))}
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+
+          
+
             {displayPlan.sourceInterests.length > 0 && (
               <div className="rounded-xl border border-black/10 bg-card p-4 md:p-5">
                 <p className="text-sm text-muted-foreground mb-2">{t("interests")}</p>
@@ -514,7 +518,7 @@ export default function ReadingPlanTab({
                 )}
               </div>
             )}
-
+  </div>
             {canGenerateStory && displayPlan.nextStoryToGenerate && (
               <div className="rounded-xl border border-blue-200/50 dark:border-blue-800/50 bg-linear-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/30 dark:to-indigo-950/30 p-4 md:p-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

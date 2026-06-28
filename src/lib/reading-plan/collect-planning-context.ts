@@ -4,11 +4,20 @@ import { prisma } from "@/src/lib/prisma";
 import type { ReadingPlanConfiguration } from "@/src/lib/onboarding/plan-constraints";
 import { getReadingPlanConfigurationFromChild } from "@/src/lib/onboarding/plan-constraints";
 
+export type ContentHistory = {
+  usedWorlds: string[];
+  usedCharacters: string[];
+  usedStoryArcs: string[];
+  completedInterests: string[];
+  lastPlanGeneration: string | null;
+};
+
 export type PlanningContext = {
   readingPlan: ReadingPlan;
   child: Child;
   readingPlanConfiguration: ReadingPlanConfiguration;
   sizing: StorySizing;
+  contentHistory: ContentHistory;
 };
 
 export async function collectPlanningContext(
@@ -32,16 +41,28 @@ export async function collectPlanningContext(
     readingPlanConfiguration,
   );
 
+  // Parse content history from child's contentHistory field
+  const childWithHistory = readingPlan.child as Child & { contentHistory?: Record<string, any> };
+  const contentHistoryData = childWithHistory.contentHistory || {};
+  const contentHistory: ContentHistory = {
+    usedWorlds: contentHistoryData.usedWorlds || [],
+    usedCharacters: contentHistoryData.usedCharacters || [],
+    usedStoryArcs: contentHistoryData.usedStoryArcs || [],
+    completedInterests: contentHistoryData.completedInterests || [],
+    lastPlanGeneration: contentHistoryData.lastPlanGeneration || null,
+  };
+
   return {
     readingPlan,
     child: readingPlan.child,
     readingPlanConfiguration,
     sizing,
+    contentHistory,
   };
 }
 
 export function buildPlanningInputSnapshot(context: PlanningContext) {
-  const { readingPlan, child, readingPlanConfiguration, sizing } = context;
+  const { readingPlan, child, readingPlanConfiguration, sizing, contentHistory } = context;
 
   return {
     child: {
@@ -75,5 +96,6 @@ export function buildPlanningInputSnapshot(context: PlanningContext) {
       storiesPerWorld: readingPlan.storiesPerWorld,
       sizing,
     },
+    contentHistory,
   };
 }

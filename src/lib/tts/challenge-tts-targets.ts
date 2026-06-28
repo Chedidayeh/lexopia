@@ -35,6 +35,7 @@ export function buildChallengeTtsTargets(
         question: challenge.question,
         targetWord: challenge.targetWord,
         sentenceTemplate: challenge.sentenceTemplate,
+        answers: challenge.answers,
       }),
     },
   ];

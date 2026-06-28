@@ -52,14 +52,9 @@ export default async function ParentDashboardPage({
 
   const ageGroups = getDashboardAgeGroups();
 
-  console.log("[Parent Dashboard] Rendering dashboard for parent", {
-
-    childProfiles,
-  
-  });
 
   return (
-    <div className="p-4">
+    <div className="md:p-4">
       <ParentDashboardInteractive
         session={session}
         parentData={parentData}

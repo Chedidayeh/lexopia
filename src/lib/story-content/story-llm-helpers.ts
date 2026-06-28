@@ -4,10 +4,13 @@ export function condenseChapterForChallengesPrompt(
   content: string,
   maxWords = CHAPTER_EXCERPT_MAX_WORDS,
 ): string {
+  if (!content) {
+    return "";
+  }
   const words = content.trim().split(/\s+/).filter(Boolean);
 
-  if (words.length <= maxWords) {
-    return words.join(" ");
+  if (!words || words.length <= maxWords) {
+    return words ? words.join(" ") : "";
   }
 
   const headCount = Math.ceil(maxWords / 2);
@@ -17,18 +20,26 @@ export function condenseChapterForChallengesPrompt(
 }
 
 export function formatStoryLlmError(error: unknown): string {
-  const message =
-    error instanceof Error ? error.message : "LLM invocation failed";
+  try {
+    const message =
+      error instanceof Error ? error.message : "LLM invocation failed";
 
-  if (
-    message.includes("Unterminated string") ||
-    message.includes("OUTPUT_PARSING_FAILURE") ||
-    message.includes("Failed to parse")
-  ) {
-    return `${message}. The model returned truncated or invalid JSON — keep hints under 15 words, keep sentenceTemplate under one short sentence, never repeat text in a loop, and return complete valid JSON.`;
+    if (!message) {
+      return "LLM invocation failed";
+    }
+
+    if (
+      message.includes("Unterminated string") ||
+      message.includes("OUTPUT_PARSING_FAILURE") ||
+      message.includes("Failed to parse")
+    ) {
+      return `${message}. The model returned truncated or invalid JSON — keep hints under 15 words, keep sentenceTemplate under one short sentence, never repeat text in a loop, and return complete valid JSON.`;
+    }
+
+    return message;
+  } catch (e) {
+    return "LLM invocation failed";
   }
-
-  return message;
 }
 
 /** Detects runaway repetition loops in LLM strings (e.g. "a_ve_a_ve_a_ve..."). */

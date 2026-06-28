@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import { useLocale } from "@/src/contexts/LocaleContext";
 import { ChallengeStatus, Story } from "@readdly/shared-types";
 import { useStoryReadingSession } from "../_lib/useStoryReadingSession";
+import { Badge } from "@/src/components/ui/badge";
 
 const SENTENCE_PAUSE_CHARS = 9;
 
@@ -311,21 +312,21 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
                 {currentPageData.hasRiddle && currentChallengeAttempt && (
                   <motion.div
                     layout
-                    className="flex mt-4 flex-col items-center gap-1 sm:gap-2"
+                    className="flex mt-4 text-lg flex-col items-center gap-1 sm:gap-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                   >
                     {currentChallengeAttempt.status ===
                       ChallengeStatus.SOLVED && (
-                      <span className="font-medium text-secondary">
-                        ✓ {t("storyFlowNavigation.challengeSolved")}
-                      </span>
+                        <Badge variant="default">
+                          ✓ {t("storyFlowNavigation.challengeSolved")}
+                        </Badge>
                     )}
                     {currentChallengeAttempt.status ===
                       ChallengeStatus.SKIPPED && (
-                      <span className="font-medium text-primary">
-                        ⊘ {t("storyFlowNavigation.challengeSkipped")}
-                      </span>
+                        <Badge variant="outline">
+                          ⊘ {t("storyFlowNavigation.challengeSkipped")}
+                        </Badge>
                     )}
                   </motion.div>
                 )}

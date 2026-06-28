@@ -101,11 +101,7 @@ export default function ReadingPlanContent({
     }
   }, [initialPlan]);
 
-  useEffect(() => {
-    if (!plan || !planHasPendingContent(plan)) return;
-    const interval = setInterval(() => void fetchPlan(), 5000);
-    return () => clearInterval(interval);
-  }, [plan, fetchPlan]);
+
 
   const primaryStory = useMemo(
     () => (plan ? findPrimaryStoryAction(plan) : null),
@@ -381,7 +377,7 @@ export default function ReadingPlanContent({
                   </div>
                 </div>
 
-                <div className="ps-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {[...world.stories]
                     .sort((a, b) => a.order - b.order)
                     .map((story, index, sorted) => (

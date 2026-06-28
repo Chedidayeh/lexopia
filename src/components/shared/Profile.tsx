@@ -70,7 +70,7 @@ export default function Profile({ session }: { session: Session }) {
                 <User className="w-4 h-4" />
                 <span>{t("profile")}</span>
               </button>
-              {/* <button
+              <button
                 onClick={() => setActiveTab("settings")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                   activeTab === "settings"
@@ -80,7 +80,7 @@ export default function Profile({ session }: { session: Session }) {
               >
                 <Settings className="w-4 h-4" />
                 <span>{t("settings")}</span>
-              </button> */}
+              </button>
               {session?.user?.role === RoleType.ADMIN && (
                 <Link href="/admin-dashboard">
                   <button
@@ -235,35 +235,6 @@ export default function Profile({ session }: { session: Session }) {
                   <h2 className="text-lg md:text-xl font-medium mb-3 md:mb-4">
                     {t("settings")}
                   </h2>
-
-                  {/* Notification Settings */}
-                  <div className="bg-card rounded-lg border border-primary/20 p-3 md:p-6 space-y-3 md:space-y-4 mb-4 md:mb-6">
-                    <h3 className="text-sm md:text-base font-medium">
-                      {t("notificationPreferences")}
-                    </h3>
-                    <div className="space-y-2 md:space-y-3">
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox defaultChecked className="w-4 h-4" />
-                        <span className="text-xs md:text-sm text-gray-500">
-                          {t("emailNotifications")}
-                        </span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox defaultChecked className="w-4 h-4" />
-
-                        <span className="text-xs md:text-sm text-gray-500">
-                          {t("learningProgressUpdates")}
-                        </span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox defaultChecked className="w-4 h-4" />
-
-                        <span className="text-xs md:text-sm text-gray-500">
-                          {t("weeklySummary")}
-                        </span>
-                      </label>
-                    </div>
-                  </div>
 
                   {/* Danger Zone */}
                   <div className="bg-red-50 rounded-lg border border-red-200 p-3 md:p-4">

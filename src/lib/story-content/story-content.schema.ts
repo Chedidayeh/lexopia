@@ -31,7 +31,7 @@ export const challengeBlueprintSchema = z.object({
   sentenceTemplate: z.string().max(180).optional(),
   blankIndex: z.number().int().min(0).optional(),
   answers: z.array(challengeAnswerBlueprintSchema).optional(),
-  hints: z.array(z.string().min(1).max(120)).min(2).max(2),
+  hints: z.array(z.string().min(1).max(120)).min(2).max(2).optional(),
 });
 
 export const storyChallengesSchema = z.object({
@@ -43,10 +43,10 @@ export type StoryChallengesBlueprint = z.infer<typeof storyChallengesSchema>;
 export type ChallengeBlueprint = z.infer<typeof challengeBlueprintSchema>;
 
 export function getRequiredChallengeTypes(
-  assignedChallenges: string[],
+  assignedChallenges: string[] | undefined | null,
   count: number,
 ): string[] {
-  if (assignedChallenges.length === 0) {
+  if (!assignedChallenges || assignedChallenges.length === 0) {
     return [];
   }
 
@@ -57,10 +57,10 @@ export function getRequiredChallengeTypes(
 }
 
 export function resolvePlannedChallengeTypes(
-  story: { plannedChallengeTypes: string[]; challengesPerStory: number },
-  assignedChallenges: string[],
+  story: { plannedChallengeTypes?: string[]; challengesPerStory: number },
+  assignedChallenges: string[] | undefined | null,
 ): string[] {
-  if (story.plannedChallengeTypes.length > 0) {
+  if (story.plannedChallengeTypes && story.plannedChallengeTypes.length > 0) {
     return story.plannedChallengeTypes;
   }
 
@@ -75,7 +75,7 @@ function countWords(text: string): number {
 }
 
 function hasSequentialOrders(orders: number[], expectedCount: number): boolean {
-  if (orders.length !== expectedCount) {
+  if (!orders || orders.length !== expectedCount) {
     return false;
   }
 
@@ -98,6 +98,10 @@ function sortByOrderIfSequential<T extends { order: number }>(
 export function normalizeChaptersBlueprint(
   blueprint: StoryChaptersBlueprint,
 ): StoryChaptersBlueprint {
+  if (!blueprint?.chapters || blueprint.chapters.length === 0) {
+    return { chapters: [] };
+  }
+
   const sorted = sortByOrderIfSequential(blueprint.chapters);
 
   return {
@@ -539,27 +543,37 @@ export function getChapterWordBounds(context: StoryContentContext): {
   minAllowed: number;
   maxAllowed: number;
 } {
-  const expectedCount = context.story.chaptersPerStory;
-  const { targetWordMin, targetWordMax, wordsPerChapter } = context.sizing;
-  const isLongStory = expectedCount >= 30;
-  const slackBelow = Math.max(
-    15,
-    Math.round(wordsPerChapter * (isLongStory ? 0.22 : 0.18)),
-  );
-  const slackAbove = Math.max(
-    20,
-    Math.round(wordsPerChapter * (isLongStory ? 0.15 : 0.12)),
-  );
+  try {
+    const expectedCount = context.story.chaptersPerStory;
+    const { targetWordMin, targetWordMax, wordsPerChapter } = context.sizing;
+    const isLongStory = expectedCount >= 30;
+    const slackBelow = Math.max(
+      15,
+      Math.round(wordsPerChapter * (isLongStory ? 0.22 : 0.18)),
+    );
+    const slackAbove = Math.max(
+      20,
+      Math.round(wordsPerChapter * (isLongStory ? 0.15 : 0.12)),
+    );
 
-  return {
-    targetWordMin,
-    targetWordMax,
-    minAllowed: Math.max(
-      50,
-      targetWordMin - slackBelow - (isLongStory ? 20 : 0),
-    ),
-    maxAllowed: targetWordMax + slackAbove + (isLongStory ? 30 : 0),
-  };
+    return {
+      targetWordMin,
+      targetWordMax,
+      minAllowed: Math.max(
+        50,
+        targetWordMin - slackBelow - (isLongStory ? 20 : 0),
+      ),
+      maxAllowed: targetWordMax + slackAbove + (isLongStory ? 30 : 0),
+    };
+  } catch (error) {
+    // Return safe defaults if context is malformed
+    return {
+      targetWordMin: 250,
+      targetWordMax: 350,
+      minAllowed: 200,
+      maxAllowed: 400,
+    };
+  }
 }
 
 export function validateChaptersBlueprint(
@@ -570,10 +584,10 @@ export function validateChaptersBlueprint(
   const { targetWordMin, targetWordMax, minAllowed, maxAllowed } =
     getChapterWordBounds(context);
 
-  if (blueprint.chapters.length !== expectedCount) {
+  if (!blueprint?.chapters || blueprint.chapters.length !== expectedCount) {
     return {
       valid: false,
-      error: `Expected ${expectedCount} chapters, got ${blueprint.chapters.length}`,
+      error: `Expected ${expectedCount} chapters, got ${blueprint?.chapters?.length ?? 0}`,
     };
   }
 
@@ -589,6 +603,12 @@ export function validateChaptersBlueprint(
   }
 
   for (const chapter of blueprint.chapters) {
+    if (!chapter?.content) {
+      return {
+        valid: false,
+        error: `Chapter ${chapter?.order ?? 'unknown'} has no content`,
+      };
+    }
     const words = countWords(chapter.content);
     if (
       !isChapterWordCountAcceptable(words, minAllowed, maxAllowed)
@@ -614,12 +634,12 @@ export function validateChallengesBatch(
 ): { valid: true } | { valid: false; error: string } {
   const { startOrder, expectedTypes } = batch;
   const maxChapter = context.story.chaptersPerStory;
-  const expectedCount = expectedTypes.length;
+  const expectedCount = expectedTypes?.length ?? 0;
 
-  if (blueprint.challenges.length !== expectedCount) {
+  if (!blueprint?.challenges || blueprint.challenges.length !== expectedCount) {
     return {
       valid: false,
-      error: `Expected ${expectedCount} challenges in this batch, got ${blueprint.challenges.length}`,
+      error: `Expected ${expectedCount} challenges in this batch, got ${blueprint?.challenges?.length ?? 0}`,
     };
   }
 
@@ -633,6 +653,13 @@ export function validateChallengesBatch(
     return {
       valid: false,
       error: `Challenge orders must be ${expectedOrders.join(",")}`,
+    };
+  }
+
+  if (!expectedTypes || expectedTypes.length === 0) {
+    return {
+      valid: false,
+      error: "Expected challenge types array is empty or undefined",
     };
   }
 
@@ -656,7 +683,9 @@ export function validateChallengesBatch(
       };
     }
 
-    if (!challenge.hints || challenge.hints.length !== 2) {
+    // SOUND_MATCH, READ_ALOUD, and LETTER_DISCRIMINATION do not require hints
+    const requiresHints = !["SOUND_MATCH", "READ_ALOUD", "LETTER_DISCRIMINATION"].includes(challenge.type);
+    if (requiresHints && (!challenge.hints || challenge.hints.length !== 2)) {
       return {
         valid: false,
         error: `Challenge ${challenge.order} must have exactly 2 hints`,
@@ -688,14 +717,14 @@ export function validateChallengesBlueprint(
   const maxChapter = context.story.chaptersPerStory;
   const plannedChallengeTypes = context.plannedChallengeTypes;
 
-  if (plannedChallengeTypes.length === 0) {
+  if (!plannedChallengeTypes || plannedChallengeTypes.length === 0) {
     return { valid: false, error: "Story has no planned challenge types" };
   }
 
-  if (blueprint.challenges.length !== expectedCount) {
+  if (!blueprint?.challenges || blueprint.challenges.length !== expectedCount) {
     return {
       valid: false,
-      error: `Expected ${expectedCount} challenges, got ${blueprint.challenges.length}`,
+      error: `Expected ${expectedCount} challenges, got ${blueprint?.challenges?.length ?? 0}`,
     };
   }
 
@@ -759,7 +788,9 @@ export function validateChallengesBlueprint(
       };
     }
 
-    if (!challenge.hints || challenge.hints.length !== 2) {
+    // SOUND_MATCH, READ_ALOUD, and LETTER_DISCRIMINATION do not require hints
+    const requiresHints = !["SOUND_MATCH", "READ_ALOUD", "LETTER_DISCRIMINATION"].includes(challenge.type);
+    if (requiresHints && (!challenge.hints || challenge.hints.length !== 2)) {
       return {
         valid: false,
         error: `Challenge ${challenge.order} must have exactly 2 hints`,

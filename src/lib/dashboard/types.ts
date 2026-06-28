@@ -214,6 +214,9 @@ export type ChildProfile = {
   ageGroupName?: string;
   favoriteThemes?: string[];
   interests?: string[];
+  assignedChallenges?: string[];
+  favoriteCharacterType?: string;
+  storyTone?: string;
   progress?: Progress[];
   badges?: ChildBadge[];
   dailyActivity?: {

@@ -64,10 +64,10 @@ const StoryFlowNavigation = ({
       return;
     }
     if (childId) {
-      router.push(`/child-dashboard/${childId}/reading-plan`);
+      router.push(`/child-dashboard/${childId}`);
       return;
     }
-    router.back();
+    router.push("/parent-dashboard");
   };
 
   const handlePreviousPage = () => {
@@ -92,7 +92,11 @@ const StoryFlowNavigation = ({
     if (isLastPage) {
       setIsStoryComplete(true);
       void onStoryComplete?.();
-      router.push("/admin-dashboard/stories");
+      if (childId) {
+        router.push(`/child-dashboard/${childId}`);
+      } else {
+        router.push("/parent-dashboard");
+      }
     }
 
     // Navigate to next page if not on last page
@@ -166,7 +170,7 @@ const StoryFlowNavigation = ({
                 {storyTitle}
               </h1>
 
-              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-bold text-primary">
+              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-semibold text-primary">
                 {currentPage}
               </span> */}
               <span className="font-caption text-xs sm:text-sm text-muted-foreground">

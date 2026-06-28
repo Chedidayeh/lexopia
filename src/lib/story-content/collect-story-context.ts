@@ -18,6 +18,12 @@ import {
   buildPriorEpisodeRecapEntry,
   type PriorEpisodeRecapEntry,
   resolveEpisodeEnding,
+  type CharacterContinuityEntry,
+  type PlotThreadContinuityEntry,
+  type WorldElementContinuityEntry,
+  formatCharacterContinuity,
+  formatPlotThreadContinuity,
+  formatWorldElementContinuity,
 } from "./episode-continuity";
 
 export type StoryPersonalization = {
@@ -43,6 +49,9 @@ export type StoryContentContext = {
   personalization: StoryPersonalization;
   previousEpisodeBridge: string | null;
   priorEpisodesRecap: PriorEpisodeRecapEntry[];
+  characterContinuity: CharacterContinuityEntry[];
+  plotThreadContinuity: PlotThreadContinuityEntry[];
+  worldElementContinuity: WorldElementContinuityEntry[];
   sizing: StorySizing;
 };
 
@@ -83,7 +92,7 @@ export async function collectStoryContext(
   const assignedChallenges =
     personalization.assignedChallenges?.length
       ? personalization.assignedChallenges
-      : story.world.roadmap.child.assignedChallenges;
+      : story.world.roadmap.child.assignedChallenges ?? [];
 
   const currentEpisodeNumber = story.episodeNumber ?? story.order;
 
@@ -128,6 +137,12 @@ export async function collectStoryContext(
       })
     : null;
 
+  // Extract continuity data from the story arc's continuity bible
+  const continuityBible = story.storyArc.continuityBible as Record<string, any> || {};
+  const characterContinuity: CharacterContinuityEntry[] = continuityBible.characters || [];
+  const plotThreadContinuity: PlotThreadContinuityEntry[] = continuityBible.plotThreads || [];
+  const worldElementContinuity: WorldElementContinuityEntry[] = continuityBible.worldElements || [];
+
   const readingPlanConfiguration = getReadingPlanConfigurationFromChild(
     story.world.roadmap.child,
   );
@@ -143,7 +158,7 @@ export async function collectStoryContext(
       challengesPerStory: story.challengesPerStory,
     },
     assignedChallenges,
-  );
+  ) ?? [];
 
   return {
     story,
@@ -153,11 +168,14 @@ export async function collectStoryContext(
     child: story.world.roadmap.child,
     readingPlan: story.world.roadmap.readingPlan,
     readingPlanConfiguration,
-    assignedChallenges,
+    assignedChallenges: assignedChallenges ?? [],
     plannedChallengeTypes,
     personalization,
     previousEpisodeBridge,
-    priorEpisodesRecap,
+    priorEpisodesRecap: priorEpisodesRecap ?? [],
+    characterContinuity: characterContinuity ?? [],
+    plotThreadContinuity: plotThreadContinuity ?? [],
+    worldElementContinuity: worldElementContinuity ?? [],
     sizing,
   };
 }
@@ -173,6 +191,9 @@ export function buildStoryContentInputSnapshot(context: StoryContentContext) {
     readingPlanConfiguration,
     assignedChallenges,
     plannedChallengeTypes,
+    characterContinuity,
+    plotThreadContinuity,
+    worldElementContinuity,
   } = context;
 
   return {
@@ -185,7 +206,7 @@ export function buildStoryContentInputSnapshot(context: StoryContentContext) {
       chaptersPerStory: story.chaptersPerStory,
       wordsPerChapter: story.wordsPerChapter,
       challengesPerStory: story.challengesPerStory,
-      plannedChallengeTypes: story.plannedChallengeTypes,
+      plannedChallengeTypes: story.plannedChallengeTypes ?? [],
       readingLevel: story.readingLevel,
       sessionDurationMins: story.sessionDurationMins,
     },
@@ -211,9 +232,12 @@ export function buildStoryContentInputSnapshot(context: StoryContentContext) {
       storyTone: readingPlan.storyTone,
       readingPlanConfiguration,
     },
-    assignedChallenges,
-    plannedChallengeTypes,
+    assignedChallenges: assignedChallenges ?? [],
+    plannedChallengeTypes: plannedChallengeTypes ?? [],
     previousEpisodeBridge: context.previousEpisodeBridge,
-    priorEpisodesRecap: context.priorEpisodesRecap,
+    priorEpisodesRecap: context.priorEpisodesRecap ?? [],
+    characterContinuity: characterContinuity ?? [],
+    plotThreadContinuity: plotThreadContinuity ?? [],
+    worldElementContinuity: worldElementContinuity ?? [],
   };
 }

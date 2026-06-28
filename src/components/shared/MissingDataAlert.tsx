@@ -12,6 +12,7 @@ import {
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 interface MissingDataAlertProps {
   message: string;
@@ -26,8 +27,9 @@ export default function MissingDataAlert({
 }: MissingDataAlertProps) {
   const t = useTranslations("CommonComponents")
   const router = useRouter();
+
   const onAction = () => {
-    router.back();
+    router.push("/parent-dashboard");
   };
 
   return (

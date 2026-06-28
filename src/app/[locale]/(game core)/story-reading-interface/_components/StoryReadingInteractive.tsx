@@ -18,6 +18,7 @@ import type {
   StoryChallengeProgress,
   StoryReadingProgress,
 } from "@/src/lib/story-progress/types";
+import { Badge } from "@/src/components/ui/badge";
 
 const SENTENCE_PAUSE_CHARS = 9;
 
@@ -350,15 +351,15 @@ const StoryReadingInteractive = ({
                   >
                     {currentChallengeAttempt.status ===
                       ChallengeStatus.SOLVED && (
-                      <span className="font-medium text-secondary">
-                        ✓ {t("storyFlowNavigation.challengeSolved")}
-                      </span>
+                        <Badge variant="default">
+                          ✓ {t("storyFlowNavigation.challengeSolved")}
+                        </Badge>
                     )}
                     {currentChallengeAttempt.status ===
                       ChallengeStatus.SKIPPED && (
-                      <span className="font-medium text-primary">
-                        ⊘ {t("storyFlowNavigation.challengeSkipped")}
-                      </span>
+                        <Badge variant="outline">
+                          ⊘ {t("storyFlowNavigation.challengeSkipped")}
+                        </Badge>
                     )}
                   </motion.div>
                 )}
