@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Child, ReadingPlan } from "@prisma/client";
 import { deriveStorySizing, type StorySizing } from "@/src/lib/onboarding/story-sizing";
 import { prisma } from "@/src/lib/prisma";
