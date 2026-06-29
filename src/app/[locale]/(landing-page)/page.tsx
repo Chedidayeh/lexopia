@@ -3,6 +3,7 @@
 import { auth } from "@/src/auth";
 import Hero from "@/src/components/landing/hero";
 import { Pricing } from "@/src/components/landing/Pricing";
+import Footer from "@/src/components/landing/Footer";
 
 
 export default async function Home() {
@@ -23,6 +24,8 @@ export default async function Home() {
       <section id="pricing" className="relative z-10 w-full">
         <Pricing />
       </section>
+
+      <Footer />
     </div>
   );
 }
