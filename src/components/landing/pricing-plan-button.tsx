@@ -4,11 +4,13 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
+import { SubscriptionPlan } from "@/src/types/types";
 
 type PricingPlanButtonProps = {
   isLoggedIn: boolean;
   isCurrentPlan: boolean;
   isFeatured: boolean;
+  planKey: SubscriptionPlan;
 };
 
 function PendingSpinner() {
@@ -23,6 +25,7 @@ export function PricingPlanButton({
   isLoggedIn,
   isCurrentPlan,
   isFeatured,
+  planKey,
 }: PricingPlanButtonProps) {
   const router = useRouter();
   return (
@@ -32,9 +35,9 @@ export function PricingPlanButton({
         disabled={!isLoggedIn || isCurrentPlan}
         className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300 ease-out ${
           !isLoggedIn
-            ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+            ? "border border-white/10 bg-white/5 text-white/45"
             : isCurrentPlan
-              ? "cursor-default border border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+              ? "cursor-default border border-white/30 bg-transparent text-white/70"
               : isFeatured
                 ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
                 : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
@@ -49,7 +52,9 @@ export function PricingPlanButton({
             ? "Log in to choose"
             : isCurrentPlan
               ? "Current plan"
-              : "Select plan"}
+              : planKey === SubscriptionPlan.FREE
+                ? "Downgrade to FREE"
+                : "Select plan"}
         </span>
       </button>
     </RefreshOnSubmit>

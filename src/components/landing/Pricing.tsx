@@ -14,10 +14,8 @@ type Plan = {
   badge?: string;
   tagline: string;
   price: string;
-  priceNote: string;
   tone: string;
   features: string[];
-  summary: string;
 };
 
 const plans: Plan[] = [
@@ -26,9 +24,7 @@ const plans: Plan[] = [
     name: "Free",
     tagline: "A simple start for every family.",
     price: "Free",
-    priceNote: "Try the core learning journey.",
     tone: "from-emerald-400/20 via-cyan-400/10 to-transparent",
-    summary: "A simple starting point for families trying the app.",
     features: [
       "1 child profile",
       "1 story per week",
@@ -44,9 +40,7 @@ const plans: Plan[] = [
     badge: "Most balanced",
     tagline: "The everyday family plan.",
     price: "Pro",
-    priceNote: "More variety without added complexity.",
     tone: "from-amber-400/25 via-orange-400/15 to-transparent",
-    summary: "The everyday family plan with broader personalization.",
     features: [
       "Up to 3 child profiles",
       "3 stories per week",
@@ -60,11 +54,9 @@ const plans: Plan[] = [
     key: SubscriptionPlan.PRO_PLUS,
     name: "Pro Plus",
     badge: "Premium",
-    tagline: "Advanced flexibility and performance.",
+    tagline: "The premium tier.",
     price: "Pro Plus",
-    priceNote: "For children who read often and need more variety.",
     tone: "from-sky-400/25 via-indigo-400/15 to-transparent",
-    summary: "The premium tier for maximum flexibility and variety.",
     features: [
       "Up to 5 child profiles",
       "7 stories per week",
@@ -140,7 +132,7 @@ function PlanCard({
               {plan.name === "Pro" ? (
                 <Crown className="h-5 w-5 text-amber-300" />
               ) : plan.name === "Pro Plus" ? (
-                <Sparkles className="h-5 w-5 text-sky-300" />
+                <Rocket className="h-5 w-5 text-sky-300" />
               ) : null}
             </div>
             <p className="mt-2 text-sm text-white/70">{plan.tagline}</p>
@@ -169,10 +161,8 @@ function PlanCard({
               {plan.price}
             </span>
           </div>
-          <p className="mt-2 text-sm text-white/70">{plan.priceNote}</p>
         </div>
 
-        <p className="mb-5 text-sm leading-6 text-white/75">{plan.summary}</p>
 
         {plan.key === SubscriptionPlan.FREE ? (
           <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
@@ -180,17 +170,18 @@ function PlanCard({
               isLoggedIn={isLoggedIn}
               isCurrentPlan={isCurrentPlan}
               isFeatured={isFeatured}
+              planKey={plan.key}
             />
           </form>
         ) : (
           <button
             onClick={handleCheckout}
             disabled={!isLoggedIn || isCurrentPlan || isLoading}
-            className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300 ease-out ${
+            className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
               !isLoggedIn
                 ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
                 : isCurrentPlan
-                  ? "cursor-default border border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                  ? "cursor-default border border-white/30 bg-transparent text-white/70"
                   : isFeatured
                     ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
                     : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
@@ -203,14 +194,14 @@ function PlanCard({
               {isLoading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Processing...
+                  Loading...
                 </>
               ) : !isLoggedIn ? (
                 "Log in to choose"
               ) : isCurrentPlan ? (
                 "Current plan"
               ) : (
-                "Select plan"
+                `Upgrade to ${plan.name}`
               )}
             </span>
           </button>
