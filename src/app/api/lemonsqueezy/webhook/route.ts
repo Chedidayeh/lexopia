@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
 async function handleSubscriptionEvent(data: any, customData: any) {
   const attributes = data.attributes;
-  const userId = customData?.custom?.userId;
+  const userId = customData?.userId;
   
   console.log("[Webhook] Processing subscription event");
   console.log("[Webhook] Custom data:", JSON.stringify(customData));
@@ -132,7 +132,7 @@ async function handleSubscriptionEvent(data: any, customData: any) {
 
 async function handleSubscriptionCancelled(data: any, customData: any) {
   const attributes = data.attributes;
-  const userId = customData?.custom?.userId;
+  const userId = customData?.userId;
   
   if (!userId) {
     console.error("[Webhook] Missing userId in custom data");
@@ -154,7 +154,7 @@ async function handleSubscriptionCancelled(data: any, customData: any) {
 
 async function handlePaymentFailed(data: any, customData: any) {
   const attributes = data.attributes;
-  const userId = customData?.custom?.userId;
+  const userId = customData?.userId;
   
   if (!userId) {
     console.error("[Webhook] Missing userId in custom data");
@@ -171,7 +171,7 @@ async function handlePaymentFailed(data: any, customData: any) {
 
 async function handlePaymentSuccess(data: any, customData: any) {
   const attributes = data.attributes;
-  const userId = customData?.custom?.userId;
+  const userId = customData?.userId;
   const subscriptionId = attributes.subscription_id;
   
   console.log("[Webhook] Processing payment success event");
