@@ -112,9 +112,9 @@ async function handleSubscriptionEvent(data: any, customData: any) {
   await prisma.user.update({
     where: { id: userId },
     data: {
-      lemonSqueezyCustomerId: attributes.customer_id,
-      lemonSqueezySubscriptionId: data.id,
-      lemonSqueezyVariantId: variantId,
+      lemonSqueezyCustomerId: String(attributes.customer_id),
+      lemonSqueezySubscriptionId: String(data.id),
+      lemonSqueezyVariantId: String(variantId),
       subscriptionStatus: attributes.status,
       subscriptionRenewsAt: attributes.renews_at ? new Date(attributes.renews_at) : null,
       subscriptionCancelledAt: null,
@@ -192,7 +192,7 @@ async function handlePaymentSuccess(data: any, customData: any) {
     where: { id: userId },
     data: {
       subscriptionStatus: "active",
-      lemonSqueezySubscriptionId: subscriptionId,
+      lemonSqueezySubscriptionId: String(subscriptionId),
     },
   });
   
