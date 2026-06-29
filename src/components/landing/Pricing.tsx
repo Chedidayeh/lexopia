@@ -92,6 +92,10 @@ function PlanCard({
   const [isLoading, setIsLoading] = useState(false);
   const isFeatured = index === 1;
   const isCurrentPlan = currentPlan === plan.key;
+  
+  // Disable upgrade buttons if user is already on a paid plan
+  const isPaidPlan = currentPlan === SubscriptionPlan.PRO || currentPlan === SubscriptionPlan.PRO_PLUS;
+  const isUpgradeDisabled = isPaidPlan && plan.key !== SubscriptionPlan.FREE && !isCurrentPlan;
 
   const handleCheckout = async () => {
     if (!isLoggedIn || !userId || plan.key === SubscriptionPlan.FREE) return;
@@ -174,37 +178,51 @@ function PlanCard({
             />
           </form>
         ) : (
-          <button
-            onClick={handleCheckout}
-            disabled={!isLoggedIn || isCurrentPlan || isLoading}
-            className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
-              !isLoggedIn
-                ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
-                : isCurrentPlan
-                  ? "cursor-default border border-white/30 bg-transparent text-white/70"
-                  : isFeatured
-                    ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
-                    : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
-            }`}
-          >
-            {!isLoggedIn || isCurrentPlan ? null : (
-              <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/25 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
-            )}
-            <span className="relative z-10 inline-flex items-center gap-2">
-              {isLoading ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Loading...
-                </>
-              ) : !isLoggedIn ? (
-                "Log in to choose"
-              ) : isCurrentPlan ? (
-                "Current plan"
-              ) : (
-                `Upgrade to ${plan.name}`
+          <>
+            <button
+              onClick={handleCheckout}
+              disabled={!isLoggedIn || isCurrentPlan || isLoading || isUpgradeDisabled}
+              className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
+                !isLoggedIn
+                  ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+                  : isCurrentPlan
+                    ? "cursor-default border border-white/30 bg-transparent text-white/70"
+                  : isUpgradeDisabled
+                    ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+                    : isFeatured
+                      ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
+                      : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
+              }`}
+            >
+              {!isLoggedIn || isCurrentPlan || isUpgradeDisabled ? null : (
+                <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/25 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
               )}
-            </span>
-          </button>
+              <span className="relative z-10 inline-flex items-center gap-2">
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Loading...
+                  </>
+                ) : !isLoggedIn ? (
+                  "Log in to choose"
+                ) : isCurrentPlan ? (
+                  "Current plan"
+                ) : isUpgradeDisabled ? (
+                  "disabled"
+                ) : (
+                  `Upgrade to ${plan.name}`
+                )}
+              </span>
+            </button>
+
+            {isCurrentPlan && (plan.key === SubscriptionPlan.PRO || plan.key === SubscriptionPlan.PRO_PLUS) && (
+              <button
+                className="mb-6 w-full  px-4 py-3 hover:underline font-medium cursor-pointer text-red-400 transition-all duration-300 hover:scale-[1.02]"
+              >
+                Cancel plan
+              </button>
+            )}
+          </>
         )}
 
         <div className="space-y-3">
