@@ -46,9 +46,11 @@ const Header = ({ session }: { session: Session | null }) => {
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <span className="font-heading text-white text-2xl font-semibold">
-                Lexopia
-              </span>
+              <img
+                src="/logo.png"
+                alt="Lexopia"
+                className=" w-30"
+              />
             </Link>
 
             {/* Right - Login component (fixed to the far right) */}
@@ -74,9 +76,11 @@ const Header = ({ session }: { session: Session | null }) => {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             onClick={() => setMobileOpen(false)}
           >
-            <span className="font-heading text-white text-lg font-semibold">
-              Lexopia
-            </span>
+            <img
+              src="/logo.png"
+              alt="Lexopia"
+              className="w-30"
+            />
           </Link>
 
           <div className="flex items-center gap-2">

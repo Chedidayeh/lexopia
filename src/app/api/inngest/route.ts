@@ -3,6 +3,7 @@ import { inngest } from "@/src/lib/inngest/client";
 import { planningAgentFunction } from "@/src/lib/inngest/functions/planning-agent";
 import { storyContentAgentFunction } from "@/src/lib/inngest/functions/story-content-agent";
 import { ttsAgentFunction } from "@/src/lib/inngest/functions/tts-agent";
+import { readingReminderFunction } from "@/src/lib/inngest/functions/reading-reminder";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -10,5 +11,6 @@ export const { GET, POST, PUT } = serve({
     planningAgentFunction,
     storyContentAgentFunction,
     ttsAgentFunction,
+    readingReminderFunction,
   ],
 });

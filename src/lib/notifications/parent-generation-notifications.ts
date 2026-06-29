@@ -86,6 +86,8 @@ style="background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30
 <td align="center"
 style="padding:40px;background:linear-gradient(135deg,#2563EB,#4F46E5);color:white;">
 
+<img src="${escapeHtml(appUrl)}/logo.png" alt="Lexopia" style="height:50px;width:auto;margin-bottom:15px;" />
+
 <div style="font-size:44px;">📚✨</div>
 
 <h1 style="margin:15px 0 8px;font-size:28px;">
@@ -255,6 +257,8 @@ style="background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30
 <td align="center"
 style="padding:40px;background:linear-gradient(135deg,#9333EA,#2563EB);color:white;">
 
+<img src="${escapeHtml(appUrl)}/logo.png" alt="Lexopia" style="height:50px;width:auto;margin-bottom:15px;" />
+
 <div style="font-size:48px;">🌟📖</div>
 
 <h1 style="margin:15px 0 8px;font-size:28px;">
@@ -337,6 +341,140 @@ Each story is uniquely personalized to improve reading skills, vocabulary, and c
 <td style="padding:24px;background:#F9FAFB;text-align:center;font-size:13px;color:#9CA3AF;">
 
 Thank you for supporting your child's reading journey with Lexopia.
+
+<br><br>
+
+© ${new Date().getFullYear()} Lexopia
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+`;
+
+  return sendParentEmail({
+    to: parentEmail,
+    subject,
+    text,
+    html,
+  });
+}
+
+export async function sendParentReadingReminderEmail(childId: string) {
+  const child = await prisma.child.findUnique({
+    where: { id: childId },
+    select: {
+      name: true,
+      parent: {
+        select: {
+          email: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  const parentEmail = child?.parent.email;
+  if (!child || !parentEmail) {
+    return { success: false as const, reason: "missing-parent-email" };
+  }
+
+  const childName = child.name;
+  const appUrl = getAppUrl();
+  const subject = `Time for ${childName} to read!`;
+  const text = [
+    `Hi${child.parent.name ? ` ${child.parent.name}` : ""},`,
+    "",
+    `It's time for ${childName} to continue their reading journey!`,
+    `Regular reading helps build confidence and improves skills.`,
+    `Open the app: ${appUrl}`,
+  ].join("\n");
+
+const html = `
+<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f4f7fb;font-family:Arial,sans-serif;">
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+<tr>
+<td align="center" style="padding:40px 20px;">
+
+<table width="620" cellspacing="0" cellpadding="0"
+style="background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.08);">
+
+<tr>
+<td align="center"
+style="padding:40px;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;">
+
+<img src="${escapeHtml(appUrl)}/logo.png" alt="Lexopia" style="height:50px;width:auto;margin-bottom:15px;" />
+
+<div style="font-size:44px;">📚✨</div>
+
+<h1 style="margin:15px 0 8px;font-size:28px;">
+Time to Read!
+</h1>
+
+<p style="margin:0;font-size:16px;opacity:.9;">
+A quick reminder to keep the reading journey going.
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:40px;">
+
+<p style="font-size:17px;">
+Hello${
+  child.parent.name
+    ? ` <strong>${escapeHtml(child.parent.name)}</strong>`
+    : ""
+},
+</p>
+
+<p style="font-size:16px;color:#4B5563;line-height:1.7;">
+It's time for <strong>${escapeHtml(childName)}</strong> to continue their reading adventure!
+Regular reading practice helps build confidence, improves vocabulary, and makes learning fun.
+</p>
+
+<div style="text-align:center;margin:35px 0;">
+
+<a
+href="${escapeHtml(appUrl)}"
+style="
+background:#F59E0B;
+color:white;
+padding:15px 34px;
+border-radius:999px;
+text-decoration:none;
+font-weight:bold;
+display:inline-block;
+">
+
+🚀 Open Lexopia
+
+</a>
+
+</div>
+
+<p style="font-size:15px;color:#6B7280;line-height:1.7;">
+Every reading session brings your child one step closer to becoming a confident reader. Keep up the great work!
+</p>
+
+</td>
+</tr>
+
+<tr>
+<td style="padding:24px;background:#F9FAFB;text-align:center;font-size:13px;color:#9CA3AF;">
+
+You're receiving this email to help keep your child's reading journey on track.
 
 <br><br>
 

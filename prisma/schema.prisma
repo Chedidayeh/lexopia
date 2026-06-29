@@ -279,12 +279,13 @@ model Child {
 
 /// Last activity timestamp — drives streak and push notification logic.
 model ChildDailyActivity {
-  id           String    @id @default(cuid())
-  childId      String    @unique
-  child        Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
-  lastActiveAt DateTime?
-  currentStreak Int      @default(0)
-  longestStreak Int      @default(0)
+  id                  String    @id @default(cuid())
+  childId             String    @unique
+  child               Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  lastActiveAt        DateTime?
+  currentStreak       Int       @default(0)
+  longestStreak       Int       @default(0)
+  lastReminderSentAt  DateTime? // Tracks when the last reading reminder was sent
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
