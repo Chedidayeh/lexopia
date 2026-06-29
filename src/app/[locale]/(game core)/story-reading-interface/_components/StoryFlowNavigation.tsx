@@ -128,13 +128,13 @@ const StoryFlowNavigation = ({
         transition={{ duration: 0.28 }}
         className={`absolute top-0 left-0 right-0 border-b bg-card shadow-warm-md transition-smooth pointer-events-auto`}
       >
-        <div className="relative flex items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 min-h-16 sm:min-h-20">
+        <div className="relative flex items-center justify-center px-6 sm:px-6 md:px-6 lg:px-8 py-3 sm:py-4 min-h-16 sm:min-h-20">
           {/* Back Button */}
           <Button
             variant={"outline"}
             onClick={handleBack}
             aria-label="Back"
-            className={`absolute ${isRTL ? "right-2 sm:right-3 md:right-4 lg:right-8" : "left-2 sm:left-3 md:left-4 lg:left-8"} text-xs sm:text-sm`}
+            className={`absolute ${isRTL ? "right-4 sm:right-4 md:right-4 lg:right-8" : "left-4 sm:left-4 md:left-4 lg:left-8"} text-xs sm:text-sm`}
           >
             {isRTL ? (
               <ChevronRight size={18} className="sm:size-5" />
@@ -195,7 +195,7 @@ const StoryFlowNavigation = ({
           )}
 
           {/* Stars earned display */}
-          <div className={`absolute ${isRTL ? "left-2 sm:left-3 md:left-4 lg:left-8" : "right-2 sm:right-3 md:right-4 lg:right-8"} flex items-center gap-3 sm:gap-2 md:gap-4`}>
+          <div className={`absolute ${isRTL ? "left-4 sm:left-4 md:left-4 lg:left-8" : "right-4 sm:right-4 md:right-4 lg:right-8"} flex items-center gap-3 sm:gap-2 md:gap-4`}>
             <div className="flex items-center gap-0.5 sm:gap-1">
               <Star
                 size={16}
@@ -228,7 +228,7 @@ const StoryFlowNavigation = ({
           transition={{ duration: 0.28 }}
           className={`fixed bottom-0 left-0 right-0 border-t bg-card shadow-warm-md transition-smooth pointer-events-auto z-50`}
         >
-          <div className="relative flex items-center justify-between px-2 sm:px-4 md:px-8 lg:px-16 xl:px-24 py-3 sm:py-4 min-h-16 sm:min-h-20">
+          <div className="relative flex items-center justify-between px-6 sm:px-6 md:px-8 lg:px-16 xl:px-24 py-3 sm:py-4 min-h-16 sm:min-h-20">
             {/* Previous Button */}
             <Button
               onClick={handlePreviousPage}

@@ -167,7 +167,7 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
                 <span className="text-white">{subscriptionPlan}</span>
               </div>
             )}
-            <ModeToggle />
+            {/* <ModeToggle /> */}
 
             <Profile session={session.data!} />
           </div>

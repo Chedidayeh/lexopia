@@ -55,7 +55,7 @@ const StoryContent = ({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.3 }}
-        className={`flex flex-col gap-8 ${highContrast ? "bg-black text-white" : "text-foreground"}`}
+        className={`flex flex-col gap-8 px-2 ${highContrast ? "bg-black text-white" : "text-foreground"}`}
       >
         {/* Story Image */}
         {currentPage.image && (

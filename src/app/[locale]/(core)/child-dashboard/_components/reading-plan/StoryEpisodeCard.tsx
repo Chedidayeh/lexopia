@@ -118,7 +118,7 @@ export default function StoryEpisodeCard({
               access.kind === "generating" ? (
                 <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
               ) : (
-                <Lock className="h-5 w-5 text-muted-foreground" />
+                <Lock className="h-3 w-3 text-secondary" />
               )
             ) : (
               <BookMarked className="h-5 w-5 text-primary" />
