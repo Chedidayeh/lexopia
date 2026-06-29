@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
   const data = event.data;
   
   try {
+    console.log("[Webhook] Received event:", eventName);
+    
     switch (eventName) {
       case "subscription_created":
       case "subscription_updated":
@@ -39,12 +41,19 @@ export async function POST(request: NextRequest) {
       case "subscription_payment_failed":
         await handlePaymentFailed(data);
         break;
+      default:
+        console.log("[Webhook] Unhandled event:", eventName);
     }
     
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("[Webhook Error]", error);
-    return NextResponse.json({ error: "Webhook failed" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ 
+      error: "Webhook failed", 
+      details: errorMessage,
+      timestamp: new Date().toISOString(),
+    }, { status: 500 });
   }
 }
 
@@ -53,24 +62,49 @@ async function handleSubscriptionEvent(data: any) {
   const customData = attributes.custom_data;
   const userId = customData?.custom?.userId;
   
+  console.log("[Webhook] Processing subscription event");
+  console.log("[Webhook] Custom data:", JSON.stringify(customData));
+  
   if (!userId) {
     console.error("[Webhook] Missing userId in custom data");
     return;
   }
   
+  console.log("[Webhook] User ID found:", userId);
+  
   // Map variant to plan
   const variantId = attributes.first_order_item?.attributes?.variant_id || attributes.variant_id;
+  console.log("[Webhook] Received variant ID:", variantId);
+  
+  const proVariantId = process.env.LEMONSQUEEZY_VARIANT_ID_PRO;
+  const proPlusVariantId = process.env.LEMONSQUEEZY_VARIANT_ID_PRO_PLUS;
+  
+  console.log("[Webhook] Expected PRO variant ID:", proVariantId);
+  console.log("[Webhook] Expected PRO_PLUS variant ID:", proPlusVariantId);
+  
   const planMap: Record<string, SubscriptionPlan> = {
-    [process.env.LEMONSQUEEZY_VARIANT_ID_PRO || ""]: SubscriptionPlan.PRO,
-    [process.env.LEMONSQUEEZY_VARIANT_ID_PRO_PLUS || ""]: SubscriptionPlan.PRO_PLUS,
+    [proVariantId || ""]: SubscriptionPlan.PRO,
+    [proPlusVariantId || ""]: SubscriptionPlan.PRO_PLUS,
   };
   
   const plan = planMap[variantId];
   
   if (!plan) {
+    const errorDetails = {
+      receivedVariantId: variantId,
+      expectedProVariantId: proVariantId,
+      expectedProPlusVariantId: proPlusVariantId,
+      availableMappings: Object.keys(planMap).filter(key => key !== ""),
+      timestamp: new Date().toISOString(),
+    };
     console.error("[Webhook] Unknown variant ID:", variantId);
-    return;
+    console.error("[Webhook] Error details:", JSON.stringify(errorDetails, null, 2));
+    throw new Error(`Unknown variant ID: ${variantId}. Expected one of: ${errorDetails.availableMappings.join(", ") || "none configured"}`);
   }
+  
+  console.log("[Webhook] Mapped variant ID to plan:", plan);
+  
+  console.log("[Webhook] Updating user subscription in database");
   
   await prisma.user.update({
     where: { id: userId },
@@ -85,8 +119,12 @@ async function handleSubscriptionEvent(data: any) {
     },
   });
   
+  console.log("[Webhook] User subscription updated successfully");
+  
   // Update children's constraints based on new plan
+  console.log("[Webhook] Updating children constraints");
   await updateChildrenConstraints(userId, plan);
+  console.log("[Webhook] Children constraints updated successfully");
 }
 
 async function handleSubscriptionCancelled(data: any) {
