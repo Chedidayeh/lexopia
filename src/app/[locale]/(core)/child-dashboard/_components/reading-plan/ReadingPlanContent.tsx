@@ -348,52 +348,60 @@ export default function ReadingPlanContent({
               </p>
             </div>
 
-            {activeRoadmap.worlds.map((world) => (
-              <div
-                key={world.id}
-                className="rounded-xl border border-black/10 bg-background/80 p-4 md:p-5"
-              >
-                <div className="flex items-start gap-3 mb-5 pb-4 border-b border-black/10">
-                  <div className="rounded-full bg-primary/10 p-2.5 shrink-0">
-                    <Globe2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="font-heading text-lg text-foreground">
-                      {world.name}
-                    </h4>
-                    {world.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {world.description}
-                      </p>
-                    )}
-                    {world.storyArc && (
-                      <p className="text-xs text-muted-foreground mt-2 italic">
-                        {world.storyArc.title}
-                        {world.storyArc.synopsis
-                          ? ` — ${world.storyArc.synopsis}`
-                          : ""}
-                      </p>
-                    )}
-                  </div>
-                </div>
+            {activeRoadmap.worlds.map((world, worldIndex, worlds) => {
+              const previousWorld = worldIndex > 0 ? worlds[worldIndex - 1] : null;
+              const previousWorldStories = previousWorld
+                ? [...previousWorld.stories].sort((a, b) => a.order - b.order)
+                : null;
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                  {[...world.stories]
-                    .sort((a, b) => a.order - b.order)
-                    .map((story, index, sorted) => (
-                      <StoryEpisodeCard
-                        key={story.id}
-                        childId={childId}
-                        story={story}
-                        world={world}
-                        previousStory={index > 0 ? sorted[index - 1] : null}
-                        index={index}
-                        isLast={index === sorted.length - 1}
-                      />
-                    ))}
+              return (
+                <div
+                  key={world.id}
+                  className="rounded-xl border border-black/10 bg-background/80 p-4 md:p-5"
+                >
+                  <div className="flex items-start gap-3 mb-5 pb-4 border-b border-black/10">
+                    <div className="rounded-full bg-primary/10 p-2.5 shrink-0">
+                      <Globe2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-heading text-lg text-foreground">
+                        {world.name}
+                      </h4>
+                      {world.description && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {world.description}
+                        </p>
+                      )}
+                      {world.storyArc && (
+                        <p className="text-xs text-muted-foreground mt-2 italic">
+                          {world.storyArc.title}
+                          {world.storyArc.synopsis
+                            ? ` — ${world.storyArc.synopsis}`
+                            : ""}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                    {[...world.stories]
+                      .sort((a, b) => a.order - b.order)
+                      .map((story, index, sorted) => (
+                        <StoryEpisodeCard
+                          key={story.id}
+                          childId={childId}
+                          story={story}
+                          world={world}
+                          previousStory={index > 0 ? sorted[index - 1] : null}
+                          previousWorldStories={previousWorldStories}
+                          index={index}
+                          isLast={index === sorted.length - 1}
+                        />
+                      ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

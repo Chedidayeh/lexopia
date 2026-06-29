@@ -40,56 +40,39 @@ export function findNextStoryToGenerate(
     }
 
     const sortedWorlds = [...roadmap.worlds].sort((a, b) => a.order - b.order);
-    const unlockedWorld = sortedWorlds.find(
-      (world) => world.status !== ContentStatus.LOCKED,
-    );
-    if (!unlockedWorld) {
-      continue;
-    }
 
-    const storyIndex = unlockedWorld.stories.findIndex(
-      (episode, index) =>
-        GENERATABLE_STATUSES.includes(episode.generationStatus) &&
-        priorStoriesAreGenerated(unlockedWorld.stories, index),
-    );
+    // Check all unlocked worlds for generable stories
+    for (let worldIndex = 0; worldIndex < sortedWorlds.length; worldIndex++) {
+      const world = sortedWorlds[worldIndex];
 
-    if (storyIndex !== -1) {
-      const story = unlockedWorld.stories[storyIndex];
-
-      return {
-        storyId: story.id,
-        episodeTitle: story.episodeTitle || story.title,
-        worldName: unlockedWorld.name,
-        roadmapTitle: roadmap.title || roadmap.interest,
-        generationStatus: story.generationStatus,
-      };
-    }
-
-    // If current unlocked world has all stories generated, check next locked world
-    const allStoriesGenerated = unlockedWorld.stories.every(
-      (story) => story.generationStatus === StoryGenerationStatus.READY,
-    );
-    if (allStoriesGenerated) {
-      const worldIndex = sortedWorlds.findIndex((w) => w.id === unlockedWorld.id);
-      const nextWorld = sortedWorlds[worldIndex + 1];
-      if (nextWorld && nextWorld.status === ContentStatus.LOCKED) {
-        const nextStoryIndex = nextWorld.stories.findIndex(
-          (episode, index) =>
-            GENERATABLE_STATUSES.includes(episode.generationStatus) &&
-            priorStoriesAreGenerated(nextWorld.stories, index),
-        );
-
-        if (nextStoryIndex !== -1) {
-          const story = nextWorld.stories[nextStoryIndex];
-
-          return {
-            storyId: story.id,
-            episodeTitle: story.episodeTitle || story.title,
-            worldName: nextWorld.name,
-            roadmapTitle: roadmap.title || roadmap.interest,
-            generationStatus: story.generationStatus,
-          };
+      // Skip locked worlds unless all previous worlds are fully generated
+      if (world.status === ContentStatus.LOCKED) {
+        const allPreviousWorldsGenerated = sortedWorlds
+          .slice(0, worldIndex)
+          .every((w) =>
+            w.stories.every((story) => story.generationStatus === StoryGenerationStatus.READY),
+          );
+        if (!allPreviousWorldsGenerated) {
+          continue;
         }
+      }
+
+      const storyIndex = world.stories.findIndex(
+        (episode, index) =>
+          GENERATABLE_STATUSES.includes(episode.generationStatus) &&
+          priorStoriesAreGenerated(world.stories, index),
+      );
+
+      if (storyIndex !== -1) {
+        const story = world.stories[storyIndex];
+
+        return {
+          storyId: story.id,
+          episodeTitle: story.episodeTitle || story.title,
+          worldName: world.name,
+          roadmapTitle: roadmap.title || roadmap.interest,
+          generationStatus: story.generationStatus,
+        };
       }
     }
 

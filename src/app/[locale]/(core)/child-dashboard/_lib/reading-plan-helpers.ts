@@ -17,6 +17,7 @@ export type FlatPlanStory = {
   roadmapTitle: string | null;
   interest: string;
   previousStory: ReadingPlanEpisodeView | null;
+  previousWorldStories: ReadingPlanEpisodeView[] | null;
 };
 
 export function flattenPlanStories(
@@ -25,8 +26,15 @@ export function flattenPlanStories(
   const items: FlatPlanStory[] = [];
 
   for (const roadmap of plan.roadmaps) {
-    for (const world of roadmap.worlds) {
+    const sortedWorlds = [...roadmap.worlds].sort((a, b) => a.order - b.order);
+    for (let worldIndex = 0; worldIndex < sortedWorlds.length; worldIndex++) {
+      const world = sortedWorlds[worldIndex];
       const sorted = [...world.stories].sort((a, b) => a.order - b.order);
+      const previousWorld = worldIndex > 0 ? sortedWorlds[worldIndex - 1] : null;
+      const previousWorldStories = previousWorld
+        ? [...previousWorld.stories].sort((a, b) => a.order - b.order)
+        : null;
+
       sorted.forEach((story, index) => {
         items.push({
           story,
@@ -35,6 +43,7 @@ export function flattenPlanStories(
           roadmapTitle: roadmap.title,
           interest: roadmap.interest,
           previousStory: index > 0 ? sorted[index - 1] : null,
+          previousWorldStories,
         });
       });
     }
@@ -47,6 +56,7 @@ export function getChildStoryAccess(
   story: ReadingPlanEpisodeView,
   world: ReadingPlanWorldView,
   previousStory: ReadingPlanEpisodeView | null,
+  previousWorldStories: ReadingPlanEpisodeView[] | null,
 ): ChildStoryAccess {
   if (
     story.generationStatus === "GENERATING" ||
@@ -57,6 +67,16 @@ export function getChildStoryAccess(
 
   if (story.generationStatus !== "READY") {
     return { kind: "locked", reason: "not_ready" };
+  }
+
+  // Check if all stories in previous world are completed (for non-first stories in world)
+  if (previousWorldStories && previousWorldStories.length > 0) {
+    const allPreviousWorldCompleted = previousWorldStories.every(
+      (s) => s.progressStatus === "COMPLETED",
+    );
+    if (!allPreviousWorldCompleted) {
+      return { kind: "locked", reason: "world_locked" };
+    }
   }
 
   if (world.status === "LOCKED") {
@@ -100,6 +120,7 @@ export function findPrimaryStoryAction(
       entry.story,
       entry.world,
       entry.previousStory,
+      entry.previousWorldStories,
     );
     return access.kind === "continue";
   });
@@ -111,6 +132,7 @@ export function findPrimaryStoryAction(
         continueStory.story,
         continueStory.world,
         continueStory.previousStory,
+        continueStory.previousWorldStories,
       ),
     };
   }
@@ -120,6 +142,7 @@ export function findPrimaryStoryAction(
       entry.story,
       entry.world,
       entry.previousStory,
+      entry.previousWorldStories,
     );
     return access.kind === "start";
   });
@@ -131,6 +154,7 @@ export function findPrimaryStoryAction(
         startStory.story,
         startStory.world,
         startStory.previousStory,
+        startStory.previousWorldStories,
       ),
     };
   }

@@ -47,6 +47,7 @@ export default function StoryEpisodeCard({
   story,
   world,
   previousStory,
+  previousWorldStories,
   index,
   isLast,
 }: {
@@ -54,11 +55,12 @@ export default function StoryEpisodeCard({
   story: ReadingPlanEpisodeView;
   world: ReadingPlanWorldView;
   previousStory: ReadingPlanEpisodeView | null;
+  previousWorldStories: ReadingPlanEpisodeView[] | null;
   index: number;
   isLast: boolean;
 }) {
   const t = useTranslations("ChildDashboard");
-  const access = getChildStoryAccess(story, world, previousStory);
+  const access = getChildStoryAccess(story, world, previousStory, previousWorldStories);
   const readable = isStoryReadable(access);
   const title = getStoryDisplayTitle(story);
 
