@@ -302,7 +302,10 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
                   >
                     <Button
                       variant={"secondary"}
-                      onClick={() => setShowRiddle(true)}
+                      onClick={() => {
+                        setShowRiddle(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
                     >
                       <span>{t("storyFlowNavigation.solveRiddle")}</span>
                     </Button>
