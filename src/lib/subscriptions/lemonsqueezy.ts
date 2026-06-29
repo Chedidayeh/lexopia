@@ -30,7 +30,7 @@ export async function createCheckout(email: string, plan: SubscriptionPlan, user
             custom: { userId }
           },
           product_options: {
-            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-success`,
           },
         },
         relationships: {
