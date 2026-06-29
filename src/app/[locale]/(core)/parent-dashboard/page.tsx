@@ -50,8 +50,6 @@ export default async function ParentDashboardPage({
     redirect("/");
   }
 
-  const ageGroups = getDashboardAgeGroups();
-
 
   return (
     <div className="md:p-4">
@@ -59,7 +57,6 @@ export default async function ParentDashboardPage({
         session={session}
         parentData={parentData}
         childProfiles={childProfiles}
-        ageGroups={ageGroups}
         userRole={userRole}
       />
     </div>

@@ -258,6 +258,9 @@ export function toChildProfile(
     sessionDurationMins: child.sessionDurationMins,
     favoriteThemes: child.interests,
     interests: child.interests,
+    assignedChallenges: child.assignedChallenges,
+    favoriteCharacterType: child.favoriteCharacterType || undefined,
+    storyTone: child.storyTone || undefined,
     progress: filteredStoryProgress.map(mapStoryProgressToProgress),
     badges: child.badges.map((entry) => ({ badgeId: entry.badgeId })),
     dailyActivity: child.dailyActivity

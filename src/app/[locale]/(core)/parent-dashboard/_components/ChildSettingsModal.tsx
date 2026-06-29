@@ -46,33 +46,15 @@ import {
 
 import { useLocale } from "@/src/contexts/LocaleContext";
 
-import { INTEREST_OPTIONS } from "@/src/lib/onboarding/constants";
-
 import {
-
-  NameStep,
-
-  BirthDateStep,
-
-  GenderStep,
-
-  LanguageStep,
-
-  ReadingLevelStep,
-
-  ChallengesStep,
-
-  InterestsStep,
-
-  CharacterTypeStep,
-
-  StoryToneStep,
-
-  StoriesPerWeekStep,
-
-  NotificationsStep,
-
-} from "@/src/lib/onboarding/element-steps";
+  CHARACTER_TYPES,
+  CHALLENGE_TYPE_OPTIONS,
+  INTEREST_OPTIONS,
+  LANGUAGE_OPTIONS,
+  READING_LEVELS,
+  STORIES_PER_WEEK_OPTIONS,
+  STORY_TONES,
+} from "@/src/lib/onboarding/constants";
 
 import {
 
@@ -83,6 +65,24 @@ import {
 } from "@/src/lib/onboarding/plan-constraints";
 
 import { SubscriptionPlan } from "@/src/types/types";
+import { Label } from "@/src/components/ui/label";
+import { Checkbox } from "@/src/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import { cn } from "@/src/lib/utils";
+import { Calendar } from "@/src/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/src/components/ui/popover";
+import { CalendarIcon, User, BookOpen, Sparkles, Clock, Target } from "lucide-react";
+import { getAvailableChallengesByPlan } from "@/src/lib/onboarding/plan-constraints";
 
 import {
 
@@ -103,6 +103,482 @@ import {
 } from "@/src/lib/onboarding/schemas";
 
 
+
+// Custom Settings Components
+
+interface SettingsFieldProps {
+  label: string;
+  description?: string;
+  children: React.ReactNode;
+}
+
+function SettingsField({ label, description, children }: SettingsFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-foreground">{label}</Label>
+      {description && (
+        <p className="text-xs text-muted-foreground">{description}</p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+interface SettingsSectionProps {
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function SettingsSection({ title, icon, children }: SettingsSectionProps) {
+  return (
+    <div className="space-y-4 p-4 rounded-lg border border-border bg-muted/30">
+      <div className="flex items-center gap-2">
+        {icon}
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+      </div>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
+
+function NameSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("childNameLabel")}
+      description={t("childNameHint")}
+    >
+      <Input
+        placeholder={t("childNamePlaceholder")}
+        value={form.name}
+        onChange={(e) => updateForm("name", e.target.value)}
+        className="h-10"
+      />
+    </SettingsField>
+  );
+}
+
+function BirthDateSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("birthDateLabel")}
+      description={t("birthDatePlaceholder")}
+    >
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal h-10",
+              !form.birthDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {form.birthDate ? (
+              form.birthDate.toLocaleDateString()
+            ) : (
+              <span>{t("birthDatePlaceholder") || "Select a date"}</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={form.birthDate || undefined}
+            onSelect={(date) => updateForm("birthDate", date || null)}
+            disabled={(date) =>
+              date > new Date() || date < new Date("1900-01-01")
+            }
+          />
+        </PopoverContent>
+      </Popover>
+      {form.birthDate && (
+        <p className="text-xs text-muted-foreground mt-1">
+          {t("ageLabel")}: {calculateAgeFromDate(form.birthDate)}
+        </p>
+      )}
+    </SettingsField>
+  );
+}
+
+function GenderSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField label={t("selectGender")}>
+      <div className="flex gap-2">
+        {[
+          { value: "boy", label: t("gender.boy"), color: "blue" },
+          { value: "girl", label: t("gender.girl"), color: "rose" },
+        ].map((option) => {
+          const selected = form.gender === option.value;
+          return (
+            <Button
+              key={option.value}
+              type="button"
+              variant={selected ? "default" : "outline"}
+              className={cn(
+                "flex-1 h-10",
+                selected && option.color === "blue" && "bg-blue-600 hover:bg-blue-700",
+                selected && option.color === "rose" && "bg-rose-500 hover:bg-rose-600"
+              )}
+              onClick={() => updateForm("gender", option.value)}
+            >
+              {option.label}
+            </Button>
+          );
+        })}
+      </div>
+    </SettingsField>
+  );
+}
+
+function LanguageSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("primaryLanguageLabel")}
+      description={t("selectLanguagePlaceholder")}
+    >
+      <Select
+        value={form.primaryLanguage}
+        onValueChange={(v) =>
+          updateForm(
+            "primaryLanguage",
+            v as OnboardingFormState["primaryLanguage"]
+          )
+        }
+      >
+        <SelectTrigger className="h-10">
+          <SelectValue placeholder={t("selectLanguagePlaceholder")} />
+        </SelectTrigger>
+        <SelectContent>
+          {LANGUAGE_OPTIONS.filter((lang) => lang.value === "EN").map(
+            (lang) => (
+              <SelectItem key={lang.value} value={lang.value}>
+                {t(lang.labelKey)}
+              </SelectItem>
+            )
+          )}
+        </SelectContent>
+      </Select>
+    </SettingsField>
+  );
+}
+
+function ReadingLevelSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("readingLevelLabel")}
+      description={t("readingLevelPlaceholder")}
+    >
+      <Select
+        value={form.readingLevel}
+        onValueChange={(v) =>
+          updateForm("readingLevel", v as OnboardingFormState["readingLevel"])
+        }
+      >
+        <SelectTrigger className="h-10">
+          <SelectValue placeholder={t("readingLevelPlaceholder")} />
+        </SelectTrigger>
+        <SelectContent>
+          {READING_LEVELS.map((level) => (
+            <SelectItem key={level.value} value={level.value}>
+              {t(level.labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </SettingsField>
+  );
+}
+
+function ChallengesSettingsField({
+  t,
+  form,
+  toggleArrayItem,
+  planConstraints,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  toggleArrayItem: (key: "assignedChallenges", value: string) => void;
+  planConstraints: PlanConstraints;
+}) {
+  let availableChallengesList: string[] = CHALLENGE_TYPE_OPTIONS.map(
+    (c) => c.value
+  );
+
+  if (planConstraints) {
+    let plan: SubscriptionPlan = SubscriptionPlan.FREE;
+    if (planConstraints.challengeTypesCount === "core") {
+      plan = SubscriptionPlan.PRO;
+    } else if (planConstraints.challengeTypesCount === "all") {
+      plan = SubscriptionPlan.PRO_PLUS;
+    }
+    availableChallengesList = getAvailableChallengesByPlan(plan);
+  }
+
+  const unavailableChallenges = new Set(
+    CHALLENGE_TYPE_OPTIONS
+      .filter((c) => !availableChallengesList.includes(c.value))
+      .map((c) => c.value)
+  );
+
+  return (
+    <SettingsField
+      label={t("assignedChallengesLabel")}
+      description={t("assignedChallengesDesc")}
+    >
+      <div className="grid grid-cols-1 gap-2">
+        {CHALLENGE_TYPE_OPTIONS.map((challenge) => {
+          const isUnavailable = unavailableChallenges.has(challenge.value);
+          const isSelected = form.assignedChallenges.includes(challenge.value);
+
+          return (
+            <label
+              key={challenge.value}
+              className={cn(
+                "flex items-center gap-3 rounded-md border p-3 cursor-pointer transition-colors",
+                isUnavailable
+                  ? "border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800 opacity-60"
+                  : isSelected
+                  ? "border-primary bg-primary/10"
+                  : "border-border hover:bg-muted/40"
+              )}
+            >
+              <Checkbox
+                checked={isSelected}
+                disabled={isUnavailable}
+                onCheckedChange={() =>
+                  !isUnavailable &&
+                  toggleArrayItem("assignedChallenges", challenge.value)
+                }
+              />
+              <span className="text-sm flex-1">{t(challenge.labelKey)}</span>
+              {isUnavailable && (
+                <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                  Upgrade
+                </span>
+              )}
+            </label>
+          );
+        })}
+      </div>
+    </SettingsField>
+  );
+}
+
+function InterestsSettingsField({
+  t,
+  form,
+  toggleArrayItem,
+  planConstraints,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  toggleArrayItem: (key: "interests", value: string) => void;
+  planConstraints: PlanConstraints;
+}) {
+  const maxThemes = planConstraints?.maxThemes ?? 5;
+
+  return (
+    <SettingsField
+      label={t("favoriteThemesLabel")}
+      description={`${t("interestsHint")} (${form.interests.length}/${maxThemes})`}
+    >
+      <div className="flex flex-wrap gap-2">
+        {INTEREST_OPTIONS.map((interest) => {
+          const selected = form.interests.includes(interest);
+          return (
+            <Button
+              key={interest}
+              type="button"
+              size="sm"
+              variant={selected ? "default" : "outline"}
+              onClick={() => {
+                if (!selected && form.interests.length >= maxThemes) {
+                  return;
+                }
+                toggleArrayItem("interests", interest);
+              }}
+              disabled={!selected && form.interests.length >= maxThemes}
+              className="h-8 text-xs"
+            >
+              {t(`interests.${interest}`, { defaultValue: interest })}
+            </Button>
+          );
+        })}
+      </div>
+    </SettingsField>
+  );
+}
+
+function CharacterSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("characterTypeLabel")}
+      description={t("characterTypePlaceholder")}
+    >
+      <Select
+        value={form.favoriteCharacterType}
+        onValueChange={(v) => updateForm("favoriteCharacterType", v)}
+      >
+        <SelectTrigger className="h-10">
+          <SelectValue placeholder={t("characterTypePlaceholder")} />
+        </SelectTrigger>
+        <SelectContent>
+          {CHARACTER_TYPES.map((c) => (
+            <SelectItem key={c.value} value={c.value}>
+              {t(c.labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </SettingsField>
+  );
+}
+
+function StoryToneSettingsField({
+  t,
+  form,
+  updateForm,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+}) {
+  return (
+    <SettingsField
+      label={t("storyToneLabel")}
+      description={t("storyTonePlaceholder")}
+    >
+      <Select
+        value={form.storyTone}
+        onValueChange={(v) => updateForm("storyTone", v)}
+      >
+        <SelectTrigger className="h-10">
+          <SelectValue placeholder={t("storyTonePlaceholder")} />
+        </SelectTrigger>
+        <SelectContent>
+          {STORY_TONES.map((tone) => (
+            <SelectItem key={tone.value} value={tone.value}>
+              {t(tone.labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </SettingsField>
+  );
+}
+
+function StoriesPerWeekSettingsField({
+  t,
+  form,
+  updateForm,
+  planConstraints,
+}: {
+  t: any;
+  form: OnboardingFormState;
+  updateForm: <K extends keyof OnboardingFormState>(
+    key: K,
+    value: OnboardingFormState[K]
+  ) => void;
+  planConstraints: PlanConstraints;
+}) {
+  const maxStoriesPerWeek = planConstraints?.maxStoriesPerWeek ?? 7;
+  const availableStoriesPerWeek = STORIES_PER_WEEK_OPTIONS.filter(
+    (n) => n <= maxStoriesPerWeek
+  );
+
+  return (
+    <SettingsField
+      label={t("storiesPerWeekLabel", { childName: form.name || "your child" })}
+      description={t("selectReadingFrequency")}
+    >
+      <Select
+        value={String(form.storiesPerWeek)}
+        onValueChange={(v) => updateForm("storiesPerWeek", Number(v))}
+      >
+        <SelectTrigger className="h-10">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {availableStoriesPerWeek.map((n) => (
+            <SelectItem key={n} value={String(n)}>
+              {t("storiesPerWeekOption", { count: n })}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </SettingsField>
+  );
+}
 
 const MAX_INTERESTS = 5;
 
@@ -189,7 +665,6 @@ function ChildSettingsModalPanel({
 
 
   // Onboarding form state
-
   const [form, setForm] = useState<OnboardingFormState>({
 
     ...INITIAL_ONBOARDING_FORM,
@@ -219,6 +694,25 @@ function ChildSettingsModalPanel({
     activateNotifications: selectedChild.activateNotifications || false,
 
   });
+
+  // Update form when selectedChild changes
+  useEffect(() => {
+    setForm({
+      ...INITIAL_ONBOARDING_FORM,
+      name: selectedChild.name || "",
+      birthDate: selectedChild.birthDate ? new Date(selectedChild.birthDate) : null,
+      gender: selectedChild.gender || "",
+      primaryLanguage: (selectedChild.primaryLanguage as any) || "EN",
+      readingLevel: (selectedChild.readingLevel as any) || "BEGINNER",
+      assignedChallenges: selectedChild.assignedChallenges || [],
+      interests: selectedChild.interests || selectedChild.favoriteThemes || [],
+      favoriteCharacterType: selectedChild.favoriteCharacterType || "",
+      storyTone: selectedChild.storyTone || "",
+      storiesPerWeek: selectedChild.storiesPerWeek || 1,
+      sessionDurationMins: selectedChild.sessionDurationMins || 10,
+      activateNotifications: selectedChild.activateNotifications || false,
+    });
+  }, [selectedChild]);
 
 
 
@@ -378,6 +872,78 @@ function ChildSettingsModalPanel({
 
 
 
+    setIsSaving(true);
+
+    try {
+
+      const result = await updateChildGeneralSettingsAction({
+
+        childId: selectedChild.id,
+
+        name: form.name.trim(),
+
+        birthDate: form.birthDate,
+
+        gender: form.gender,
+
+        primaryLanguage: form.primaryLanguage,
+
+        readingLevel: form.readingLevel,
+
+        assignedChallenges: form.assignedChallenges,
+
+        interests: form.interests,
+
+        favoriteCharacterType: form.favoriteCharacterType,
+
+        storyTone: form.storyTone,
+
+        storiesPerWeek: form.storiesPerWeek,
+
+        sessionDurationMins: form.sessionDurationMins,
+
+      });
+
+
+
+      if (result.success) {
+
+        toast.success(
+
+          t("childSettings.savedSuccess") ||
+
+            "General settings saved successfully!",
+
+        );
+
+        onClose();
+
+        router.refresh();
+
+      } else {
+
+        toast.error("Failed to save general settings");
+
+      }
+
+    } catch (error) {
+
+      toast.error("Failed to save general settings");
+
+      console.error(error);
+
+    } finally {
+
+      setIsSaving(false);
+
+    }
+
+  };
+
+
+
+  const handleSaveReading = async () => {
+
     // Validate challenges with plan constraints
 
     const challengeValidation = validateStep3WithPlan(
@@ -520,7 +1086,7 @@ function ChildSettingsModalPanel({
 
           t("childSettings.savedSuccess") ||
 
-            "General settings saved successfully!",
+            "Reading preferences saved successfully!",
 
         );
 
@@ -530,13 +1096,13 @@ function ChildSettingsModalPanel({
 
       } else {
 
-        toast.error("Failed to save general settings");
+        toast.error("Failed to save reading preferences");
 
       }
 
     } catch (error) {
 
-      toast.error("Failed to save general settings");
+      toast.error("Failed to save reading preferences");
 
       console.error(error);
 
@@ -745,87 +1311,56 @@ function ChildSettingsModalPanel({
 
 
             <TabsContent value="general" className="space-y-4">
-
-              <NameStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <BirthDateStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <GenderStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <LanguageStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <ReadingLevelStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <Button onClick={handleSaveGeneral} disabled={isSaving}>
-
+              <SettingsSection title="Profile Information" icon={<User className="h-4 w-4" />}>
+                <NameSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+                <BirthDateSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+                <GenderSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+              </SettingsSection>
+              <SettingsSection title="Language & Reading" icon={<BookOpen className="h-4 w-4" />}>
+                <LanguageSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+                <ReadingLevelSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+              </SettingsSection>
+              <Button onClick={handleSaveGeneral} disabled={isSaving} className="w-full">
                 {isSaving
-
                   ? t("childSettings.saving") || "Saving..."
-
                   : t("childSettings.saveGeneral") || "Save Changes"}
-
               </Button>
-
             </TabsContent>
 
 
 
             <TabsContent value="reading" className="space-y-4">
-
-              <ChallengesStep
-
-                t={tOnboarding}
-
-                form={form}
-
-                updateForm={updateForm}
-
-                toggleChallenge={toggleArrayItem}
-
-                planConstraints={planConstraints}
-
-              />
-
-              <InterestsStep
-
-                t={tOnboarding}
-
-                form={form}
-
-                updateForm={updateForm}
-
-                toggleInterest={toggleArrayItem}
-
-                planConstraints={planConstraints}
-
-              />
-
-              <CharacterTypeStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <StoryToneStep t={tOnboarding} form={form} updateForm={updateForm} />
-
-              <StoriesPerWeekStep
-
-                t={tOnboarding}
-
-                form={form}
-
-                updateForm={updateForm}
-
-                planConstraints={planConstraints}
-
-              />
-
-              <Button onClick={handleSaveGeneral} disabled={isSaving}>
-
+              <SettingsSection title="Reading Challenges" icon={<Target className="h-4 w-4" />}>
+                <ChallengesSettingsField
+                  t={tOnboarding}
+                  form={form}
+                  toggleArrayItem={toggleArrayItem}
+                  planConstraints={planConstraints}
+                />
+              </SettingsSection>
+              <SettingsSection title="Story Preferences" icon={<Sparkles className="h-4 w-4" />}>
+                <InterestsSettingsField
+                  t={tOnboarding}
+                  form={form}
+                  toggleArrayItem={toggleArrayItem}
+                  planConstraints={planConstraints}
+                />
+                <CharacterSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+                <StoryToneSettingsField t={tOnboarding} form={form} updateForm={updateForm} />
+              </SettingsSection>
+              <SettingsSection title="Reading Schedule" icon={<Clock className="h-4 w-4" />}>
+                <StoriesPerWeekSettingsField
+                  t={tOnboarding}
+                  form={form}
+                  updateForm={updateForm}
+                  planConstraints={planConstraints}
+                />
+              </SettingsSection>
+              <Button onClick={handleSaveReading} disabled={isSaving} className="w-full">
                 {isSaving
-
                   ? t("childSettings.saving") || "Saving..."
-
-                  : t("childSettings.saveGeneral") || "Save Changes"}
-
+                  : t("childSettings.saveReading") || "Save Changes"}
               </Button>
-
             </TabsContent>
 
 

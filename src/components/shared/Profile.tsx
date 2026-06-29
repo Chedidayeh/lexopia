@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -11,17 +11,20 @@ import {
 
 import { Button } from "../ui/button";
 import { signOut } from "next-auth/react";
-import { LogOut, User, Settings, Layout, Loader2 } from "lucide-react";
+import { LogOut, User, Settings, Layout, Loader2, CreditCard, X } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "sonner";
 import { Session } from "next-auth";
 import Link from "next/link";
-import { RoleType } from "../../types/types";
+import { RoleType, SubscriptionPlan } from "../../types/types";
 
 export default function Profile({ session }: { session: Session }) {
   const [closeDialog, setCloseDialog] = React.useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "settings">("profile");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
   const t = useTranslations("Profile");
 
   const handleLogout = async () => {
@@ -35,6 +38,63 @@ export default function Profile({ session }: { session: Session }) {
     }
   };
 
+  // Load subscription plan on mount
+  useEffect(() => {
+    const loadSubscriptionPlan = async () => {
+      try {
+        const response = await fetch("/api/user/subscription");
+        if (response.ok) {
+          const data = await response.json();
+          setSubscriptionPlan(data.subscriptionPlan);
+        }
+      } catch (error) {
+        console.error("Failed to load subscription plan:", error);
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+
+    loadSubscriptionPlan();
+  }, []);
+
+  const handleCancelPlan = async () => {
+    if (!subscriptionPlan || subscriptionPlan === SubscriptionPlan.FREE) return;
+
+    setIsUpdatingPlan(true);
+    try {
+      const response = await fetch("/api/user/subscription", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscriptionPlan: SubscriptionPlan.FREE }),
+      });
+
+      if (response.ok) {
+        setSubscriptionPlan(SubscriptionPlan.FREE);
+        toast.success("Plan cancelled successfully");
+      } else {
+        toast.error("Failed to cancel plan");
+      }
+    } catch (error) {
+      console.error("Failed to cancel plan:", error);
+      toast.error("Failed to cancel plan");
+    } finally {
+      setIsUpdatingPlan(false);
+    }
+  };
+
+  const getPlanDisplayName = (plan: SubscriptionPlan) => {
+    switch (plan) {
+      case SubscriptionPlan.FREE:
+        return "Free";
+      case SubscriptionPlan.PRO:
+        return "Pro";
+      case SubscriptionPlan.PRO_PLUS:
+        return "Pro Plus";
+      default:
+        return plan;
+    }
+  };
+
   return (
     <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
       <DialogTrigger asChild>
@@ -44,7 +104,7 @@ export default function Profile({ session }: { session: Session }) {
       </DialogTrigger>
       <DialogTitle></DialogTitle>
 
-      <DialogContent showCloseButton={false}>
+      <DialogContent className="w-[60vw]! max-w-[90vw]!" showCloseButton={false}>
         {/* Mobile Header - Avatar and User Info */}
 
         <div className="flex flex-col md:flex-row h-full gap-4">
@@ -52,7 +112,7 @@ export default function Profile({ session }: { session: Session }) {
           <div className="hidden md:block w-48 bg-card rounded-lg p-4 border border-primary/20">
             <div className="mb-6 flex flex-col items-center">
               <div className="flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full border flex items-center justify-center text-white bg-primary text-lg">
+                <div className="w-12 h-12 rounded-full border flex items-center justify-center bg-primary text-black text-lg">
                   {session?.user?.name?.charAt(0).toUpperCase()}
                 </div>
               </div>
@@ -63,7 +123,7 @@ export default function Profile({ session }: { session: Session }) {
                 onClick={() => setActiveTab("profile")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                   activeTab === "profile"
-                    ? "bg-primary text-white shadow-sm"
+                    ? "bg-primary text-black shadow-sm"
                     : "text-gray-700 bg-background/30 hover:bg-primary hover:text-white dark:text-white"
                 }`}
               >
@@ -74,7 +134,7 @@ export default function Profile({ session }: { session: Session }) {
                 onClick={() => setActiveTab("settings")}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                   activeTab === "settings"
-                    ? "bg-primary text-white shadow-sm"
+                    ? "bg-primary text-black shadow-sm"
                     : "text-gray-700 bg-background/30 hover:bg-primary hover:text-white dark:text-white"
                 }`}
               >
@@ -177,19 +237,7 @@ export default function Profile({ session }: { session: Session }) {
                       </div>
                     </div>
 
-                    {/* Role */}
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between border-gray-200">
-                      <div>
-                        <label className="text-xs md:text-sm font-medium text-gray-500">
-                          {t("accountType")}
-                        </label>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="inline-block px-2 md:px-3 py-1 rounded-full text-xs bg-primary text-white">
-                            {session?.user?.role}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+  
                   </div>
                   {/* Mobile Logout Button */}
                   <div className="md:hidden flex items-center justify-between mt-4">
@@ -236,9 +284,58 @@ export default function Profile({ session }: { session: Session }) {
                     {t("settings")}
                   </h2>
 
+                  {/* Subscription Plan Management */}
+                  <div className="bg-card rounded-lg border border-primary/20 p-3 md:p-4 mb-4">
+                    <h3 className="text-sm md:text-base font-medium mb-3 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      Subscription Plan
+                    </h3>
+                    {isLoadingPlan ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Loading plan...
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">
+                              Current Plan: <span className="text-primary font-semibold">{getPlanDisplayName(subscriptionPlan || SubscriptionPlan.FREE)}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Cancel Plan */}
+                        {subscriptionPlan && subscriptionPlan !== SubscriptionPlan.FREE && (
+                          <div className="border-t pt-4">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={handleCancelPlan}
+                              disabled={isUpdatingPlan}
+                              className="w-full"
+                            >
+                              {isUpdatingPlan ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Cancelling...
+                                </>
+                              ) : (
+                                <>
+                                  <X className="w-4 h-4 mr-2" />
+                                  Cancel Plan
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Danger Zone */}
-                  <div className="bg-red-50 rounded-lg border border-red-200 p-3 md:p-4">
-                    <h3 className="text-red-900 mb-3 md:mb-4 text-sm md:text-base">
+                  <div className="rounded-lg border border-red-500 p-3 md:p-4">
+                    <h3 className="text-red-500 mb-3 md:mb-4 text-sm md:text-base">
                       {t("dangerZone")}
                     </h3>
                     <Button

@@ -32,7 +32,6 @@ import {
 } from "./story-content.schema";
 import { enqueueStoryTts } from "@/src/lib/tts/enqueue-story-tts";
 import { formatStoryLlmError, getChallengeBatchSize, splitChallengeBatches } from "./story-llm-helpers";
-import { sendParentStoryGeneratedEmail } from "@/src/lib/notifications/parent-generation-notifications";
 
 const MAX_LLM_ATTEMPTS = 5;
 const STORY_LLM_MAX_OUTPUT_TOKENS = 65536;
@@ -431,11 +430,5 @@ export async function runStoryContentAgent(params: {
 
   if (!ttsResult.success) {
     console.error("Failed to enqueue story TTS:", ttsResult.error);
-  }
-
-  try {
-    await sendParentStoryGeneratedEmail(storyId);
-  } catch (error) {
-    console.error("Failed to send story email notification:", error);
   }
 }

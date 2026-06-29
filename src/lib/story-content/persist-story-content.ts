@@ -105,8 +105,7 @@ export async function persistStoryContent(
       await tx.story.update({
         where: { id: story.id },
         data: {
-          generationStatus: StoryGenerationStatus.READY,
-          generationCompletedAt: new Date(),
+          generationStatus: StoryGenerationStatus.GENERATING,
           episodeBridge,
           aiPromptSnapshot: `${chaptersPrompt}\n\n---\n\n${challengesPrompt}`,
         },

@@ -234,7 +234,7 @@ model Child {
   storyTone             String? // funny, adventurous, calm, magical, educational
 
   // --- Schedule & goals (onboarding step 5) ---
-  storiesPerWeek      Int @default(3)
+  storiesPerWeek      Int @default(1)
   sessionDurationMins Int @default(10) // 10 | 20 | 30 | 60 — drives story sizing
 
   // --- Reading plan configuration (based on parent subscription plan at child creation) ---

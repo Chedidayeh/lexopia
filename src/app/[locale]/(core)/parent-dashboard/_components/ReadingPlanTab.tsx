@@ -256,7 +256,7 @@ export default function ReadingPlanTab({
 
     const interval = setInterval(() => {
       refreshPlan();
-    }, 5000);
+    }, 20000);
 
     return () => clearInterval(interval);
   }, [displayPlan, refreshPlan]);

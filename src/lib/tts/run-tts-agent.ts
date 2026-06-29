@@ -4,6 +4,7 @@ import {
   AgentJobStatus,
   AgentTrigger,
   AgentType,
+  StoryGenerationStatus,
 } from "@prisma/client";
 import { prisma } from "@/src/lib/prisma";
 import { requestChildOrchestration } from "@/src/lib/orchestration/request-orchestration";
@@ -19,6 +20,7 @@ import {
   synthesizeAndPersistChallengeTarget,
 } from "./process-challenge-tts";
 import { synthesizeAndPersistChapter } from "./process-chapter-tts";
+import { sendParentStoryGeneratedEmail } from "@/src/lib/notifications/parent-generation-notifications";
 
 type ChapterTtsStepResult = {
   chapterId: string;
@@ -237,6 +239,13 @@ export async function runTtsAgent(params: {
         },
       },
     }),
+    prisma.story.update({
+      where: { id: storyId },
+      data: {
+        generationStatus: StoryGenerationStatus.READY,
+        generationCompletedAt: new Date(),
+      },
+    }),
     prisma.aiGenerationLog.create({
       data: {
         agentJobId,
@@ -266,5 +275,11 @@ export async function runTtsAgent(params: {
     );
   } catch (error) {
     console.error("Failed to request post-TTS orchestration:", error);
+  }
+
+  try {
+    await sendParentStoryGeneratedEmail(storyId);
+  } catch (error) {
+    console.error("Failed to send story email notification:", error);
   }
 }

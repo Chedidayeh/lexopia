@@ -28,12 +28,10 @@ import { SubscriptionPlan } from "@/src/types/types";
 export default function ParentDashboardInteractive({
   childProfiles: intialChildProfiles,
   parentData,
-  ageGroups,
   session,
   userRole,
 }: {
   childProfiles: ChildProfile[];
-  ageGroups: AgeGroup[];
   session: Session;
   parentData: User;
   userRole: RoleType;
@@ -177,7 +175,6 @@ export default function ParentDashboardInteractive({
             childProfiles={childProfiles}
             selectedChildId={selectedChildId}
             onChildSelect={handleChildSelect}
-            ageGroups={ageGroups}
             onChildAdded={handleChildAdded}
             userRole={userRole}
             parentData={parentData}

@@ -31,7 +31,6 @@ interface ChildSidebarProps {
   childProfiles: ChildProfile[];
   selectedChildId: string | undefined;
   onChildSelect: (childId: string) => void;
-  ageGroups: AgeGroup[];
   onChildAdded: () => void;
   userRole: RoleType;
   parentData: User;
@@ -43,7 +42,6 @@ export default function ChildSidebar({
   childProfiles,
   selectedChildId,
   onChildSelect,
-  ageGroups,
   onChildAdded,
   userRole,
   parentData,

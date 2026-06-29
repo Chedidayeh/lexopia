@@ -38,10 +38,13 @@ export async function enqueueStoryTts(params: {
     return { success: false, error: "Story not found" };
   }
 
-  if (story.generationStatus !== StoryGenerationStatus.READY) {
+  if (
+    story.generationStatus !== StoryGenerationStatus.READY &&
+    story.generationStatus !== StoryGenerationStatus.GENERATING
+  ) {
     return {
       success: false,
-      error: "Story must be READY before TTS generation",
+      error: "Story must be READY or GENERATING before TTS generation",
     };
   }
 
