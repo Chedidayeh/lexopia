@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
   const event = JSON.parse(body);
   const eventName = event.meta.event_name;
   const data = event.data;
+  const customData = event.meta.custom_data;
   
   try {
     console.log("[Webhook] Received event:", eventName);
@@ -33,13 +34,16 @@ export async function POST(request: NextRequest) {
     switch (eventName) {
       case "subscription_created":
       case "subscription_updated":
-        await handleSubscriptionEvent(data);
+        await handleSubscriptionEvent(data, customData);
         break;
       case "subscription_cancelled":
-        await handleSubscriptionCancelled(data);
+        await handleSubscriptionCancelled(data, customData);
         break;
       case "subscription_payment_failed":
-        await handlePaymentFailed(data);
+        await handlePaymentFailed(data, customData);
+        break;
+      case "subscription_payment_success":
+        await handlePaymentSuccess(data, customData);
         break;
       default:
         console.log("[Webhook] Unhandled event:", eventName);
@@ -57,9 +61,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleSubscriptionEvent(data: any) {
+async function handleSubscriptionEvent(data: any, customData: any) {
   const attributes = data.attributes;
-  const customData = attributes.custom_data;
   const userId = customData?.custom?.userId;
   
   console.log("[Webhook] Processing subscription event");
@@ -127,9 +130,8 @@ async function handleSubscriptionEvent(data: any) {
   console.log("[Webhook] Children constraints updated successfully");
 }
 
-async function handleSubscriptionCancelled(data: any) {
+async function handleSubscriptionCancelled(data: any, customData: any) {
   const attributes = data.attributes;
-  const customData = attributes.custom_data;
   const userId = customData?.custom?.userId;
   
   if (!userId) {
@@ -150,9 +152,8 @@ async function handleSubscriptionCancelled(data: any) {
   await updateChildrenConstraints(userId, SubscriptionPlan.FREE);
 }
 
-async function handlePaymentFailed(data: any) {
+async function handlePaymentFailed(data: any, customData: any) {
   const attributes = data.attributes;
-  const customData = attributes.custom_data;
   const userId = customData?.custom?.userId;
   
   if (!userId) {
@@ -166,6 +167,36 @@ async function handlePaymentFailed(data: any) {
       subscriptionStatus: "past_due",
     },
   });
+}
+
+async function handlePaymentSuccess(data: any, customData: any) {
+  const attributes = data.attributes;
+  const userId = customData?.custom?.userId;
+  const subscriptionId = attributes.subscription_id;
+  
+  console.log("[Webhook] Processing payment success event");
+  console.log("[Webhook] Custom data:", JSON.stringify(customData));
+  console.log("[Webhook] Subscription ID:", subscriptionId);
+  
+  if (!userId) {
+    console.error("[Webhook] Missing userId in custom data");
+    return;
+  }
+  
+  console.log("[Webhook] User ID found:", userId);
+  
+  // Update subscription status to active
+  console.log("[Webhook] Updating subscription status to active");
+  
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      subscriptionStatus: "active",
+      lemonSqueezySubscriptionId: subscriptionId,
+    },
+  });
+  
+  console.log("[Webhook] Subscription status updated successfully");
 }
 
 async function updateChildrenConstraints(userId: string, plan: SubscriptionPlan) {
