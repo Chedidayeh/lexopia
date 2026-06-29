@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Sparkles, Crown } from "lucide-react";
-import { auth } from "@/src/auth";
-import { unstable_update } from "@/src/auth";
+import { CheckCircle, Crown, Rocket } from "lucide-react";
 import { SubscriptionPlan } from "@/src/types/types";
 
 export default function PaymentSuccessPage() {
@@ -22,13 +20,6 @@ export default function PaymentSuccessPage() {
         if (response.ok) {
           const data = await response.json();
           setCurrentPlan(data.subscriptionPlan);
-
-          // Update the session with new subscription plan
-          await unstable_update({
-            user: {
-              subscriptionPlan: data.subscriptionPlan,
-            },
-          });
         }
       } catch (error) {
         console.error("Failed to refresh session:", error);
@@ -38,7 +29,17 @@ export default function PaymentSuccessPage() {
     }
 
     refreshSession();
-  }, [update]);
+  }, []);
+
+  useEffect(() => {
+    // After showing the success page for 3 seconds, reload to refresh the session
+    if (!isRefreshing && currentPlan) {
+      const timer = setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isRefreshing, currentPlan]);
 
   const handleContinue = () => {
     router.push("/");
@@ -56,15 +57,15 @@ export default function PaymentSuccessPage() {
   }
 
   const planName = currentPlan === SubscriptionPlan.PRO_PLUS ? "Pro Plus" : currentPlan === SubscriptionPlan.PRO ? "Pro" : "Free";
-  const planIcon = currentPlan === SubscriptionPlan.PRO_PLUS ? <Sparkles className="h-8 w-8 text-sky-300" /> : currentPlan === SubscriptionPlan.PRO ? <Crown className="h-8 w-8 text-amber-300" /> : null;
+  const planIcon = currentPlan === SubscriptionPlan.PRO_PLUS ? <Rocket className="h-8 w-8 text-sky-300" /> : currentPlan === SubscriptionPlan.PRO ? <Crown className="h-8 w-8 text-amber-300" /> : null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 p-4">
       <div className="max-w-md w-full">
         <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-8 text-center shadow-2xl">
           <div className="mb-6 flex justify-center">
-            <div className="h-20 w-20 rounded-full bg-emerald-500/20 flex items-center justify-center">
-              <CheckCircle className="h-12 w-12 text-emerald-400" />
+            <div className="h-16 w-16 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <CheckCircle className="h-8 w-8 text-emerald-400" />
             </div>
           </div>
 
