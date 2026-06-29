@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/src/components/ui/button";
 import { GripHorizontal, Check } from "lucide-react";
@@ -29,6 +29,9 @@ const WordBuildAnswer = ({
   const t = useTranslations("StoryReadingInterface.riddleInterface");
   const [orderedTiles, setOrderedTiles] = useState<LetterTile[]>(tiles);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [touchStartIndex, setTouchStartIndex] = useState<number | null>(null);
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
 
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
@@ -48,6 +51,41 @@ const WordBuildAnswer = ({
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
+  };
+
+  // Touch handling for mobile
+  const handleTouchStart = (event: React.TouchEvent, index: number) => {
+    if (!canInteract) return;
+    touchStartX.current = event.touches[0].clientX;
+    touchStartY.current = event.touches[0].clientY;
+    setTouchStartIndex(index);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent) => {
+    if (touchStartIndex === null) return;
+    event.preventDefault();
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent, overIndex: number) => {
+    if (touchStartIndex === null || touchStartIndex === overIndex) {
+      setTouchStartIndex(null);
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartX.current);
+    const deltaY = Math.abs(touch.clientY - touchStartY.current);
+
+    // Only reorder if it was a horizontal swipe (not a scroll)
+    if (deltaX > 30 && deltaX > deltaY) {
+      const nextTiles = [...orderedTiles];
+      const draggedTile = nextTiles[touchStartIndex];
+      nextTiles.splice(touchStartIndex, 1);
+      nextTiles.splice(overIndex, 0, draggedTile);
+      setOrderedTiles(nextTiles);
+    }
+
+    setTouchStartIndex(null);
   };
 
   const builtWord = orderedTiles.map((tile) => tile.text).join("");
@@ -85,11 +123,14 @@ const WordBuildAnswer = ({
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(event) => handleDragOver(event, index)}
                 onDragEnd={handleDragEnd}
+                onTouchStart={(event) => handleTouchStart(event, index)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={(event) => handleTouchEnd(event, index)}
                 className={`flex flex-col items-center justify-center shrink-0 w-14 sm:w-16 rounded-xl border-2 transition-colors ${
-                  draggedIndex === index
+                  draggedIndex === index || touchStartIndex === index
                     ? "border-secondary bg-secondary/20 opacity-80 scale-105 z-10"
                     : "border-border bg-card hover:border-secondary/50 hover:bg-secondary/5"
-                } ${canInteract ? "cursor-grab active:cursor-grabbing" : "opacity-50 cursor-not-allowed"}`}
+                } ${canInteract ? "cursor-grab active:cursor-grabbing touch-none" : "opacity-50 cursor-not-allowed"}`}
               >
                 <div className="pt-2 pb-1 text-muted-foreground">
                   <GripHorizontal size={18} aria-hidden />

@@ -104,7 +104,7 @@ export default function Profile({ session }: { session: Session }) {
       </DialogTrigger>
       <DialogTitle></DialogTitle>
 
-      <DialogContent className="w-[60vw]! max-w-[90vw]!" showCloseButton={false}>
+      <DialogContent className="md:w-[60vw]! " showCloseButton={false}>
         {/* Mobile Header - Avatar and User Info */}
 
         <div className="flex flex-col md:flex-row h-full gap-4">

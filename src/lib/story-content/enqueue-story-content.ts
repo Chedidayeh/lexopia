@@ -94,6 +94,7 @@ export async function enqueueStoryContent(params: {
           roadmap: {
             select: {
               id: true,
+              isActive: true,
               readingPlanId: true,
               child: {
                 select: {
@@ -172,6 +173,22 @@ export async function enqueueStoryContent(params: {
   }
 
   const result = await prisma.$transaction(async (tx) => {
+    // Unlock the world if it's locked (parent generating next world stories)
+    if (story.world.status === "LOCKED") {
+      await tx.world.update({
+        where: { id: story.worldId },
+        data: { status: "AVAILABLE" },
+      });
+    }
+
+    // Activate the roadmap if it's inactive (parent generating next roadmap stories)
+    if (!story.world.roadmap.isActive) {
+      await tx.roadmap.update({
+        where: { id: story.world.roadmap.id },
+        data: { isActive: true },
+      });
+    }
+
     await tx.story.update({
       where: { id: storyId },
       data: {

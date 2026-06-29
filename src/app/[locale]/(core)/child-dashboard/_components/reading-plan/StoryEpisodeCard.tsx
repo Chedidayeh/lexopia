@@ -128,7 +128,7 @@ export default function StoryEpisodeCard({
 
         {readable && (
           <div className="mt-4">
-            <Button size="sm" asChild>
+            <Button size="sm" variant={access.kind === "completed" ? "outline" : "default"} asChild>
               <Link
                 target="_blank"
                 href={
