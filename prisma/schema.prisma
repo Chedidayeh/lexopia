@@ -154,6 +154,14 @@ model User {
 
   emailVerified DateTime?
 
+  // Lemon Squeezy subscription fields
+  lemonSqueezyCustomerId String?
+  lemonSqueezySubscriptionId String?
+  lemonSqueezyVariantId String?
+  subscriptionStatus String? // "active", "cancelled", "past_due", "expired"
+  subscriptionRenewsAt DateTime?
+  subscriptionCancelledAt DateTime?
+
   children     Child[]
   readingPlans ReadingPlan[]
   sessions     Session[]
@@ -163,6 +171,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([email])
+  @@index([lemonSqueezyCustomerId])
+  @@index([lemonSqueezySubscriptionId])
 }
 
 model Account {

@@ -1,8 +1,12 @@
+/* eslint-disable react/no-unescaped-entities */
+"use client";
+
 import { Check, Crown, Sparkles, Zap, Rocket } from "lucide-react";
-import { selectSubscriptionPlanAction } from "@/src/actions/auth-actions";
-import { auth } from "@/src/auth";
+import { selectSubscriptionPlanAction, createCheckoutAction } from "@/src/actions/auth-actions";
+import { useSession } from "next-auth/react";
 import { SubscriptionPlan } from "@/src/types/types";
 import { PricingPlanButton } from "./pricing-plan-button";
+import { useState } from "react";
 
 type Plan = {
   key: SubscriptionPlan;
@@ -85,14 +89,36 @@ function PlanCard({
   index,
   currentPlan,
   isLoggedIn,
+  userId,
 }: {
   plan: Plan;
   index: number;
   currentPlan?: SubscriptionPlan;
   isLoggedIn: boolean;
+  userId?: string;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const isFeatured = index === 1;
   const isCurrentPlan = currentPlan === plan.key;
+
+  const handleCheckout = async () => {
+    if (!isLoggedIn || !userId || plan.key === SubscriptionPlan.FREE) return;
+    
+    setIsLoading(true);
+    try {
+      const result = await createCheckoutAction(plan.key);
+      
+      if (result.success && result.data?.checkoutUrl) {
+        window.location.href = result.data.checkoutUrl;
+      } else {
+        console.error("Checkout failed");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Checkout failed", error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <article
@@ -148,13 +174,47 @@ function PlanCard({
 
         <p className="mb-5 text-sm leading-6 text-white/75">{plan.summary}</p>
 
-        <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
-          <PricingPlanButton
-            isLoggedIn={isLoggedIn}
-            isCurrentPlan={isCurrentPlan}
-            isFeatured={isFeatured}
-          />
-        </form>
+        {plan.key === SubscriptionPlan.FREE ? (
+          <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
+            <PricingPlanButton
+              isLoggedIn={isLoggedIn}
+              isCurrentPlan={isCurrentPlan}
+              isFeatured={isFeatured}
+            />
+          </form>
+        ) : (
+          <button
+            onClick={handleCheckout}
+            disabled={!isLoggedIn || isCurrentPlan || isLoading}
+            className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-300 ease-out ${
+              !isLoggedIn
+                ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+                : isCurrentPlan
+                  ? "cursor-default border border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                  : isFeatured
+                    ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
+                    : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
+            }`}
+          >
+            {!isLoggedIn || isCurrentPlan ? null : (
+              <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/25 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
+            )}
+            <span className="relative z-10 inline-flex items-center gap-2">
+              {isLoading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Processing...
+                </>
+              ) : !isLoggedIn ? (
+                "Log in to choose"
+              ) : isCurrentPlan ? (
+                "Current plan"
+              ) : (
+                "Select plan"
+              )}
+            </span>
+          </button>
+        )}
 
         <div className="space-y-3">
           {plan.features.map((feature) => (
@@ -169,10 +229,24 @@ function PlanCard({
   );
 }
 
-export async function Pricing() {
-  const session = await auth();
+export function Pricing() {
+  const { data: session, status } = useSession();
+
   const currentPlan = session?.user?.subscriptionPlan;
   const isLoggedIn = Boolean(session);
+  const userId = session?.user?.id;
+
+  if (status === "loading") {
+    return (
+      <section className="relative overflow-hidden py-20 sm:py-24">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative overflow-hidden py-20 sm:py-24">
@@ -185,7 +259,7 @@ export async function Pricing() {
             Subscription plans for families
           </div>
           <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            Pick the plan that matches your child’s reading journey
+            Pick the plan that matches your child's reading journey
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
             Free gives families a meaningful start, Pro expands personalization,
@@ -201,6 +275,7 @@ export async function Pricing() {
               index={index}
               currentPlan={currentPlan}
               isLoggedIn={isLoggedIn}
+              userId={userId}
             />
           ))}
         </div>

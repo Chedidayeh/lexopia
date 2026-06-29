@@ -16,8 +16,9 @@ import {
   validatePassword,
 } from "@/src/lib/auth/validators";
 import { findUserByEmail } from "@/src/lib/auth/user";
-import type { SubscriptionPlan } from "@/src/types/types";
+import { SubscriptionPlan } from "@/src/types/types";
 import { getReadingPlanConfiguration, getAvailableChallengesByPlan } from "@/src/lib/onboarding/plan-constraints";
+import { createCheckout } from "@/src/lib/subscriptions/lemonsqueezy";
 
 function fail<T = void>(
   code: AuthErrorCode,
@@ -83,6 +84,11 @@ export async function selectSubscriptionPlanAction(
     return;
   }
 
+  // Only allow FREE plan to be selected directly
+  if (plan !== SubscriptionPlan.FREE) {
+    throw new Error("Paid plans must go through checkout");
+  }
+
   // Get the new reading plan configuration for this plan
   const newConfig = getReadingPlanConfiguration(plan);
   const newChallenges = getAvailableChallengesByPlan(plan);
@@ -114,6 +120,33 @@ export async function selectSubscriptionPlanAction(
       subscriptionPlan: plan,
     },
   });
+}
+
+export async function createCheckoutAction(
+  plan: SubscriptionPlan,
+): Promise<AuthActionResult<{ checkoutUrl: string }>> {
+  const session = await auth();
+
+  if (!session?.user?.id || !session?.user?.email) {
+    return fail("UNAUTHORIZED", "You must be logged in to subscribe");
+  }
+
+  if (plan === SubscriptionPlan.FREE) {
+    return fail("INVALID_PLAN", "Free plan does not require checkout");
+  }
+
+  try {
+    const checkoutUrl = await createCheckout(
+      session.user.email,
+      plan,
+      session.user.id
+    );
+
+    return { success: true, data: { checkoutUrl } };
+  } catch (error) {
+    console.error("[createCheckoutAction]", error);
+    return fail("CHECKOUT_FAILED", "Failed to create checkout session");
+  }
 }
 
 export async function credentialsSignInAction(

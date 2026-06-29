@@ -7,7 +7,9 @@ export type AuthErrorCode =
   | "USER_NOT_FOUND"
   | "UNAUTHORIZED"
   | "REGISTRATION_FAILED"
-  | "LOGIN_FAILED";
+  | "LOGIN_FAILED"
+  | "INVALID_PLAN"
+  | "CHECKOUT_FAILED";
 
 export type AuthActionError = {
   code: AuthErrorCode;
