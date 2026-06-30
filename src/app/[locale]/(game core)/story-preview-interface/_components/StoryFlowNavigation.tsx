@@ -34,6 +34,7 @@ interface StoryFlowNavigationProps {
   handleRepeatAudio?: () => void;
   onStoryComplete?: () => void | Promise<void>;
   childId?: string;
+  isPreviewMode?: boolean;
 }
 
 const StoryFlowNavigation = ({
@@ -53,12 +54,17 @@ const StoryFlowNavigation = ({
   handleRepeatAudio,
   onStoryComplete,
   childId,
+  isPreviewMode = false,
 }: StoryFlowNavigationProps) => {
   const t = useTranslations("StoryReadingInterface");
   const { isRTL } = useLocale();
   const [isStoryComplete, setIsStoryComplete] = useState(false);
   const router = useRouter();
   const handleBack = () => {
+    if (isPreviewMode) {
+      window.close();
+      return;
+    }
     if (showRiddle) {
       setShowRiddle(false);
       return;
@@ -84,7 +90,7 @@ const StoryFlowNavigation = ({
   const handleNextPage = () => {
     if (isPlayingAudio) {
       handlePlayAudio?.();
-    } 
+    }
     // Check if this is the last page
     const isLastPage = currentPage === totalPages;
 
@@ -92,6 +98,10 @@ const StoryFlowNavigation = ({
     if (isLastPage) {
       setIsStoryComplete(true);
       void onStoryComplete?.();
+      if (isPreviewMode) {
+        window.close();
+        return;
+      }
       if (childId) {
         router.push(`/child-dashboard/${childId}`);
       } else {
@@ -155,7 +165,7 @@ const StoryFlowNavigation = ({
                   </span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="font-heading text-secondary font-semibold text-sm md:text-base">
+                  <p className="font-heading text-secondary font-medium text-sm md:text-base">
                     {t("storyFlowNavigation.riddleTime")}
                   </p>
                   <p className="font-body text-xs md:text-sm text-muted-foreground">
@@ -170,7 +180,7 @@ const StoryFlowNavigation = ({
                 {storyTitle}
               </h1>
 
-              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-semibold text-primary">
+              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-medium text-primary">
                 {currentPage}
               </span> */}
               <span className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -190,7 +200,7 @@ const StoryFlowNavigation = ({
                 className="sm:size-5 text-primary"
                 fill="currentColor"
               />
-              <span className="font-heading font-semibold text-sm sm:text-base text-foreground">
+              <span className="font-heading font-medium text-sm sm:text-base text-foreground">
                 {totalStarsEarned}
               </span>
             </div>

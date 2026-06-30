@@ -121,7 +121,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <h3 className="text-2xl font-semibold text-white">Lexopia</h3>
+              <h3 className="text-2xl font-medium text-white">Lexopia</h3>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed max-w-xs mb-6">
               Transforming young readers into confident learners through
@@ -147,7 +147,7 @@ const Footer = () => {
 
           {/* Contact Form Section */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Talk with us</h4>
+            <h4 className="text-lg font-medium text-white mb-4">Talk with us</h4>
             <p className="text-slate-400 text-sm mb-4">
               Have questions? We'd love to hear from you. Send us a message!
             </p>
@@ -193,7 +193,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 gap-8 mb-16 pb-16 border-b border-slate-700/50">
           {footerSections.map((section, index) => (
             <div key={index}>
-              <h4 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              <h4 className="text-sm font-medium text-white mb-4 uppercase tracking-wider">
                 {section.title}
               </h4>
               <ul className="space-y-3">

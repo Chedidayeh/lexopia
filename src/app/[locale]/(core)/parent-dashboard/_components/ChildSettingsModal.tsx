@@ -135,7 +135,7 @@ function SettingsSection({ title, icon, children }: SettingsSectionProps) {
     <div className="space-y-4 p-4 rounded-lg border border-border bg-muted/30">
       <div className="flex items-center gap-2">
         {icon}
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <h3 className="text-sm font-medium text-foreground">{title}</h3>
       </div>
       <div className="space-y-4">{children}</div>
     </div>

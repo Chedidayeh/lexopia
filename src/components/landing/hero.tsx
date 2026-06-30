@@ -26,7 +26,7 @@ export default function Hero({ session }: { session: Session | null }) {
       <div className="text-center max-w-4xl mx-auto px-4 sm:px-0">
         {/* Main Headline */}
         <div className="space-y-3 sm:space-y-4">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white drop-shadow-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white drop-shadow-lg">
             {t("headline")} <br />
             <FlipWords words={words} isRTL={isRTL} />
           </h1>

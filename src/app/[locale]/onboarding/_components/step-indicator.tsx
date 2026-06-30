@@ -14,7 +14,7 @@ export function StepIndicator({ step }: { step: number }) {
         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
           <motion.div
             key={s}
-            className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-all ${
+            className={`h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center font-medium text-xs sm:text-sm transition-all ${
               s < step
                 ? "bg-primary text-primary-foreground"
                 : s === step

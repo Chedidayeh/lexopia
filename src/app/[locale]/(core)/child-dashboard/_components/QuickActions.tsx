@@ -57,7 +57,7 @@ const QuickActions = ({ className = '' }: QuickActionsProps) => {
           href={action.href}
           className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-warm transition-smooth hover:scale-105 ${action.color}`}
         >
-          <span className="font-body font-semibold">{action.label}</span>
+          <span className="font-body font-medium">{action.label}</span>
         </Link>
       ))}
     </div>

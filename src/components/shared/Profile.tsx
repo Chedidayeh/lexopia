@@ -300,7 +300,7 @@ export default function Profile({ session }: { session: Session }) {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="text-sm font-medium">
-                              Current Plan: <span className="text-primary font-semibold">{getPlanDisplayName(subscriptionPlan || SubscriptionPlan.FREE)}</span>
+                              Current Plan: <span className="text-primary font-medium">{getPlanDisplayName(subscriptionPlan || SubscriptionPlan.FREE)}</span>
                             </p>
                           </div>
                         </div>

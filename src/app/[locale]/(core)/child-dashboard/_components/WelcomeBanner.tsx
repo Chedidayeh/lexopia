@@ -50,7 +50,7 @@ const WelcomeBanner = ({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-3xl lg:text-4xl font-heading font-semibold text-primary">
+              <span className="text-3xl lg:text-4xl font-heading font-medium text-primary">
                 {childName.charAt(0).toUpperCase()}
               </span>
             )}

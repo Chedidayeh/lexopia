@@ -4,6 +4,7 @@ import MissingDataAlert from "@/src/components/shared/MissingDataAlert";
 import { auth } from "@/src/auth";
 import { redirect } from "next/navigation";
 import {
+  getStoryById,
   getStoryByIdForUser,
   storyHasReadableContent,
 } from "@/src/lib/story-reading/queries";
@@ -22,26 +23,29 @@ export default async function StoryPreviewPage({
   searchParams,
 }: {
   params: Promise<{ id: string; locale: string }>;
-  searchParams: Promise<{ childId?: string }>;
+  searchParams: Promise<{ childId?: string; preview?: string }>;
 }) {
   const t = await getTranslations("StoryReadingInterface");
   const session = await auth();
 
-  if (!session?.user?.id) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+
+  // Allow access for preview mode without authentication
+  const isPreviewMode = query.preview === "true";
+
+  if (!isPreviewMode && !session?.user?.id) {
     redirect("/");
   }
-
-  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!id) {
     return <MissingDataAlert message={t("missingRequiredParameters")} />;
   }
 
-  const story = await getStoryByIdForUser(
-    id,
-    session.user.id,
-    session.user.role,
-  );
+  // In preview mode, use getStoryById which doesn't check user access
+  // Otherwise use getStoryByIdForUser for proper access control
+  const story = isPreviewMode
+    ? await getStoryById(id)
+    : await getStoryByIdForUser(id, session?.user?.id || "", session?.user?.role || "parent");
 
   if (!story) {
     return <MissingDataAlert message={t("storyNotFound")} />;
@@ -52,5 +56,5 @@ export default async function StoryPreviewPage({
   }
 
 
-  return <StoryReadingInteractive story={story} childId={query.childId} />;
+  return <StoryReadingInteractive story={story} childId={query.childId} isPreviewMode={isPreviewMode} />;
 }

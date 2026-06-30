@@ -1,6 +1,6 @@
 "use server";
 
-import { auth, signIn, unstable_update } from "@/src/auth";
+import { auth, signIn } from "@/src/auth";
 import { hashPassword } from "@/src/lib/password";
 import { prisma } from "@/src/lib/prisma";
 import type {
@@ -18,7 +18,7 @@ import {
 import { findUserByEmail } from "@/src/lib/auth/user";
 import { SubscriptionPlan } from "@/src/types/types";
 import { getReadingPlanConfiguration, getAvailableChallengesByPlan } from "@/src/lib/onboarding/plan-constraints";
-import { createCheckout } from "@/src/lib/subscriptions/lemonsqueezy";
+import { createCheckout, createCustomerPortal } from "@/src/lib/subscriptions/lemonsqueezy";
 
 function fail<T = void>(
   code: AuthErrorCode,
@@ -115,11 +115,6 @@ export async function selectSubscriptionPlanAction(
     },
   });
 
-  await unstable_update({
-    user: {
-      subscriptionPlan: plan,
-    },
-  });
 }
 
 export async function createCheckoutAction(
@@ -146,6 +141,36 @@ export async function createCheckoutAction(
   } catch (error) {
     console.error("[createCheckoutAction]", error);
     return fail("CHECKOUT_FAILED", "Failed to create checkout session");
+  }
+}
+
+export async function createCustomerPortalAction(): Promise<AuthActionResult<{ portalUrl: string }>> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return fail("UNAUTHORIZED", "You must be logged in to manage subscription");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { lemonSqueezySubscriptionId: true },
+  });
+
+  console.log("[createCustomerPortalAction] User subscription ID:", user?.lemonSqueezySubscriptionId);
+
+  if (!user?.lemonSqueezySubscriptionId) {
+    console.error("[createCustomerPortalAction] No subscription ID found for user");
+    return fail("NO_SUBSCRIPTION", "No active subscription found");
+  }
+
+  try {
+    const portalUrl = await createCustomerPortal(user.lemonSqueezySubscriptionId);
+    console.log("[createCustomerPortalAction] Portal URL:", portalUrl);
+
+    return { success: true, data: { portalUrl } };
+  } catch (error) {
+    console.error("[createCustomerPortalAction]", error);
+    return fail("PORTAL_FAILED", "Failed to create customer portal session");
   }
 }
 

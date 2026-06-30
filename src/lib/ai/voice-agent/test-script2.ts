@@ -113,21 +113,20 @@ class VertexAITTSProvider {
 async function run() {
   const tts = new VertexAITTSProvider();
 
-  const welcomeText = `Welcome to Lexopia App, where we create personalized reading journeys for your child.
+  const welcomeText = `Understanding Reading Challenges.
+We're here to help with common reading difficulties.
 
-Here's what our app delivers. First, Personalized Stories - AI-generated stories tailored to your child's interests, reading level, and learning goals.
+Let's start with reading difficulties. This includes slow, effortful reading, trouble recognizing common words quickly, and skipping or misreading words in sentences.
 
-Next, we offer a Reading Plan Structure - a structured learning journey with chapter-based progress and adaptive challenges.
+Next, many children experience spelling problems. This shows up as inconsistent spelling where the same word is spelled differently each time, difficulty remembering how words are written, and mixing up letters like "b" and "d".
 
-Let me explain your role as a parent. You guide your child's reading journey, monitor progress, and generate new stories as they complete each plan.
+Another common challenge is sound-letter confusion. Children may have trouble matching letters to their sounds, difficulty breaking words into syllables or sounds, and problems blending sounds to form words.
 
-When it comes to Generate Reading Plans, when your child completes a reading plan, you can generate the next one with updated challenges.
+Additionally, memory and processing issues can affect learning. This includes difficulty remembering instructions or sequences, and needing more time to process language.
 
-For each Generate Next Story, every story is generated based on your child's preferences and progress, ensuring engaging and appropriate content.
+Finally, there's often an emotional impact. This can include frustration or avoidance of reading tasks, low confidence in school settings, and feeling "slower" than classmates even when they're not.
 
-You can also Monitor Progress - track your child's reading timeline, completed stories, and skill development through detailed progress monitoring.
-
-Are you ready to create your child's personalized reading profile?`;
+Our app is designed to address these challenges and help your child succeed`;
 
   const audio = await tts.synthesize(welcomeText, {
     languageCode: TTSLanguageCodes.ENGLISH_US,

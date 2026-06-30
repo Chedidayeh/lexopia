@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import authConfig from "./auth.config";
 import { authenticateCredentials } from "./lib/auth/credentials";
 import { toAuthUser, upsertGoogleUser } from "./lib/auth/user";
-import { RoleType, SubscriptionPlan } from "./types/types";
+import { RoleType } from "./types/types";
 
 declare module "next-auth" {
   interface User {
@@ -12,7 +12,6 @@ declare module "next-auth" {
     name: string;
     role: RoleType;
     newUser: boolean;
-    subscriptionPlan: SubscriptionPlan;
     childId?: string;
     parentId?: string;
     token?: string;
@@ -25,7 +24,6 @@ declare module "next-auth" {
       name: string;
       role: RoleType;
       newUser?: boolean;
-      subscriptionPlan?: SubscriptionPlan;
       childId?: string;
       parentId?: string;
       token?: string;
@@ -40,7 +38,6 @@ declare module "@auth/core/jwt" {
     name?: string;
     role?: RoleType;
     newUser?: boolean;
-    subscriptionPlan?: SubscriptionPlan;
     childId?: string;
     parentId?: string;
     accessToken?: string;
@@ -94,9 +91,6 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         if (session.user.newUser !== undefined) {
           token.newUser = session.user.newUser;
         }
-        if (session.user.subscriptionPlan !== undefined) {
-          token.subscriptionPlan = session.user.subscriptionPlan;
-        }
         if (session.user.childId !== undefined) {
           token.childId = session.user.childId;
         }
@@ -111,7 +105,6 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         token.parentId = user.parentId ?? user.id;
         token.accessToken = user.token;
         token.newUser = user.newUser;
-        token.subscriptionPlan = user.subscriptionPlan;
       }
 
       return token;
@@ -125,8 +118,6 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
       session.user.parentId = token.parentId as string | undefined;
       session.user.token = token.accessToken as string | undefined;
       session.user.newUser = token.newUser as boolean;
-      session.user.subscriptionPlan =
-        token.subscriptionPlan as SubscriptionPlan;
       return session;
     },
   },

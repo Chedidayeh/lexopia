@@ -149,7 +149,7 @@ const VoiceInputAnswer = ({
         {transcript && (
           <div className="p-4 sm:p-6 bg-secondary/10 rounded-xl border border-secondary/20">
             <p className="text-foreground font-body text-sm sm:text-base">
-              <span className="font-semibold">{t("voiceInputAnswer.transcript")}:</span>{" "}
+              <span className="font-medium">{t("voiceInputAnswer.transcript")}:</span>{" "}
               {transcript}
             </p>
           </div>

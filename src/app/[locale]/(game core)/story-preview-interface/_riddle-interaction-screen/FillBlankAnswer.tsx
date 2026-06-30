@@ -39,7 +39,7 @@ const FillBlankAnswer = ({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <label className="block font-body font-semibold text-foreground text-lg">
+      <label className="block font-body font-medium text-foreground text-lg">
         {t("fillBlankAnswer.instructions")}
       </label>
 

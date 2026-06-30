@@ -194,7 +194,7 @@ export function FAQ() {
       <div className="relative max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl sm:text-5xl text-white font-semibold">FAQ</h1>
+          <h1 className="text-4xl sm:text-5xl text-white font-medium">FAQ</h1>
           <p className="text-lg text-slate-300 drop-shadow-md mt-2">
             Find answers tailored to your role
           </p>
@@ -230,7 +230,7 @@ export function FAQ() {
 
         {/* Contact CTA */}
         <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-slate-800/50 to-slate-900/50 border border-slate-700/50 backdrop-blur-sm text-center">
-          <h3 className="text-xl md:text-2xl font-semibold text-white mb-3">
+          <h3 className="text-xl md:text-2xl font-medium text-white mb-3">
             Still have questions?
           </h3>
           <p className="text-slate-300 mb-6">

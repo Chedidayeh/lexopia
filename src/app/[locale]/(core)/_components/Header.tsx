@@ -69,7 +69,7 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
             <div className="shrink-0 flex items-center gap-3">
               {subscriptionPlan && (
                 <div
-                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold border backdrop-blur-md transition-all duration-300 hover:scale-[1.03]"
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium border backdrop-blur-md transition-all duration-300 hover:scale-[1.03]"
                   style={{
                     background:
                       subscriptionPlan === "FREE"
@@ -150,7 +150,7 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
           {/* Right Actions */}
           <div className="flex items-center gap-2">
             {subscriptionPlan && (
-              <div className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-semibold border shadow-sm"
+              <div className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium border shadow-sm"
                 style={{
                   background: subscriptionPlan === "FREE"
                     ? "linear-gradient(135deg, rgb(107, 114, 128) 0%, rgb(75, 85, 99) 100%)"

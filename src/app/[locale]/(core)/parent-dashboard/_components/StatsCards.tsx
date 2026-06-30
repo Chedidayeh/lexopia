@@ -66,7 +66,7 @@ const StatCard = ({
       )}
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
       <div className="flex items-baseline gap-1">
-        <p className={`text-3xl font-data font-semibold ${textColor}`}>
+        <p className={`text-3xl font-data font-medium ${textColor}`}>
           {displayValue}
         </p>
         {suffix && (

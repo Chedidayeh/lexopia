@@ -60,7 +60,7 @@ export function About() {
           {/* Left: Mission + Stats */}
           <div>
             <div className="text-left mb-8 md:mb-12">
-              <h1 className="text-4xl sm:text-5xl text-white font-semibold">
+              <h1 className="text-4xl sm:text-5xl text-white font-medium">
                 Built for Educators,
                 <br />
                 Loved by Children
@@ -76,13 +76,13 @@ export function About() {
 
             {/* Stats placed under the mission on the left column */}
             <div className="bg-gradient-to-br from-slate-800/70 to-slate-900/80 border border-slate-600/50 rounded-2xl p-6 mt-6 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-lg font-medium text-white mb-4">
                 By the Numbers
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 {stats.map((s, i) => (
                   <div key={i} className="text-left">
-                    <p className="text-2xl font-semibold text-white">{s.value}</p>
+                    <p className="text-2xl font-medium text-white">{s.value}</p>
                     <p className="text-sm text-slate-400">{s.label}</p>
                   </div>
                 ))}
@@ -121,7 +121,7 @@ export function About() {
                       {prop.icon}
                     </div>
 
-                    <h3 className="text-xl font-semibold text-white mb-2">
+                    <h3 className="text-xl font-medium text-white mb-2">
                       {prop.title}
                     </h3>
                     <p className="text-slate-300 text-sm leading-relaxed">
@@ -137,7 +137,7 @@ export function About() {
         {/* Core Values */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 backdrop-blur-md">
-            <h4 className="text-xl font-semibold text-amber-300 mb-3">
+            <h4 className="text-xl font-medium text-amber-300 mb-3">
               For Educators
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed">
@@ -149,7 +149,7 @@ export function About() {
           </div>
 
           <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 backdrop-blur-md">
-            <h4 className="text-xl font-semibold text-purple-300 mb-3">
+            <h4 className="text-xl font-medium text-purple-300 mb-3">
               For Children
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed">

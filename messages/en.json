@@ -4,7 +4,7 @@
 	},
 	"Hero": {
 		"headline": "Stories That Make Your Child",
-		"subline": "Journey through magical tales and solve mind-bending riddles",
+		"subline": "Journey through magical tales and solve mind-bending challenges",
 		"details": "Perfect for young readers • Build reading skills • Develop critical thinking",
 		"cta": {
 			"getStarted": "Get Started",
@@ -651,6 +651,19 @@
 		"dangerZone": "Danger Zone",
 		"deleteAccount": "Delete Account"
 	},
+	"SubscriptionSuccess": {
+		"title": "Plan Upgraded!",
+		"message": "You have successfully upgraded to",
+		"closeButton": "Close"
+	},
+	"CancelSubscription": {
+		"title": "Cancel Subscription?",
+		"message": "Are you sure you want to cancel your subscription? You will be redirected to the customer portal to complete the cancellation.",
+		"warning": "Your subscription will remain active until the end of your current billing period. After that, your account will be downgraded to the Free plan.",
+		"keepPlan": "Keep Plan",
+		"cancelButton": "Cancel Subscription",
+		"loading": "Loading..."
+	},
 	"LoginForm": {
 		"titleCreate": "Create an account",
 		"titleWelcome": "Welcome",
@@ -720,8 +733,23 @@
 		"featureGenerateStory": "Generate Next Story",
 		"featureGenerateStoryDesc": "Each story is generated based on your child's preferences and progress, ensuring engaging and appropriate content.",
 		"featureMonitorProgress": "Monitor Progress",
-		"featureMonitorProgressDesc": "Track your child's reading timeline, completed stories, and skill development through detailed progress reports.",
+		"featureMonitorProgressDesc": "Track your child's reading timeline, completed stories, and skill development through detailed progress monitoring.",
 		"introReadyToStart": "Ready to create your child's personalized reading profile?",
+		"intro2Title": "Understanding Reading Challenges",
+		"intro2Subtitle": "We're here to help with common reading difficulties",
+		"difficultyReading": "Reading difficulties",
+		"difficultyReadingDesc": "Slow, effortful reading, trouble recognizing common words quickly, skipping or misreading words in sentences",
+		"difficultySpelling": "Spelling problems",
+		"difficultySpellingDesc": "Inconsistent spelling (same word spelled differently each time), difficulty remembering how words are written, mixing up letters (like \"b\" and \"d\")",
+		"difficultySoundLetter": "Sound-letter confusion",
+		"difficultySoundLetterDesc": "Trouble matching letters to their sounds, difficulty breaking words into syllables or sounds, problems blending sounds to form words",
+		"difficultyWriting": "Writing challenges",
+		"difficultyWritingDesc": "Slow writing speed, grammar and punctuation errors, ideas are clear in their mind but hard to put on paper",
+		"difficultyMemory": "Memory and processing issues",
+		"difficultyMemoryDesc": "Difficulty remembering instructions or sequences, needing more time to process language.",
+		"difficultyEmotional": "Emotional impact",
+		"difficultyEmotionalDesc": "Frustration or avoidance of reading tasks, low confidence in school settings, feeling \"slower\" than classmates (even when they're not)",
+		"intro2ReadyToStart": "Our app is designed to address these challenges and help your child succeed",
 		"loading": "Loading...",
 		"step2Title": "Tell us about your child",
 		"step2Desc": "This name and age will shape their first personalized story.",

@@ -628,6 +628,19 @@
 			}
 		}
 	},
+	"SubscriptionSuccess": {
+		"title": "Plan mis à niveau !",
+		"message": "Vous avez réussi à mettre à niveau vers le plan",
+		"closeButton": "Fermer"
+	},
+	"CancelSubscription": {
+		"title": "Annuler l'abonnement ?",
+		"message": "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous serez redirigé vers le portail client pour compléter l'annulation.",
+		"warning": "Votre abonnement restera actif jusqu'à la fin de votre période de facturation actuelle. Après cela, votre compte sera rétrogradé au plan gratuit.",
+		"keepPlan": "Garder le plan",
+		"cancelButton": "Annuler l'abonnement",
+		"loading": "Chargement..."
+	},
 	"Profile": {
 		"profile": "Profil",
 		"settings": "Paramètres",

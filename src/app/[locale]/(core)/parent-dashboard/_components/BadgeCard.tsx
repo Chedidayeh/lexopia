@@ -20,7 +20,7 @@ const BADGE_STYLE = {
   base: "bg-gradient-to-br from-primary/20 to-primary/10 border-2 border-primary/50 shadow-warm hover:shadow-lg hover:border-primary/70",
   locked: "bg-muted/40 border-muted/50 opacity-60 hover:opacity-80 shadow-warm ",
   text: "text-foreground font-heading",
-  label: "text-primary font-semibold",
+  label: "text-primary font-medium",
   icon: "text-4xl",
 };
 
@@ -99,7 +99,7 @@ export default function BadgeCard({
       <div className="relative z-10 text-center space-y-2">
         {isLocked ? (
           <>
-            <p className="text-lg font-semibold text-gray-600">
+            <p className="text-lg font-medium text-gray-600">
               {t("achievements.locked.title")}
             </p>
             <p className="text-sm text-gray-500 px-2">
@@ -123,7 +123,7 @@ export default function BadgeCard({
           showDetails && (
             <>
               <p
-                className={`font-semibold text-xl leading-tight ${BADGE_STYLE.text}`}
+                className={`font-medium text-xl leading-tight ${BADGE_STYLE.text}`}
               >
                 {localizedName}
               </p>

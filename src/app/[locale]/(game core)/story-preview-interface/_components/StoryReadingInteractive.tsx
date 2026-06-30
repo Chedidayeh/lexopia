@@ -38,9 +38,10 @@ function computeSentenceBoundaries(
 interface StoryReadingInteractiveProps {
   story: Story;
   childId?: string;
+  isPreviewMode?: boolean;
 }
 
-const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProps) => {
+const StoryReadingInteractive = ({ story, childId, isPreviewMode = false }: StoryReadingInteractiveProps) => {
   const t = useTranslations("StoryReadingInterface");
   const { locale } = useLocale();
 
@@ -57,9 +58,16 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
     totalStarsEarned,
     handlePageChange,
     handleChallengeSubmitted,
-    handleStoryComplete,
+    handleStoryComplete: originalHandleStoryComplete,
     recordTtsReplay,
   } = useStoryReadingSession(story, locale);
+
+  const handleStoryComplete = useCallback(() => {
+    originalHandleStoryComplete();
+    if (isPreviewMode) {
+      window.close();
+    }
+  }, [originalHandleStoryComplete, isPreviewMode]);
 
   const [textSize, setTextSize] = useState<"small" | "medium" | "large">(
     "medium",
@@ -244,6 +252,7 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
         handleRepeatAudio={handleRepeatAudio}
         onStoryComplete={handleStoryComplete}
         childId={childId}
+        isPreviewMode={isPreviewMode}
       />
       {!showRiddle ? (
         <>
@@ -407,7 +416,7 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.navigation")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -418,7 +427,7 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
 
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.audioReading")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -429,7 +438,7 @@ const StoryReadingInteractive = ({ story, childId }: StoryReadingInteractiveProp
 
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.riddles")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">

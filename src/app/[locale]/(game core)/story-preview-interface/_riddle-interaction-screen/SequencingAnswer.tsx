@@ -61,7 +61,7 @@ const SequencingAnswer = ({
   return (
     <div className="w-full space-y-4 sm:space-y-6">
       <div>
-        <label className="block font-body font-semibold text-foreground text-base sm:text-lg mb-2">
+        <label className="block font-body font-medium text-foreground text-base sm:text-lg mb-2">
           {t('sequencingAnswer.instructions') || 'Arrange these events in the correct order:'}
         </label>
         <p className="font-body text-sm sm:text-base text-muted-foreground">
@@ -97,7 +97,7 @@ const SequencingAnswer = ({
 
                 {/* Position Badge */}
                 <div className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-secondary/20 border-2 border-secondary flex items-center justify-center">
-                  <span className="font-heading font-semibold text-secondary text-sm sm:text-base">
+                  <span className="font-heading font-medium text-secondary text-sm sm:text-base">
                     {index + 1}
                   </span>
                 </div>

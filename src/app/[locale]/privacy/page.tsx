@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
             </div>
             <div className="space-y-4 text-slate-600 dark:text-slate-400">
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                <h3 className="font-medium text-slate-900 dark:text-white mb-2">
                   Account Information
                 </h3>
                 <p className="leading-relaxed">
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                <h3 className="font-medium text-slate-900 dark:text-white mb-2">
                   Child Profile Information
                 </h3>
                 <p className="leading-relaxed">
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                <h3 className="font-medium text-slate-900 dark:text-white mb-2">
                   Usage Data
                 </h3>
                 <p className="leading-relaxed">

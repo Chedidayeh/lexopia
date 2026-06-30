@@ -39,9 +39,11 @@ import {
   NotificationsStep,
   OverviewStep,
   IntroStep,
+  IntroStep2,
+  stopIntroAudio,
 } from "@/src/lib/onboarding/element-steps";
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 13;
 
 const ONBOARDING_ERROR_KEYS = new Set([
   "childNameRequired",
@@ -117,14 +119,16 @@ export default function ParentOnboarding() {
     const validators = [
       // Step 0: Intro (no validation needed)
       () => ({ valid: true, message: "" }),
-      // Step 1: Name
+      // Step 1: IntroStep2 (no validation needed)
+      () => ({ valid: true, message: "" }),
+      // Step 2: Name
       () => {
         if (!form.name || form.name.trim().length === 0) {
           return { valid: false, message: "childNameRequired" };
         }
         return { valid: true, message: "" };
       },
-      // Step 2: Birth date
+      // Step 3: Birth date
       () => {
         if (!form.birthDate) {
           return { valid: false, message: "invalidAge" };
@@ -135,28 +139,28 @@ export default function ParentOnboarding() {
         }
         return { valid: true, message: "" };
       },
-      // Step 3: Gender
+      // Step 4: Gender
       () => {
         if (!form.gender) {
           return { valid: false, message: "selectGender" };
         }
         return { valid: true, message: "" };
       },
-      // Step 4: Language
+      // Step 5: Language
       () => {
         if (!form.primaryLanguage) {
           return { valid: false, message: "selectLanguageRequired" };
         }
         return { valid: true, message: "" };
       },
-      // Step 5: Reading level
+      // Step 6: Reading level
       () => {
         if (!form.readingLevel) {
           return { valid: false, message: "selectReadingLevel" };
         }
         return { valid: true, message: "" };
       },
-      // Step 6: Challenges
+      // Step 7: Challenges
       () => validateStep3WithPlan(
         {
           primaryLanguage: form.primaryLanguage,
@@ -165,7 +169,7 @@ export default function ParentOnboarding() {
         },
         planConstraints
       ),
-      // Step 7: Interests
+      // Step 8: Interests
       () => {
         if (form.interests.length === 0) {
           return { valid: false, message: "selectAtLeastOneTheme" };
@@ -176,21 +180,21 @@ export default function ParentOnboarding() {
         }
         return { valid: true, message: "" };
       },
-      // Step 8: Character type
+      // Step 9: Character type
       () => {
         if (!form.favoriteCharacterType) {
           return { valid: false, message: "selectCharacterType" };
         }
         return { valid: true, message: "" };
       },
-      // Step 9: Story tone
+      // Step 10: Story tone
       () => {
         if (!form.storyTone) {
           return { valid: false, message: "selectStoryTone" };
         }
         return { valid: true, message: "" };
       },
-      // Step 10: Stories per week
+      // Step 11: Stories per week
       () => validateStep5WithPlan(
         {
           storiesPerWeek: form.storiesPerWeek,
@@ -199,9 +203,9 @@ export default function ParentOnboarding() {
         },
         planConstraints
       ),
-      // Step 11: Notifications (no validation needed, it's optional)
+      // Step 12: Notifications (no validation needed, it's optional)
       () => ({ valid: true, message: "" }),
-      // Step 12: Overview (no validation needed)
+      // Step 13: Overview (no validation needed)
       () => ({ valid: true, message: "" }),
     ];
     
@@ -215,11 +219,12 @@ export default function ParentOnboarding() {
 
   function handleNext() {
     if (!validateCurrentStep()) return;
+    stopIntroAudio();
     setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   }
 
   function handleBack() {
-    if (step === 1) {
+    if (step === 0) {
       router.push("/");
       return;
     }
@@ -291,12 +296,13 @@ export default function ParentOnboarding() {
               </Button>
             </div>
             {step === 0 && <IntroStep t={t} form={form} updateForm={updateForm} />}
-            {step === 1 && <NameStep t={t} form={form} updateForm={updateForm} />}
-            {step === 2 && <BirthDateStep t={t} form={form} updateForm={updateForm} />}
-            {step === 3 && <GenderStep t={t} form={form} updateForm={updateForm} />}
-            {step === 4 && <LanguageStep t={t} form={form} updateForm={updateForm} />}
-            {step === 5 && <ReadingLevelStep t={t} form={form} updateForm={updateForm} />}
-            {step === 6 && (
+            {step === 1 && <IntroStep2 t={t} form={form} updateForm={updateForm} />}
+            {step === 2 && <NameStep t={t} form={form} updateForm={updateForm} />}
+            {step === 3 && <BirthDateStep t={t} form={form} updateForm={updateForm} />}
+            {step === 4 && <GenderStep t={t} form={form} updateForm={updateForm} />}
+            {step === 5 && <LanguageStep t={t} form={form} updateForm={updateForm} />}
+            {step === 6 && <ReadingLevelStep t={t} form={form} updateForm={updateForm} />}
+            {step === 7 && (
               <ChallengesStep
                 t={t}
                 form={form}
@@ -305,7 +311,7 @@ export default function ParentOnboarding() {
                 planConstraints={planConstraints}
               />
             )}
-            {step === 7 && (
+            {step === 8 && (
               <InterestsStep
                 t={t}
                 form={form}
@@ -314,9 +320,9 @@ export default function ParentOnboarding() {
                 planConstraints={planConstraints}
               />
             )}
-            {step === 8 && <CharacterTypeStep t={t} form={form} updateForm={updateForm} />}
-            {step === 9 && <StoryToneStep t={t} form={form} updateForm={updateForm} />}
-            {step === 10 && (
+            {step === 9 && <CharacterTypeStep t={t} form={form} updateForm={updateForm} />}
+            {step === 10 && <StoryToneStep t={t} form={form} updateForm={updateForm} />}
+            {step === 11 && (
               <StoriesPerWeekStep
                 t={t}
                 form={form}
@@ -324,8 +330,8 @@ export default function ParentOnboarding() {
                 planConstraints={planConstraints}
               />
             )}
-            {step === 11 && <NotificationsStep t={t} form={form} updateForm={updateForm} />}
-            {step === 12 && <OverviewStep t={t} form={form} updateForm={updateForm} />}
+            {step === 12 && <NotificationsStep t={t} form={form} updateForm={updateForm} />}
+            {step === 13 && <OverviewStep t={t} form={form} updateForm={updateForm} />}
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               {step > 0 && (

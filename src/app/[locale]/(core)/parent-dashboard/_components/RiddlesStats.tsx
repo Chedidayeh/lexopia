@@ -186,7 +186,7 @@ export default function RiddlesStats({
           <p className="text-sm text-muted-foreground mb-1">
             {t("riddleStatistics.stats.totalChallenges")}
           </p>
-          <p className="text-3xl font-data font-semibold text-purple-600">
+          <p className="text-3xl font-data font-medium text-purple-600">
             {totalChallenges}
           </p>
         </div>
@@ -194,7 +194,7 @@ export default function RiddlesStats({
           <p className="text-sm text-muted-foreground mb-1">
             {t("riddleStatistics.stats.solved")}
           </p>
-          <p className="text-3xl font-data font-semibold text-green-600">
+          <p className="text-3xl font-data font-medium text-green-600">
             {solvedChallenges}
           </p>
         </div>
@@ -202,7 +202,7 @@ export default function RiddlesStats({
           <p className="text-sm text-muted-foreground mb-1">
             {t("riddleStatistics.stats.successRate")}
           </p>
-          <p className="text-3xl font-data font-semibold text-blue-600">
+          <p className="text-3xl font-data font-medium text-blue-600">
             {successRate}%
           </p>
         </div>
@@ -210,7 +210,7 @@ export default function RiddlesStats({
           <p className="text-sm text-muted-foreground mb-1">
             {t("riddleStatistics.stats.avgAttempts")}
           </p>
-          <p className="text-3xl font-data font-semibold text-orange-600">
+          <p className="text-3xl font-data font-medium text-orange-600">
             {avgAttemptsPerChallenge}
           </p>
         </div>
@@ -366,7 +366,7 @@ export default function RiddlesStats({
                             key={answer.id}
                             className="flex items-start gap-3 p-2 bg-white dark:bg-blue-900 rounded"
                           >
-                            <div className="shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold">
+                            <div className="shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">
                               {index + 1}
                             </div>
                             <p className="text-sm text-blue-900 dark:text-blue-100 pt-1">

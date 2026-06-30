@@ -3,6 +3,8 @@
  * Replaces the legacy @Lexopia/shared-types package for parent-dashboard UI.
  */
 
+import { SubscriptionPlan } from "@prisma/client";
+
 export {
   RoleType,
   LanguageCode,
@@ -20,7 +22,7 @@ export type User = {
   name: string | null;
   role: string;
   newUser?: boolean;
-  subscriptionPlan?: string;
+  subscriptionPlan?: SubscriptionPlan;
 };
 
 export type ParentUser = User;

@@ -186,7 +186,7 @@ const ChildDashboardInteractive = ({
                   <div className="flex w-full items-start gap-3 p-4">
                     <div
                       className={cn(
-                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold transition-colors",
+                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-medium transition-colors",
                         isSelected
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground",

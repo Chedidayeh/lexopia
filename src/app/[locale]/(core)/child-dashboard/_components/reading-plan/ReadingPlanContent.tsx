@@ -254,7 +254,7 @@ export default function ReadingPlanContent({
           >
             <stat.icon className={`h-5 w-5 ${stat.color} mb-2`} />
             <p className="text-xs text-muted-foreground">{stat.label}</p>
-            <p className="font-heading text-lg md:text-xl font-semibold mt-0.5">
+            <p className="font-heading text-lg md:text-xl font-medium mt-0.5">
               {stat.value}
             </p>
           </div>
@@ -277,7 +277,7 @@ export default function ReadingPlanContent({
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl border-2 border-primary/30 bg-linear-to-r from-primary/15 via-primary/5 to-transparent p-6 md:p-8"
         >
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+          <p className="text-xs font-medium uppercase tracking-widest text-primary">
             {primaryStory.access.kind === "continue"
               ? t("readingPlan.continueReading")
               : t("readingPlan.upNext")}

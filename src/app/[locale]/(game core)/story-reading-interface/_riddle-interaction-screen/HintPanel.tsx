@@ -74,7 +74,7 @@ const HintPanel = ({
           <div className="px-3 sm:px-6 pb-2">
             <div className="p-4 sm:p-6 rounded-xl border-2 border-secondary bg-secondary/10">
               <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                <span className="font-caption text-xs sm:text-sm uppercase tracking-wider font-semibold text-secondary">
+                <span className="font-caption text-xs sm:text-sm uppercase tracking-wider font-medium text-secondary">
                   {t("hintPanel.hintCounter", { current: currentHintLevel, total: hints.length })}
                 </span>
               </div>

@@ -78,7 +78,7 @@ export function ChildBasicsStep({ t, form, updateForm }: StepProps) {
   return (
     <>
       <div>
-        <h2 className="text-lg font-semibold">{t("step2Title")}</h2>
+        <h2 className="text-lg font-medium">{t("step2Title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{t("step2Desc")}</p>
       </div>
 
@@ -178,7 +178,7 @@ export function ChildBasicsStep({ t, form, updateForm }: StepProps) {
           </span>
 
           <div className="space-y-1">
-            <span className="block text-sm font-semibold">
+            <span className="block text-sm font-medium">
               {t(`gender.${option.value}`)}
             </span>
 
@@ -190,7 +190,7 @@ export function ChildBasicsStep({ t, form, updateForm }: StepProps) {
 
         <span
           className={cn(
-            "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-semibold transition-all",
+            "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-medium transition-all",
             selected
               ? colorClasses.check
               : "border-border text-transparent"
@@ -247,7 +247,7 @@ export function ReadingProfileStep({
   return (
     <>
       <div>
-        <h2 className="text-lg font-semibold">{t("step3Title")}</h2>
+        <h2 className="text-lg font-medium">{t("step3Title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{t("step3Desc")}</p>
       </div>
 
@@ -393,7 +393,7 @@ export function InterestsStep({
   return (
     <>
       <div>
-        <h2 className="text-lg font-semibold">{t("step4Title")}</h2>
+        <h2 className="text-lg font-medium">{t("step4Title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{t("step4Desc")}</p>
       </div>
 
@@ -555,7 +555,7 @@ export function GoalsLaunchStep({ t, form, updateForm, planConstraints }: StepPr
   return (
     <>
       <div>
-        <h2 className="text-lg font-semibold">{t("step5Title")}</h2>
+        <h2 className="text-lg font-medium">{t("step5Title")}</h2>
         <p className="text-sm text-muted-foreground mt-1">{t("step5Desc")}</p>
       </div>
 
@@ -605,7 +605,7 @@ export function GoalsLaunchStep({ t, form, updateForm, planConstraints }: StepPr
       </label>
 
       <div className="rounded-lg border bg-muted/30 p-4 space-y-2 text-sm">
-        <h3 className="font-semibold">{t("summaryTitle")}</h3>
+        <h3 className="font-medium">{t("summaryTitle")}</h3>
         <p className="text-muted-foreground text-xs">{t("summaryDesc")}</p>
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 pt-2">
           <SummaryItem label={t("childNameLabel")} value={form.name} />

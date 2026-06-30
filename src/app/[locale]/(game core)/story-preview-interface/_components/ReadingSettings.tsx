@@ -67,7 +67,7 @@ const ReadingSettings = ({
 
         {/* Text Size */}
         <div className="mb-4 sm:mb-6">
-          <label className="block font-body font-semibold text-sm sm:text-base text-foreground mb-2 sm:mb-3">
+          <label className="block font-body font-medium text-sm sm:text-base text-foreground mb-2 sm:mb-3">
             {t("readingSettings.textSize")}
           </label>
           <div className="flex gap-2 sm:gap-3">
@@ -106,7 +106,7 @@ const ReadingSettings = ({
 
         {/* Theme Selection */}
         {/* <div className="mb-4 sm:mb-6">
-          <label className="block font-body font-semibold text-sm sm:text-base text-foreground mb-2 sm:mb-3">
+          <label className="block font-body font-medium text-sm sm:text-base text-foreground mb-2 sm:mb-3">
             {t("readingSettings.theme")}
           </label>
           <div className="flex gap-2 sm:gap-3">
@@ -143,7 +143,7 @@ const ReadingSettings = ({
         {/* <div className="mb-6">
           <label className="flex items-center justify-between cursor-pointer">
             <div>
-              <span className="block font-body font-semibold text-foreground mb-1">
+              <span className="block font-body font-medium text-foreground mb-1">
                 High Contrast Mode
               </span>
               <span className="block font-caption text-sm text-muted-foreground">
@@ -159,7 +159,7 @@ const ReadingSettings = ({
           <div className="flex items-start gap-2 sm:gap-3">
             <Lightbulb className="text-accent w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-body font-semibold text-sm sm:text-base text-foreground mb-1">
+              <p className="font-body font-medium text-sm sm:text-base text-foreground mb-1">
                 {t("readingSettings.readingTip")}
               </p>
               <p className="font-caption text-xs sm:text-sm text-muted-foreground">

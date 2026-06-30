@@ -4,10 +4,13 @@ import { auth } from "@/src/auth";
 import Hero from "@/src/components/landing/hero";
 import { Pricing } from "@/src/components/landing/Pricing";
 import Footer from "@/src/components/landing/Footer";
+import { findUserById } from "@/src/lib/auth/user";
+import { SubscriptionSuccessDialogWithConfetti } from "@/src/components/landing/SubscriptionSuccessDialogWithConfetti";
 
 
 export default async function Home() {
   const session = await auth()
+  const user = session?.user?.id ? await findUserById(session.user.id) : null
 
   return (
     <div className="relative isolate min-h-screen overflow-hidden">
@@ -22,10 +25,11 @@ export default async function Home() {
       </div>
 
       <section id="pricing" className="relative z-10 w-full">
-        <Pricing />
+        <Pricing user={user} />
       </section>
 
       <Footer />
+      <SubscriptionSuccessDialogWithConfetti />
     </div>
   );
 }

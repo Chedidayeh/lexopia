@@ -30,7 +30,7 @@ export async function createCheckout(email: string, plan: SubscriptionPlan, user
             custom: { userId }
           },
           product_options: {
-            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-success`,
+            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/?payment=success&plan=${plan}`,
           },
         },
         relationships: {
@@ -43,4 +43,21 @@ export async function createCheckout(email: string, plan: SubscriptionPlan, user
 
   const json = await res.json();
   return json.data?.attributes?.url as string;
+}
+
+export async function createCustomerPortal(subscriptionId: string) {
+  const res = await fetch(
+    `https://api.lemonsqueezy.com/v1/subscriptions/${subscriptionId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+        Accept: "application/vnd.api+json",
+      },
+    }
+  );
+
+  const json = await res.json();
+  console.log("[createCustomerPortal] Response:", JSON.stringify(json, null, 2));
+  return json.data?.attributes?.urls?.customer_portal as string;
 }

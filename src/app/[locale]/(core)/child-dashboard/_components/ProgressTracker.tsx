@@ -23,7 +23,7 @@ const ProgressTracker = ({ currentStars }: ProgressTrackerProps) => {
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="relative bg-primary rounded-full w-24 h-24 flex items-center justify-center">
           <div className="absolute flex flex-col items-center">
-            <span className="text-4xl font-semibold text-white">{currentStars}</span>
+            <span className="text-4xl font-medium text-white">{currentStars}</span>
             <span className="text-xs text-gray-100 font-data">
               {t("progressTracker.totalStarsLabel")}
             </span>

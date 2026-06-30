@@ -443,7 +443,7 @@ const StoryReadingInteractive = ({
             <div className="space-y-3 sm:space-y-4">
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.navigation")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -454,7 +454,7 @@ const StoryReadingInteractive = ({
 
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.audioReading")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -465,7 +465,7 @@ const StoryReadingInteractive = ({
 
               <div className="flex items-start gap-2 sm:gap-3">
                 <div className="flex-1">
-                  <p className="font-body font-semibold text-foreground mb-1 text-sm sm:text-base">
+                  <p className="font-body font-medium text-foreground mb-1 text-sm sm:text-base">
                     {t("readingHelp.riddles")}
                   </p>
                   <p className="font-caption text-xs sm:text-sm text-muted-foreground">

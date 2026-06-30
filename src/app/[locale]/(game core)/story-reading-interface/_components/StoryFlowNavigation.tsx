@@ -167,7 +167,7 @@ const StoryFlowNavigation = ({
                   </span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="font-heading text-secondary font-semibold text-sm md:text-base">
+                  <p className="font-heading text-secondary font-medium text-sm md:text-base">
                     {t("storyFlowNavigation.riddleTime")}
                   </p>
                   <p className="font-body text-xs md:text-sm text-muted-foreground">
@@ -182,7 +182,7 @@ const StoryFlowNavigation = ({
                 {storyTitle}
               </h1>
 
-              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-semibold text-primary">
+              {/* <span className="font-data text-xl sm:text-2xl md:text-3xl font-medium text-primary">
                 {currentPage}
               </span> */}
               <span className="font-caption text-xs sm:text-sm text-muted-foreground">
@@ -202,7 +202,7 @@ const StoryFlowNavigation = ({
                 className="sm:size-5 text-primary"
                 fill="currentColor"
               />
-              <span className="font-heading font-semibold text-sm sm:text-base text-foreground">
+              <span className="font-heading font-medium text-sm sm:text-base text-foreground">
                 {totalStarsEarned}
               </span>
             </div>

@@ -45,19 +45,19 @@ export function ChallengeTypeInfoDialog({
         </DialogHeader>
         <div className="space-y-4 text-sm">
           <section className="space-y-1">
-            <h4 className="font-semibold">{t("challengeInfoPurpose")}</h4>
+            <h4 className="font-medium">{t("challengeInfoPurpose")}</h4>
             <p className="text-muted-foreground">
               {t(`challengeTypeInfo.${infoKey}.purpose`)}
             </p>
           </section>
           <section className="space-y-1">
-            <h4 className="font-semibold">{t("challengeInfoHowItWorks")}</h4>
+            <h4 className="font-medium">{t("challengeInfoHowItWorks")}</h4>
             <p className="text-muted-foreground">
               {t(`challengeTypeInfo.${infoKey}.howItWorks`)}
             </p>
           </section>
           <section className="space-y-1">
-            <h4 className="font-semibold">{t("challengeInfoExample")}</h4>
+            <h4 className="font-medium">{t("challengeInfoExample")}</h4>
             <p className="text-muted-foreground italic">
               {t(`challengeTypeInfo.${infoKey}.example`)}
             </p>

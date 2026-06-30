@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="order-1 md:order-1 w-full md:w-auto flex items-center justify-start">
             <Link
               href="/"
-              className="font-heading z-10 text-xl font-semibold hover:opacity-80 transition-opacity"
+              className="font-heading z-10 text-xl font-medium hover:opacity-80 transition-opacity"
             >
               Lexopia
             </Link>

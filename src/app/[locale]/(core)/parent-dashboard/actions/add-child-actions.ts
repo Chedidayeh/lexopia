@@ -11,6 +11,7 @@ import type {
   OnboardingCompleteData,
   OnboardingErrorCode,
 } from "@/src/lib/onboarding/types";
+import { findUserByEmail, findUserById } from "@/src/lib/auth/user";
 
 function fail<T = void>(
   code: OnboardingErrorCode,
@@ -39,8 +40,9 @@ export async function addChildAction(
   }
 
   try {
+    const user = await findUserById(session.user.id);
     const subscriptionPlan =
-      session.user.subscriptionPlan ?? SubscriptionPlan.FREE;
+      user?.subscriptionPlan ?? SubscriptionPlan.FREE;
     const readingPlanConfiguration = getReadingPlanConfiguration(
       subscriptionPlan,
     );

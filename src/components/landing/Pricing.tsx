@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { SubscriptionPlan } from "@/src/types/types";
 import { PricingPlanButton } from "./pricing-plan-button";
 import { useState } from "react";
+import { User } from "@/src/lib/dashboard/types";
+import { CancelSubscriptionDialog } from "./CancelSubscriptionDialog";
 
 type Plan = {
   key: SubscriptionPlan;
@@ -90,6 +92,7 @@ function PlanCard({
   userId?: string;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const isFeatured = index === 1;
   const isCurrentPlan = currentPlan === plan.key;
   
@@ -132,7 +135,7 @@ function PlanCard({
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-semibold text-white">{plan.name}</h3>
+              <h3 className="text-2xl font-medium text-white">{plan.name}</h3>
               {plan.name === "Pro" ? (
                 <Crown className="h-5 w-5 text-amber-300" />
               ) : plan.name === "Pro Plus" ? (
@@ -145,12 +148,12 @@ function PlanCard({
           {plan.badge ? (
             <div className="flex flex-col gap-1">
               {plan.name === "Pro" ? (
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(251, 146, 60, 0.9), rgba(249, 115, 22, 0.9))", borderColor: "rgba(251, 146, 60, 0.5)", boxShadow: "0 4px 12px rgba(251, 146, 60, 0.3)" }}>
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(251, 146, 60, 0.9), rgba(249, 115, 22, 0.9))", borderColor: "rgba(251, 146, 60, 0.5)", boxShadow: "0 4px 12px rgba(251, 146, 60, 0.3)" }}>
                   <Zap className="h-3.5 w-3.5" />
                   {plan.badge}
                 </div>
               ) : plan.name === "Pro Plus" ? (
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(59, 130, 246, 0.9), rgba(99, 102, 241, 0.9))", borderColor: "rgba(59, 130, 246, 0.5)", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)" }}>
+                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium text-white border shadow-lg" style={{ background: "linear-gradient(to right, rgba(59, 130, 246, 0.9), rgba(99, 102, 241, 0.9))", borderColor: "rgba(59, 130, 246, 0.5)", boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)" }}>
                   <Rocket className="h-3.5 w-3.5" />
                   {plan.badge}
                 </div>
@@ -161,7 +164,7 @@ function PlanCard({
 
         <div className="mb-6 rounded-2xl border border-white/10 bg-black/15 p-5">
           <div className="flex items-end gap-3">
-            <span className="text-4xl font-semibold text-white sm:text-5xl">
+            <span className="text-4xl font-medium text-white sm:text-5xl">
               {plan.price}
             </span>
           </div>
@@ -217,6 +220,7 @@ function PlanCard({
 
             {isCurrentPlan && (plan.key === SubscriptionPlan.PRO || plan.key === SubscriptionPlan.PRO_PLUS) && (
               <button
+                onClick={() => setIsCancelDialogOpen(true)}
                 className="mb-6 w-full  px-4 py-3 hover:underline font-medium cursor-pointer text-red-400 transition-all duration-300 hover:scale-[1.02]"
               >
                 Cancel plan
@@ -234,28 +238,16 @@ function PlanCard({
           ))}
         </div>
       </div>
+      <CancelSubscriptionDialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen} />
     </article>
   );
 }
 
-export function Pricing() {
-  const { data: session, status } = useSession();
+export function Pricing({ user }: { user: User | null }) {
 
-  const currentPlan = session?.user?.subscriptionPlan;
-  const isLoggedIn = Boolean(session);
-  const userId = session?.user?.id;
-
-  if (status === "loading") {
-    return (
-      <section className="relative overflow-hidden py-20 sm:py-24">
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const currentPlan = user?.subscriptionPlan
+  const isLoggedIn = Boolean(user);
+  const userId = user?.id;
 
   return (
     <section className="relative overflow-hidden py-20 sm:py-24">
@@ -264,10 +256,9 @@ export function Pricing() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/80 backdrop-blur-sm">
-            <Sparkles className="h-4 w-4 text-amber-300" />
             Subscription plans for families
           </div>
-          <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+          <h2 className="text-4xl font-medium tracking-tight text-white sm:text-5xl">
             Pick the plan that matches your child's reading journey
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
@@ -291,14 +282,14 @@ export function Pricing() {
 
         <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-black/20 backdrop-blur-md">
           <div className="border-b border-white/10 px-6 py-5 sm:px-8">
-            <h3 className="text-xl font-semibold text-white">Feature comparison</h3>
+            <h3 className="text-xl font-medium text-white">Feature comparison</h3>
             <p className="mt-1 text-sm text-white/65">
               A quick view of what each plan includes at a glance.
             </p>
           </div>
 
           <div className="grid gap-4 p-6 sm:p-8">
-            <div className="grid grid-cols-4 gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/45">
+            <div className="grid grid-cols-4 gap-3 text-xs font-medium uppercase tracking-[0.2em] text-white/45">
               <div>Feature</div>
               <div className="text-center">Free</div>
               <div className="text-center">Pro</div>
@@ -311,9 +302,9 @@ export function Pricing() {
                 className="grid grid-cols-4 gap-3 rounded-2xl border border-white/8 bg-white/5 px-4 py-4 text-sm text-white/80"
               >
                 <div className="font-medium text-white">{feature.label}</div>
-                <div className="text-center font-semibold text-emerald-300">{feature.free}</div>
-                <div className="text-center font-semibold text-amber-300">{feature.pro}</div>
-                <div className="text-center font-semibold text-sky-300">{feature.proPlus}</div>
+                <div className="text-center font-medium text-emerald-300">{feature.free}</div>
+                <div className="text-center font-medium text-amber-300">{feature.pro}</div>
+                <div className="text-center font-medium text-sky-300">{feature.proPlus}</div>
               </div>
             ))}
           </div>

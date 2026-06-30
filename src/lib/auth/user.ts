@@ -10,7 +10,6 @@ export function toAuthUser(user: User): NextAuthUser {
     name: user.name ?? user.email,
     role: user.role as RoleType,
     newUser: user.newUser,
-    subscriptionPlan: user.subscriptionPlan,
     parentId: user.id,
   };
 }
@@ -18,6 +17,12 @@ export function toAuthUser(user: User): NextAuthUser {
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({
     where: { email },
+  });
+}
+
+export async function findUserById(id: string) {
+  return prisma.user.findUnique({
+    where: { id },
   });
 }
 

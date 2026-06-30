@@ -9,7 +9,9 @@ export type AuthErrorCode =
   | "REGISTRATION_FAILED"
   | "LOGIN_FAILED"
   | "INVALID_PLAN"
-  | "CHECKOUT_FAILED";
+  | "CHECKOUT_FAILED"
+  | "NO_SUBSCRIPTION"
+  | "PORTAL_FAILED";
 
 export type AuthActionError = {
   code: AuthErrorCode;

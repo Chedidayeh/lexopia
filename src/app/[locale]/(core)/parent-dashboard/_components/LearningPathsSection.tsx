@@ -389,7 +389,7 @@ export default function LearningPathsSection({
                     <div key={story.id} className="relative flex gap-3">
                       <div className="flex flex-col items-center shrink-0 pt-1">
                         <div
-                          className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold border-2 ${
+                          className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium border-2 ${
                             story.progressStatus === "COMPLETED"
                               ? "border-green-600 bg-green-600 text-white"
                               : story.progressStatus === "IN_PROGRESS"

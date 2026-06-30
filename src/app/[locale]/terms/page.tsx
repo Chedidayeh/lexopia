@@ -87,7 +87,7 @@ export default function TermsOfServicePage() {
                 before the renewal date.
               </p>
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                <h3 className="font-medium text-slate-900 dark:text-white mb-2">
                   Payment Terms
                 </h3>
                 <ul className="space-y-2">

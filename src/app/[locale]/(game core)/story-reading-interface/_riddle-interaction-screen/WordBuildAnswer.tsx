@@ -94,7 +94,7 @@ const WordBuildAnswer = ({
   return (
     <div className="w-full space-y-4 sm:space-y-6">
       <div>
-        <label className="block font-body font-semibold text-foreground text-base sm:text-lg mb-2">
+        <label className="block font-body font-medium text-foreground text-base sm:text-lg mb-2">
           {t("wordBuildAnswer.instructions")}
         </label>
         <p className="font-body text-sm sm:text-base text-muted-foreground">

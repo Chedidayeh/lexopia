@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Mars, Venus } from "lucide-react";
+import { ExternalLink, Mars, Venus } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -32,7 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/components/ui/dialog";
-import { BookOpen, Target, Users, TrendingUp, RefreshCw, Play, ChevronDown } from "lucide-react";
+import { BookOpen, Target, Users, TrendingUp, RefreshCw, Play, ChevronDown, Book, PenTool, Ear, Brain, Heart, Play as PlayIcon, Pause } from "lucide-react";
 import {
   CHARACTER_TYPES,
   CHALLENGE_TYPE_OPTIONS,
@@ -47,6 +47,7 @@ import { ChallengeTypeInfoDialog } from "@/src/app/[locale]/onboarding/_componen
 import { calculateAgeFromDate } from "@/src/lib/onboarding/schemas";
 import { getAvailableChallengesByPlan, type PlanConstraints } from "@/src/lib/onboarding/plan-constraints";
 import { SubscriptionPlan } from "@/src/types/types";
+import Link from "next/link";
 
 type OnboardingT = ReturnType<typeof useTranslations<"Onboarding">>;
 
@@ -81,15 +82,131 @@ const GENDER_OPTIONS = [
 
 const PREDEFINED_INTERESTS = new Set<string>(INTEREST_OPTIONS);
 
+// Global audio reference for stopping audio on navigation
+let introAudioElement: HTMLAudioElement | null = null;
+let intro2AudioElement: HTMLAudioElement | null = null;
+
+export function stopIntroAudio() {
+  if (introAudioElement) {
+    introAudioElement.pause();
+    introAudioElement.currentTime = 0;
+    introAudioElement = null;
+  }
+  if (intro2AudioElement) {
+    intro2AudioElement.pause();
+    intro2AudioElement.currentTime = 0;
+    intro2AudioElement = null;
+  }
+}
+
+// Audio timestamp mapping for IntroStep feature highlighting
+// Timestamps in seconds based on the welcome audio
+const FEATURE_TIMESTAMPS = [
+  { start: 0, end: 9 },         // Before "First, Personalized Stories"
+  { start: 9, end: 18 },        // Personalized Stories
+  { start: 18, end: 28 },       // Reading Plan Structure
+  { start: 28, end: 40 },       // Parent Role
+  { start: 40, end: 48 },       // Generate Reading Plans
+  { start: 48, end: 58 },       // Generate Next Story
+  { start: 58, end: 70 },       // Monitor Progress
+];
+
+// Audio timestamp mapping for IntroStep2 difficulty highlighting
+// Timestamps in seconds based on the welcome-2 audio
+const DIFFICULTY_TIMESTAMPS = [
+  { start: 0, end: 7 },         // Before "Let's start with reading difficulties"
+  { start: 7, end: 19 },        // Reading difficulties
+  { start: 19, end: 36 },       // Spelling problems
+  { start: 36, end: 50 },       // Sound-letter confusion
+  { start: 50, end: 61 },       // Memory and processing issues
+  { start: 61, end: 75 },       // Emotional impact
+];
+
 function getInterestLabel(t: OnboardingT, interest: string) {
   return t(`interests.${interest}`, { defaultValue: interest });
 }
 
 export function IntroStep({ t }: StepProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentFeature, setCurrentFeature] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const features = [
+    { icon: BookOpen, titleKey: "featurePersonalizedStories", descKey: "featurePersonalizedStoriesDesc" },
+    { icon: Target, titleKey: "featureReadingPlan", descKey: "featureReadingPlanDesc" },
+    { icon: Users, titleKey: "featureParentRole", descKey: "featureParentRoleDesc" },
+    { icon: RefreshCw, titleKey: "featureGeneratePlan", descKey: "featureGeneratePlanDesc" },
+    { icon: Play, titleKey: "featureGenerateStory", descKey: "featureGenerateStoryDesc" },
+    { icon: TrendingUp, titleKey: "featureMonitorProgress", descKey: "featureMonitorProgressDesc" },
+  ];
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Set global reference
+    introAudioElement = audio;
+
+    const handleTimeUpdate = () => {
+      const currentTime = audio.currentTime;
+      let activeIndex = null;
+
+      for (let i = 1; i < FEATURE_TIMESTAMPS.length; i++) {
+        const { start, end } = FEATURE_TIMESTAMPS[i];
+        if (currentTime >= start && currentTime < end) {
+          activeIndex = i - 1; // Convert to 0-based index for features array
+          break;
+        }
+      }
+
+      setCurrentFeature(activeIndex);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentFeature(null);
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+      audio.pause();
+      audio.currentTime = 0;
+      introAudioElement = null;
+    };
+  }, []);
+
+  // Auto-scroll to highlighted feature
+  useEffect(() => {
+    if (currentFeature !== null && featureRefs.current[currentFeature]) {
+      featureRefs.current[currentFeature]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [currentFeature]);
+
   return (
     <div className="space-y-8 pb-">
+      <audio ref={audioRef} src="/welcome.wav" preload="auto" />
+      
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="text-4xl font-medium tracking-tight">
           {t("introTitle")}
         </h1>
         <p className="text-xl text-muted-foreground">
@@ -97,90 +214,48 @@ export function IntroStep({ t }: StepProps) {
         </p>
       </div>
 
+      <div className="flex justify-center">
+        <Button
+          onClick={togglePlay}
+          variant={isPlaying ? "outline" : "default"}
+          size="lg"
+          className="gap-2"
+        >
+          {isPlaying ? <Pause className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
+          {isPlaying ? "Pause" : "Play Welcome Audio"}
+        </Button>
+      </div>
+
+      {/* features */}
       <div className="space-y-6">
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <BookOpen className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featurePersonalizedStories")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featurePersonalizedStoriesDesc")}
-            </p>
-          </div>
-        </div>
+        {features.map((feature, index) => {
+          const Icon = feature.icon;
+          const isActive = currentFeature === index;
 
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Target className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featureReadingPlan")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featureReadingPlanDesc")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Users className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featureParentRole")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featureParentRoleDesc")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <RefreshCw className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featureGeneratePlan")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featureGeneratePlanDesc")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Play className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featureGenerateStory")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featureGenerateStoryDesc")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <TrendingUp className="w-6 h-6 text-primary" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">
-              {t("featureMonitorProgress")}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {t("featureMonitorProgressDesc")}
-            </p>
-          </div>
-        </div>
+          return (
+            <div
+              key={index}
+              ref={(el) => {
+                featureRefs.current[index] = el;
+              }}
+              className={`flex items-start gap-4 p-4 rounded-lg bg-muted/30 transition-all duration-300 ${
+                isActive ? 'border-2 border-primary scale-105' : ''
+              }`}
+            >
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium mb-2">
+                  {t(feature.titleKey)}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {t(feature.descKey)}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="text-center pt-4">
@@ -197,7 +272,161 @@ export function IntroStep({ t }: StepProps) {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="text-black bg-primary backdrop-blur-sm rounded-full p-2 shadow-lg"
+          className="text-black bg-primary backdrop-blur-sm rounded-full p-1 shadow-lg"
+        >
+          <ChevronDown className="w-6 h-6" />
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export function IntroStep2({ t }: StepProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentDifficulty, setCurrentDifficulty] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const difficultyRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const difficulties = [
+    { icon: Book, titleKey: "difficultyReading", descKey: "difficultyReadingDesc" },
+    { icon: PenTool, titleKey: "difficultySpelling", descKey: "difficultySpellingDesc" },
+    { icon: Ear, titleKey: "difficultySoundLetter", descKey: "difficultySoundLetterDesc" },
+    { icon: Brain, titleKey: "difficultyMemory", descKey: "difficultyMemoryDesc" },
+    { icon: Heart, titleKey: "difficultyEmotional", descKey: "difficultyEmotionalDesc" },
+  ];
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Set global reference
+    intro2AudioElement = audio;
+
+    const handleTimeUpdate = () => {
+      const currentTime = audio.currentTime;
+      let activeIndex = null;
+
+      for (let i = 1; i < DIFFICULTY_TIMESTAMPS.length; i++) {
+        const { start, end } = DIFFICULTY_TIMESTAMPS[i];
+        if (currentTime >= start && currentTime < end) {
+          activeIndex = i - 1; // Convert to 0-based index for difficulties array
+          break;
+        }
+      }
+
+      setCurrentDifficulty(activeIndex);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentDifficulty(null);
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('ended', handleEnded);
+      audio.pause();
+      audio.currentTime = 0;
+      intro2AudioElement = null;
+    };
+  }, []);
+
+  // Auto-scroll to highlighted difficulty
+  useEffect(() => {
+    if (currentDifficulty !== null && difficultyRefs.current[currentDifficulty]) {
+      difficultyRefs.current[currentDifficulty]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [currentDifficulty]);
+
+  return (
+    <div className="space-y-8 pb-">
+      <audio ref={audioRef} src="/welcome-2.wav" preload="auto" />
+      
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-medium tracking-tight">
+          {t("intro2Title")}
+        </h1>
+        <p className="text-xl text-muted-foreground">
+          {t("intro2Subtitle")}
+        </p>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={togglePlay}
+          variant={isPlaying ? "outline" : "default"}
+          size="lg"
+          className="gap-2"
+        >
+          {isPlaying ? <Pause className="w-4 h-4" /> : <PlayIcon className="w-4 h-4" />}
+          {isPlaying ? "Pause" : "Play Audio"}
+        </Button>
+      </div>
+
+      {/* difficulties */}
+      <div className="space-y-6">
+        {difficulties.map((difficulty, index) => {
+          const Icon = difficulty.icon;
+          const isActive = currentDifficulty === index;
+
+          return (
+            <div
+              key={index}
+              ref={(el) => {
+                difficultyRefs.current[index] = el;
+              }}
+              className={`flex items-start gap-4 p-4 rounded-lg bg-muted/30 transition-all duration-300 ${
+                isActive ? 'border-2 border-primary scale-105' : ''
+              }`}
+            >
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium mb-2">
+                  {t(difficulty.titleKey)}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {t(difficulty.descKey)}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="text-center pt-4">
+        <p className="text-sm text-muted-foreground">
+          {t("intro2ReadyToStart")}
+        </p>
+      </div>
+
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="text-black bg-primary backdrop-blur-sm rounded-full p-1 shadow-lg"
         >
           <ChevronDown className="w-6 h-6" />
         </motion.div>
@@ -210,7 +439,7 @@ export function NameStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("childNameLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("childNameLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("childNameHint")}</p>
       </div>
       <Input
@@ -228,7 +457,7 @@ export function BirthDateStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("birthDateLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("birthDateLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("birthDatePlaceholder")}</p>
       </div>
       <Popover>
@@ -272,7 +501,7 @@ export function GenderStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("selectGender")}</h2>
+        <h2 className="text-2xl font-medium">{t("selectGender")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("tapToSelect")}</p>
       </div>
       <div className="flex gap-3">
@@ -319,7 +548,7 @@ export function GenderStep({ t, form, updateForm }: StepProps) {
                 >
                   <Icon className="h-8 w-8" />
                 </span>
-                <span className="block text-lg font-semibold">
+                <span className="block text-lg font-medium">
                   {t(`gender.${option.value}`)}
                 </span>
               </div>
@@ -335,7 +564,7 @@ export function LanguageStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("primaryLanguageLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("primaryLanguageLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("selectLanguagePlaceholder")}</p>
       </div>
       <Select
@@ -366,7 +595,7 @@ export function ReadingLevelStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("readingLevelLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("readingLevelLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("readingLevelPlaceholder")}</p>
       </div>
       <Select
@@ -439,7 +668,7 @@ export function ChallengesStep({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("assignedChallengesLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("assignedChallengesLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("assignedChallengesDesc")}</p>
       </div>
       {planNote && (
@@ -447,15 +676,29 @@ export function ChallengesStep({
           {planNote}
         </p>
       )}
+      <div className="flex items-center justify-between gap-2">
+
+  
       <Button
         type="button"
-        variant="ghost"
+        variant="outline"
         size="sm"
         onClick={() => setLearnMoreDialogOpen(true)}
-        className="text-primary hover:text-primary/80"
+        className="hover:text-primary/80"
       >
-        Learn about challenges
+        Learn about challenges <ExternalLink/>
       </Button>
+      <Link target="_blank" href={"/story-preview-interface/cmqxzf7p3001rfatg2q5lh2gb?preview=true"}>
+      <Button
+        type="button"
+        variant="default"
+        size="sm"
+        className="hover:text-primary/80"
+      >
+        See Story preview <ExternalLink/>
+      </Button>
+      </Link>
+          </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {allChallenges.map((challenge) => {
           const isUnavailable = unavailableChallenges.has(challenge.value);
@@ -533,9 +776,9 @@ export function ChallengesStep({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-3 font-semibold">Challenge</th>
-                  <th className="text-left p-3 font-semibold">Purpose</th>
-                  <th className="text-left p-3 font-semibold">How it works</th>
+                  <th className="text-left p-3 font-medium">Challenge</th>
+                  <th className="text-left p-3 font-medium">Purpose</th>
+                  <th className="text-left p-3 font-medium">How it works</th>
                 </tr>
               </thead>
               <tbody>
@@ -600,7 +843,7 @@ export function InterestsStep({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("favoriteThemesLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("favoriteThemesLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">
           {t("interestsHint")} ({form.interests.length}/{maxThemes})
         </p>
@@ -667,7 +910,7 @@ export function CharacterTypeStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("characterTypeLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("characterTypeLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("characterTypePlaceholder")}</p>
       </div>
       <Select
@@ -693,7 +936,7 @@ export function StoryToneStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("storyToneLabel")}</h2>
+        <h2 className="text-2xl font-medium">{t("storyToneLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("storyTonePlaceholder")}</p>
       </div>
       <Select
@@ -735,7 +978,7 @@ export function StoriesPerWeekStep({ t, form, updateForm, planConstraints }: Ste
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">
+        <h2 className="text-2xl font-medium">
           {t("storiesPerWeekLabel", {
             childName: form.name || "your child",
           })}
@@ -770,7 +1013,7 @@ export function NotificationsStep({ t, form, updateForm }: StepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-semibold">{t("enableReadingReminders")}</h2>
+        <h2 className="text-2xl font-medium">{t("enableReadingReminders")}</h2>
         <p className="text-sm text-muted-foreground mt-2">
           {t("enableRemindersDescription", {
             childName: form.name || "your child",
@@ -801,7 +1044,7 @@ export function OverviewStep({ t, form }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold">{t("summaryTitle")}</h2>
+        <h2 className="text-2xl font-medium">{t("summaryTitle")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("summaryDesc")}</p>
       </div>
 

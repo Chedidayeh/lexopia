@@ -335,7 +335,7 @@ export default function ReadingPlanTab({
                   >
                     <div className="flex w-full items-start gap-3 p-4">
                       <div className={cn(
-                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold transition-colors",
+                        "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-medium transition-colors",
                         isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
                       )}>
                         {item.planNumber}
@@ -474,7 +474,7 @@ export default function ReadingPlanTab({
                 >
                   <stat.icon className={`h-5 w-5 ${stat.color} mb-2`} />
                   <p className="text-xs text-muted-foreground">{stat.label}</p>
-                  <p className="font-heading text-base font-semibold mt-0.5 line-clamp-2">
+                  <p className="font-heading text-base font-medium mt-0.5 line-clamp-2">
                     {stat.value}
                   </p>
                 </div>

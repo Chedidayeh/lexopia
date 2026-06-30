@@ -108,7 +108,7 @@ export default function AboutPage() {
           </p>
           <a
             href="/"
-            className="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-slate-100 transition-colors"
+            className="inline-block bg-white text-primary font-medium px-8 py-3 rounded-lg hover:bg-slate-100 transition-colors"
           >
             Get Started Free
           </a>
