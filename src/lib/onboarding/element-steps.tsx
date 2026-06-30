@@ -59,6 +59,8 @@ type StepProps = {
     v: OnboardingFormState[K],
   ) => void;
   planConstraints?: PlanConstraints;
+  hasSavedData?: boolean;
+  onResetData?: () => void;
 };
 
 const GENDER_OPTIONS = [
@@ -435,9 +437,21 @@ export function IntroStep2({ t }: StepProps) {
   );
 }
 
-export function NameStep({ t, form, updateForm }: StepProps) {
+export function NameStep({ t, form, updateForm, hasSavedData, onResetData }: StepProps) {
   return (
     <div className="space-y-4">
+      {hasSavedData && onResetData && (
+        <div className="flex justify-end">
+          {/* <Button
+            variant="outline"
+            size="sm"
+            onClick={onResetData}
+            className="text-destructive hover:text-destructive"
+          >
+            Reset Data
+          </Button> */}
+        </div>
+      )}
       <div>
         <h2 className="text-2xl font-medium">{t("childNameLabel")}</h2>
         <p className="text-sm text-muted-foreground mt-2">{t("childNameHint")}</p>
@@ -754,12 +768,11 @@ export function ChallengesStep({
             <Button variant="outline" onClick={() => setUpgradeDialogOpen(false)}>
               Maybe Later
             </Button>
-            <Button onClick={() => {
-              setUpgradeDialogOpen(false);
-              router.push("/#pricing");
-            }}>
-              Upgrade Now
-            </Button>
+            <Link href={"/#pricing"}>
+              <Button>
+                Upgrade Now
+              </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>

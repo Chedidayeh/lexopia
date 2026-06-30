@@ -43,6 +43,50 @@ import {
   stopIntroAudio,
 } from "@/src/lib/onboarding/element-steps";
 
+const ONBOARDING_STORAGE_KEY = "onboarding_data";
+
+interface StoredOnboardingData {
+  form: Omit<OnboardingFormState, "birthDate"> & { birthDate: string | null };
+  step: number;
+}
+
+// Helper functions for localStorage
+function saveOnboardingData(form: OnboardingFormState, step: number) {
+  try {
+    const data: StoredOnboardingData = {
+      form: {
+        ...form,
+        birthDate: form.birthDate ? form.birthDate.toISOString() : null,
+      },
+      step,
+    };
+    localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error("Failed to save onboarding data:", error);
+  }
+}
+
+function loadOnboardingData(): StoredOnboardingData | null {
+  try {
+    const stored = localStorage.getItem(ONBOARDING_STORAGE_KEY);
+    if (!stored) return null;
+
+    const data: StoredOnboardingData = JSON.parse(stored);
+    return data;
+  } catch (error) {
+    console.error("Failed to load onboarding data:", error);
+    return null;
+  }
+}
+
+function clearOnboardingData() {
+  try {
+    localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+  } catch (error) {
+    console.error("Failed to clear onboarding data:", error);
+  }
+}
+
 const TOTAL_STEPS = 13;
 
 const ONBOARDING_ERROR_KEYS = new Set([
@@ -74,6 +118,23 @@ export default function ParentOnboarding() {
   const [planConstraints, setPlanConstraints] = useState<PlanConstraints>(
     getPlanConstraints(SubscriptionPlan.FREE)
   );
+  const [hasSavedData, setHasSavedData] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  // Load saved data on mount
+  useEffect(() => {
+    const savedData = loadOnboardingData();
+    if (savedData) {
+      setForm({
+        ...savedData.form,
+        birthDate: savedData.form.birthDate ? new Date(savedData.form.birthDate) : null,
+      });
+      setStep(savedData.step);
+      setHasSavedData(true);
+      toast.success("Progress restored from previous session");
+    }
+    setIsDataLoaded(true);
+  }, []);
 
   // Fetch user's subscription plan on mount
   useEffect(() => {
@@ -97,6 +158,20 @@ export default function ParentOnboarding() {
     fetchPlan();
   }, []);
 
+  // Auto-save form changes to localStorage (only after initial data load)
+  useEffect(() => {
+    if (isDataLoaded) {
+      saveOnboardingData(form, step);
+    }
+  }, [form, step, isDataLoaded]);
+
+  // Scroll to top when navigating to IntroStep2
+  useEffect(() => {
+    if (step === 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [step]);
+
   function updateForm<K extends keyof OnboardingFormState>(
     key: K,
     value: OnboardingFormState[K],
@@ -112,6 +187,16 @@ export default function ParentOnboarding() {
         : [...current, value];
       return { ...prev, [key]: next };
     });
+  }
+
+  function handleResetData() {
+    if (window.confirm("Are you sure you want to reset all onboarding data? This cannot be undone.")) {
+      clearOnboardingData();
+      setForm(INITIAL_ONBOARDING_FORM);
+      setStep(0);
+      setHasSavedData(false);
+      toast.success("Onboarding data has been reset");
+    }
   }
 
   function validateCurrentStep(): boolean {
@@ -248,6 +333,7 @@ export default function ParentOnboarding() {
         );
         return;
       }
+      clearOnboardingData();
       toast.success(t("childCreated"));
       router.push("/parent-dashboard");
       router.refresh();
@@ -297,7 +383,7 @@ export default function ParentOnboarding() {
             </div>
             {step === 0 && <IntroStep t={t} form={form} updateForm={updateForm} />}
             {step === 1 && <IntroStep2 t={t} form={form} updateForm={updateForm} />}
-            {step === 2 && <NameStep t={t} form={form} updateForm={updateForm} />}
+            {step === 2 && <NameStep t={t} form={form} updateForm={updateForm} hasSavedData={hasSavedData} onResetData={handleResetData} />}
             {step === 3 && <BirthDateStep t={t} form={form} updateForm={updateForm} />}
             {step === 4 && <GenderStep t={t} form={form} updateForm={updateForm} />}
             {step === 5 && <LanguageStep t={t} form={form} updateForm={updateForm} />}
