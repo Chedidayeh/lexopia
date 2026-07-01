@@ -67,7 +67,7 @@ interface AddChildDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   parentData: User;
-  onChildAdded: () => void;
+  onChildAdded: (childId?: string) => void;
 }
 
 export default function AddChildDialog({
@@ -282,7 +282,7 @@ export default function AddChildDialog({
       toast.success(tDashboard("addChildDialog.messages.createdSuccess"));
       resetForm();
       onOpenChange(false);
-      onChildAdded();
+      onChildAdded(result.data?.childId);
     } catch {
       toast.error(tDashboard("addChildDialog.messages.createError"));
     } finally {

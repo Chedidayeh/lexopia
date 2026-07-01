@@ -692,7 +692,7 @@ export function ChallengesStep({
           {planNote}
         </p>
       )}
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col md:flex-row md:justify-between gap-2">
 
   
       <Button
@@ -745,8 +745,8 @@ export function ChallengesStep({
                 {t(challenge.labelKey)}
               </span>
               {isUnavailable && (
-                <span className="text-xs flex items-center gap-1 text-amber-200 dark:text-amber-200 font-medium">
-                  <CircleFadingArrowUp className="w-4 h-4 text-amber-200" />Upgrade
+                <span className="text-xs flex items-center gap-1 text-amber-400 dark:text-amber-200 font-medium">
+                  <CircleFadingArrowUp className="w-4 h-4 dark:text-amber-200 text-amber-400" />Upgrade
                 </span>
               )}
               <ChallengeTypeInfoDialog
@@ -771,7 +771,7 @@ export function ChallengesStep({
               Maybe Later
             </Button>
             <Link href={"/#pricing"}>
-              <Button>
+              <Button >
                 Upgrade Now
               </Button>
             </Link>

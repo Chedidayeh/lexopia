@@ -76,14 +76,16 @@ export default function ReadingPlanTab({
   const [showPlanConfirm, setShowPlanConfirm] = useState(false);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [planRefreshKey, setPlanRefreshKey] = useState(0);
+  const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [showStoryConfirm, setShowStoryConfirm] = useState(false);
   const [isGeneratingStory, setIsGeneratingStory] = useState(false);
 
   const requestKey = childId ? `${childId}:${planRefreshKey}` : null;
   const isPlanLoading =
     requestKey !== null && resolvedRequestKey !== requestKey;
+  const isSwitchingPlan = loadingPlanId !== null;
   const displayPlan =
-    resolvedRequestKey === requestKey ? plan : null;
+    !isSwitchingPlan && resolvedRequestKey === requestKey ? plan : null;
   const activePlan = plans.find((item) => item.id === selectedPlanId) ?? plans[0] ?? null;
   const hasDisplayPlan = Boolean(displayPlan);
 
@@ -134,11 +136,16 @@ export default function ReadingPlanTab({
     async (planId: string) => {
       if (!childId || planId === selectedPlanId) return;
 
+      setLoadingPlanId(planId);
       setSelectedPlanId(planId);
-      const detail = await getChildReadingPlanByIdAction(planId, childId);
-      if (detail) {
-        setPlan(detail);
-        setResolvedRequestKey(requestKey);
+      try {
+        const detail = await getChildReadingPlanByIdAction(planId, childId);
+        if (detail) {
+          setPlan(detail);
+          setResolvedRequestKey(requestKey);
+        }
+      } finally {
+        setLoadingPlanId(null);
       }
     },
     [childId, requestKey, selectedPlanId],
@@ -324,7 +331,7 @@ export default function ReadingPlanTab({
                     key={item.id}
                     variant="ghost"
                     onClick={() => void selectPlan(item.id)}
-                    disabled={isPlanLoading}
+                    disabled={isPlanLoading || isSwitchingPlan}
                     aria-pressed={isSelected}
                     className={cn(
                       "group h-auto min-w-52 shrink-0 justify-start rounded-2xl border p-0 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md",
@@ -381,7 +388,7 @@ export default function ReadingPlanTab({
           <div className="rounded-xl border border-black/10 bg-card p-6 text-center text-muted-foreground text-sm">
             {t("noChildSelected")}
           </div>
-        ) : isPlanLoading && !displayPlan ? (
+        ) : (isPlanLoading || isSwitchingPlan) && !displayPlan ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>

@@ -397,12 +397,25 @@ export function calculateDailyTimeStats(timeEntries: TimeEntry[] | undefined) {
  */
 export function calculateChallengeStats(
   progressArray: Progress[] | undefined,
+  allowedStoryIds?: string[],
 ): ChallengeStats[] {
   if (
     !progressArray ||
     !Array.isArray(progressArray) ||
     progressArray.length === 0
   ) {
+    return [];
+  }
+
+  const filteredProgressArray =
+    allowedStoryIds === undefined
+      ? progressArray
+      : progressArray.filter(
+          (progress) =>
+            progress.storyId && allowedStoryIds.includes(progress.storyId),
+        );
+
+  if (filteredProgressArray.length === 0) {
     return [];
   }
 
@@ -413,7 +426,7 @@ export function calculateChallengeStats(
   }
   const attemptMap = new Map<string, AttemptWithContext>();
 
-  for (const progress of progressArray) {
+  for (const progress of filteredProgressArray) {
     if (
       progress.gameSession?.challengeAttempts &&
       Array.isArray(progress.gameSession.challengeAttempts)
@@ -528,8 +541,9 @@ export function calculateChallengeStats(
  */
 export function getAggregatedChallengeStats(
   progressArray: Progress[] | undefined,
+  allowedStoryIds?: string[],
 ) {
-  const challengeStats = calculateChallengeStats(progressArray);
+  const challengeStats = calculateChallengeStats(progressArray, allowedStoryIds);
 
   if (challengeStats.length === 0) {
     return {

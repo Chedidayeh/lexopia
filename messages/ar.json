@@ -162,6 +162,21 @@
 			"generatingAudio": "جاري إنشاء الصوت…",
 			"previewStory": "معاينة"
 		},
+		"readingPlanFilter": {
+			"label": "تصفية حسب خطة القراءة",
+			"allPlans": "جميع خطط القراءة",
+			"loadingPlans": "جارٍ تحميل خطط القراءة...",
+			"planLabel": "الخطة",
+			"planStatus": {
+				"active": "نشطة",
+				"generating": "جارٍ الإنشاء",
+				"failed": "فشل",
+				"archived": "مؤرشفة",
+				"completed": "مكتملة",
+				"draft": "مسودة",
+				"paused": "متوقفة"
+			}
+		},
 		"weeklySummary": {
 			"weekRange": "أسبوع {start} – {end}",
 			"storiesCompleted": "{count, plural, one {قصة واحدة مكتملة} other {# قصص مكتملة}}",

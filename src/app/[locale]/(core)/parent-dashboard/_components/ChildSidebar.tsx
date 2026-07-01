@@ -31,7 +31,7 @@ interface ChildSidebarProps {
   childProfiles: ChildProfile[];
   selectedChildId: string | undefined;
   onChildSelect: (childId: string) => void;
-  onChildAdded: () => void;
+  onChildAdded: (childId?: string) => void;
   userRole: RoleType;
   parentData: User;
   maxChildProfiles?: number;
@@ -67,14 +67,14 @@ export default function ChildSidebar({
               key={profile.childId}
               onClick={() => onChildSelect(profile.childId)}
               className={cn(
-                "flex-shrink-0 lg:w-full flex lg:flex-row flex-col lg:flex-row items-center lg:items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-lg transition-all",
+                "shrink-0 lg:w-full flex flex-col lg:flex-row items-center lg:items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-lg transition-all",
                 "hover:bg-muted active:scale-95 whitespace-nowrap lg:whitespace-normal",
                 selectedChildId === profile.childId
                   ? "bg-primary/15 border border-primary/30"
                   : "hover:bg-muted",
               )}
             >
-              <Avatar className="h-8 w-8 lg:h-10 lg:w-10 flex-shrink-0">
+              <Avatar className="h-8 w-8 lg:h-10 lg:w-10 shrink-0">
                 <AvatarImage
                   src={profile.child?.avatar || ""}
                   alt={profile.child?.name}
@@ -92,7 +92,7 @@ export default function ChildSidebar({
                 </p>
               </div>
               {selectedChildId === profile.childId && (
-                <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
               )}
             </button>
           ))}

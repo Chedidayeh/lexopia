@@ -97,7 +97,7 @@
 			"readingPlan": "Reading Plan",
 			"achievements": "Achievements",
 			"weeklyReports": "Weekly Reports",
-			"riddleStatistics": "Riddle Statistics",
+			"riddleStatistics": "Challenge Statistics",
 			"timeAnalytics": "Time Analytics",
 			"childStorytelling": "Child Storytelling"
 		},
@@ -186,6 +186,21 @@
 			"generatingAudio": "Generating audio…",
 			"previewStory": "Preview"
 		},
+		"readingPlanFilter": {
+			"label": "Filter by reading plan",
+			"allPlans": "All reading plans",
+			"loadingPlans": "Loading reading plans...",
+			"planLabel": "Plan",
+			"planStatus": {
+				"active": "Active",
+				"generating": "Generating",
+				"failed": "Failed",
+				"archived": "Archived",
+				"completed": "Completed",
+				"draft": "Draft",
+				"paused": "Paused"
+			}
+		},
 		"weeklySummary": {
 			"weekRange": "Week of {start} – {end}",
 			"storiesCompleted": "{count, plural, one {# story completed} other {# stories completed}}",
@@ -227,7 +242,7 @@
 		},
 		"riddleStatistics": {
 			"chapter": "Chapter",
-			"title": "Riddle Statistics",
+			"title": "Challenge Statistics",
 			"description": "In-depth insights into {childName}'s reading and problem-solving journey",
 			"dashboardButton": "{childName}'s dashboard →",
 			"stats": {
@@ -1065,8 +1080,8 @@
 			"navigationDesc": "Use the arrows at the bottom to move between pages. Your progress is saved automatically.",
 			"audioReading": "Audio Reading",
 			"audioReadingDesc": "Press play to hear the story read aloud. Adjust language in the controls.",
-			"riddles": "Riddles",
-			"riddlesDesc": "When you see a riddle indicator, solve it to continue the story and earn stars!",
+			"riddles": "Challenges",
+			"riddlesDesc": "When you see a challenge indicator, solve it to continue the story and earn stars!",
 			"gotIt": "Got it!"
 		},
 		"storyFlowNavigation": {
@@ -1109,7 +1124,7 @@
 			"needAHint": "Need a Hint?",
 			"incorrectAnswer": "Not quite right, but that's okay! Every try helps you learn. Want to try again or use a hint?",
 			"almostAnswer": "Think about it a little more. You can do this!",
-			"solvedAnswerRIDDLE": "Fantastic! You solved the riddle! Your reading skills are amazing!",
+			"solvedAnswerRIDDLE": "Fantastic! You solved the challenge! Your reading skills are amazing!",
 			"solvedAnswerTRUE_FALSE": "Correct! You understood that statement perfectly!",
 			"solvedAnswerMULTIPLE_CHOICE": "Excellent choice! You really understood the story!",
 			"solvedAnswerSEQUENCING": "Excellent! You arranged the events in the correct order!",
@@ -1120,7 +1135,7 @@
 			"solvedAnswerREAD_ALOUD": "Wonderful reading! You pronounced it clearly!",
 			"solvedAnswerWORD_BUILD": "Excellent! You built the word correctly!",
 			"riddleQuestion": {
-				"riddleCounter": "Riddle {current} of {total}",
+				"riddleCounter": "Challenge {current} of {total}",
 				"trueOrFalse": "Choose True or False:",
 				"multipleChoice": "Choose the correct answer:",
 				"sequencing": "Put these events in the correct order:",
@@ -1132,8 +1147,8 @@
 				"wordBuild": "Build the word:",
 				"defaultQuestion": "Answer the question:",
 				"timeDisplay": "Time: {seconds}s",
-				"playAudio": "Read riddle aloud",
-				"stopAudio": "Stop reading riddle"
+				"playAudio": "Read challenge aloud",
+				"stopAudio": "Stop reading challenge"
 			},
 			"floatingItems": {
 				"attemptsLabel": "Attempts",

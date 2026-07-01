@@ -183,6 +183,21 @@
 			"generatingAudio": "Génération de l'audio…",
 			"previewStory": "Aperçu"
 		},
+		"readingPlanFilter": {
+			"label": "Filtrer par plan de lecture",
+			"allPlans": "Tous les plans de lecture",
+			"loadingPlans": "Chargement des plans de lecture...",
+			"planLabel": "Plan",
+			"planStatus": {
+				"active": "Actif",
+				"generating": "Génération",
+				"failed": "Échec",
+				"archived": "Archivé",
+				"completed": "Terminé",
+				"draft": "Brouillon",
+				"paused": "En pause"
+			}
+		},
 		"weeklySummary": {
 			"weekRange": "Semaine du {start} au {end}",
 			"storiesCompleted": "{count, plural, one {# histoire terminée} other {# histoires terminées}}",

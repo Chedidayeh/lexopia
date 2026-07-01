@@ -116,7 +116,7 @@ export default function ParentDashboardInteractive({
     setSelectedChildId(childId);
   };
 
-  const handleChildAdded = async () => {
+  const handleChildAdded = async (newChildId?: string) => {
     try {
       if (!parentData?.id) {
         console.error("Parent ID not found:", parentData);
@@ -135,15 +135,19 @@ export default function ParentDashboardInteractive({
 
       console.log("[Parent Dashboard] Child list refreshed:", newChildProfiles);
 
-      if (Array.isArray(newChildProfiles) && newChildProfiles.length > 0) {
+      if (Array.isArray(newChildProfiles)) {
         setChildProfiles(newChildProfiles);
-        // toast.success("Child added successfully!");
+
+        if (newChildId) {
+          setSelectedChildId(newChildId);
+        } else if (newChildProfiles.length > 0 && !selectedChildId) {
+          setSelectedChildId(newChildProfiles[0].childId);
+        }
       } else {
         console.error(
           "[Parent Dashboard] Invalid response from getChildProfilesByParentAction:",
           newChildProfiles,
         );
-        // toast.error("Failed to refresh children list");
       }
     } catch (error) {
       console.error("[Parent Dashboard] Error refreshing child list:", error);

@@ -69,14 +69,20 @@ function sortChallengeStats(
 export function getChallengeAnalytics(
   profile: ChildProfile | undefined,
   locale?: string,
+  allowedStoryIds?: string[],
 ): ChallengeAnalytics {
   const progress = profile?.progress ?? [];
-  const stories = profile?.stories ?? [];
+  const stories =
+    allowedStoryIds === undefined
+      ? profile?.stories ?? []
+      : (profile?.stories ?? []).filter(
+          (story) => allowedStoryIds.includes(story.id),
+        );
   const storyMap = buildStoryMap(stories);
   const storyOrder = buildStoryOrder(progress);
 
-  const challengeStats = calculateChallengeStats(progress);
-  const aggregatedStats = getAggregatedChallengeStats(progress);
+  const challengeStats = calculateChallengeStats(progress, allowedStoryIds);
+  const aggregatedStats = getAggregatedChallengeStats(progress, allowedStoryIds);
   const sortedStats = sortChallengeStats(challengeStats, storyMap, storyOrder);
   const localizedStats = localizeChallengStatsWithMaps(
     sortedStats,

@@ -1,4 +1,5 @@
 import Header from "./_components/Header";
+import UpgradeButtonBar from "./_components/UpgradeButtonBar";
 import { redirect } from "next/navigation";
 import { RoleType } from "@/src/types/types";
 import { auth } from "@/src/auth";
@@ -13,11 +14,10 @@ export default async function Layout({
     redirect("/onboarding");
   }
 
-  const userRole = session?.user.role;
-
   return (
     <div>
-      <Header userRole={userRole} />
+      <Header />
+      <UpgradeButtonBar />
 
       {children}
       {/* <audio
