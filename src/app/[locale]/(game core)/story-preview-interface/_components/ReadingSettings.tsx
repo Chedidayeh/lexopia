@@ -31,7 +31,6 @@ const ReadingSettings = ({
     const handleChange = (newLocale: string) => {
       if (newLocale === locale) return;
       // Replace only the locale code at the beginning of the pathname
-      // e.g., /fr/story-reading-interface/... → /en/story-reading-interface/...
       const newPath = pathname.replace(/^\/[a-z]{2}\//, `/${newLocale}/`);
 
       // Preserve search parameters (e.g., ?childId=...)

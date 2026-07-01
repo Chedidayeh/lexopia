@@ -132,7 +132,7 @@ export default function StoryEpisodeCard({
           <div className="mt-4">
             <Button size="sm" variant={access.kind === "completed" ? "outline" : "default"} asChild>
               <Link
-                target="_blank"
+                target={access.kind === "completed" ? "_blank" : undefined}
                 href={
                   access.kind === "completed"
                     ? `/story-preview-interface/${story.id}?childId=${childId}`
