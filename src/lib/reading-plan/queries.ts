@@ -30,7 +30,12 @@ export async function getChildReadingPlans(
   childId: string,
 ): Promise<ReadingPlanSummary[]> {
   const plans = await prisma.readingPlan.findMany({
-    where: { childId },
+    where: {
+      childId,
+      status: {
+        notIn: [ReadingPlanStatus.FAILED],
+      },
+    },
     orderBy: { planNumber: "desc" },
     select: {
       id: true,
@@ -340,7 +345,6 @@ async function findLatestReadingPlan(childId: string) {
         in: [
           ReadingPlanStatus.GENERATING,
           ReadingPlanStatus.ACTIVE,
-          ReadingPlanStatus.FAILED,
           ReadingPlanStatus.PAUSED,
           ReadingPlanStatus.DRAFT,
         ],

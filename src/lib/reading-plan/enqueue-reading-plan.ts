@@ -147,22 +147,13 @@ export async function enqueueReadingPlan(params: {
     const message =
       error instanceof Error ? error.message : "Failed to enqueue planning job";
 
+    // Delete the created plan and job instead of marking them as failed
     await prisma.$transaction([
-      prisma.readingPlan.update({
-        where: { id: result.readingPlan.id },
-        data: {
-          status: ReadingPlanStatus.FAILED,
-          generationError: message,
-          generationCompletedAt: new Date(),
-        },
-      }),
-      prisma.agentJob.update({
+      prisma.agentJob.delete({
         where: { id: result.agentJob.id },
-        data: {
-          status: AgentJobStatus.FAILED,
-          error: message,
-          completedAt: new Date(),
-        },
+      }),
+      prisma.readingPlan.delete({
+        where: { id: result.readingPlan.id },
       }),
     ]);
 
