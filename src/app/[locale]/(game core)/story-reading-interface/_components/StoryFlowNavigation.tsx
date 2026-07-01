@@ -78,8 +78,8 @@ const StoryFlowNavigation = ({
       setShowRiddle(false);
       return;
     }
-    void onExit?.();
-    router.push(`/child-dashboard/${childId}`);
+          window.close();
+      return;
   };
 
   const handlePreviousPage = () => {
@@ -107,7 +107,8 @@ const StoryFlowNavigation = ({
       if (nextStoryId) {
         router.push(`/story-reading-interface/${nextStoryId}?childId=${childId}`);
       } else {
-        router.push(`/child-dashboard/${childId}`);
+              window.close();
+      return;
       }
     }
 

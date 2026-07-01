@@ -70,10 +70,11 @@ const StoryFlowNavigation = ({
       return;
     }
     if (childId) {
-      router.push(`/child-dashboard/${childId}`);
+      window.close();
       return;
     }
-    router.push("/parent-dashboard");
+    window.close();
+    return;
   };
 
   const handlePreviousPage = () => {
@@ -103,9 +104,11 @@ const StoryFlowNavigation = ({
         return;
       }
       if (childId) {
-        router.push(`/child-dashboard/${childId}`);
+        window.close();
+        return;
       } else {
-        router.push("/parent-dashboard");
+        window.close();
+        return;
       }
     }
 
@@ -193,7 +196,9 @@ const StoryFlowNavigation = ({
           )}
 
           {/* Stars earned display */}
-          <div className={`absolute ${isRTL ? "left-4 sm:left-4 md:left-4 lg:left-8" : "right-4 sm:right-4 md:right-4 lg:right-8"} flex items-center gap-3 sm:gap-2 md:gap-4`}>
+          <div
+            className={`absolute ${isRTL ? "left-4 sm:left-4 md:left-4 lg:left-8" : "right-4 sm:right-4 md:right-4 lg:right-8"} flex items-center gap-3 sm:gap-2 md:gap-4`}
+          >
             <div className="flex items-center gap-0.5 sm:gap-1">
               <Star
                 size={16}
@@ -204,7 +209,6 @@ const StoryFlowNavigation = ({
                 {totalStarsEarned}
               </span>
             </div>
-          
           </div>
         </div>
 
@@ -246,54 +250,54 @@ const StoryFlowNavigation = ({
 
             {/* Page Counter */}
             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-               {audioUrl && showRiddle === false && (
-              <>
-                <Button
-                  variant={"accent"}
-                  size={"sm"}
-                  className="z-50 pointer-events-auto"
-                  onClick={handlePlayAudio}
-                  disabled={!audioUrl || isLoadingAudio}
-                  aria-label={isPlayingAudio ? "Pause audio" : "Play audio"}
-                >
-                  {isLoadingAudio ? (
-                    <>
-                      <Loader size={18} className="animate-spin" />
-                      <span className="hidden sm:inline">
-                        {t("playAudio.loading")}
-                      </span>
-                    </>
-                  ) : isPlayingAudio ? (
-                    <>
-                      <Pause size={18} />
-                      <span className="hidden sm:inline">
-                        {t("playAudio.pause")}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Play size={18} />
-                      <span className="hidden sm:inline">
-                        {t("playAudio.play")}
-                      </span>
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant={"outline"}
-                  size={"sm"}
-                  className="z-50 pointer-events-auto"
-                  onClick={handleRepeatAudio}
-                  disabled={!audioUrl || isLoadingAudio}
-                  aria-label="Repeat audio from start"
-                >
-                  <RotateCcw size={18} />
-                  <span className="hidden sm:inline">
-                    {t("playAudio.repeat")}
-                  </span>
-                </Button>
-              </>
-            )}
+              {audioUrl && showRiddle === false && (
+                <>
+                  <Button
+                    variant={"accent"}
+                    size={"sm"}
+                    className="z-50 pointer-events-auto"
+                    onClick={handlePlayAudio}
+                    disabled={!audioUrl || isLoadingAudio}
+                    aria-label={isPlayingAudio ? "Pause audio" : "Play audio"}
+                  >
+                    {isLoadingAudio ? (
+                      <>
+                        <Loader size={18} className="animate-spin" />
+                        <span className="hidden sm:inline">
+                          {t("playAudio.loading")}
+                        </span>
+                      </>
+                    ) : isPlayingAudio ? (
+                      <>
+                        <Pause size={18} />
+                        <span className="hidden sm:inline">
+                          {t("playAudio.pause")}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Play size={18} />
+                        <span className="hidden sm:inline">
+                          {t("playAudio.play")}
+                        </span>
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    size={"sm"}
+                    className="z-50 pointer-events-auto"
+                    onClick={handleRepeatAudio}
+                    disabled={!audioUrl || isLoadingAudio}
+                    aria-label="Repeat audio from start"
+                  >
+                    <RotateCcw size={18} />
+                    <span className="hidden sm:inline">
+                      {t("playAudio.repeat")}
+                    </span>
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Next Button */}
