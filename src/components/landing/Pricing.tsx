@@ -25,7 +25,7 @@ const plans: Plan[] = [
     key: SubscriptionPlan.FREE,
     name: "Free",
     tagline: "A simple start for every family.",
-    price: "Free",
+    price: "0$",
     tone: "from-emerald-400/20 via-cyan-400/10 to-transparent",
     features: [
       "1 child profile",
@@ -41,7 +41,7 @@ const plans: Plan[] = [
     name: "Pro",
     badge: "Most balanced",
     tagline: "The everyday family plan.",
-    price: "Pro",
+    price: "19.99$",
     tone: "from-amber-400/25 via-orange-400/15 to-transparent",
     features: [
       "Up to 3 child profiles",
@@ -57,7 +57,7 @@ const plans: Plan[] = [
     name: "Pro Plus",
     badge: "Premium",
     tagline: "The premium tier.",
-    price: "Pro Plus",
+    price: "29.99$",
     tone: "from-sky-400/25 via-indigo-400/15 to-transparent",
     features: [
       "Up to 5 child profiles",
