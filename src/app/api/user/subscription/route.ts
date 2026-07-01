@@ -15,7 +15,12 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { subscriptionPlan: true },
+      select: {
+        subscriptionPlan: true,
+        subscriptionStatus: true,
+        subscriptionRenewsAt: true,
+        subscriptionCancelledAt: true,
+      },
     });
 
     if (!user) {
@@ -27,6 +32,9 @@ export async function GET() {
 
     return NextResponse.json({
       subscriptionPlan: user.subscriptionPlan,
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionRenewsAt: user.subscriptionRenewsAt,
+      subscriptionCancelledAt: user.subscriptionCancelledAt,
     });
   } catch (error) {
     console.error("[GET /api/user/subscription]", error);
@@ -60,7 +68,12 @@ export async function PATCH(request: Request) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { subscriptionPlan: true },
+      select: {
+        subscriptionPlan: true,
+        subscriptionStatus: true,
+        subscriptionRenewsAt: true,
+        subscriptionCancelledAt: true,
+      },
     });
 
     if (!user) {
@@ -105,6 +118,9 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({
       subscriptionPlan: updatedUser.subscriptionPlan,
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionRenewsAt: user.subscriptionRenewsAt,
+      subscriptionCancelledAt: user.subscriptionCancelledAt,
     });
   } catch (error) {
     console.error("[PATCH /api/user/subscription]", error);

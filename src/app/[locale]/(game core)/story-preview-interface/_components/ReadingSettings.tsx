@@ -105,7 +105,7 @@ const ReadingSettings = ({
         </div>
 
         {/* Theme Selection */}
-        {/* <div className="mb-4 sm:mb-6">
+        <div className="mb-4 sm:mb-6">
           <label className="block font-body font-medium text-sm sm:text-base text-foreground mb-2 sm:mb-3">
             {t("readingSettings.theme")}
           </label>
@@ -137,7 +137,7 @@ const ReadingSettings = ({
               );
             })}
           </div>
-        </div> */}
+        </div>
 
         {/* High Contrast */}
         {/* <div className="mb-6">

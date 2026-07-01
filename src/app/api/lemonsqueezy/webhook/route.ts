@@ -138,18 +138,31 @@ async function handleSubscriptionCancelled(data: any, customData: any) {
     console.error("[Webhook] Missing userId in custom data");
     return;
   }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      subscriptionPlan: true,
+      subscriptionRenewsAt: true,
+    },
+  });
+
+  if (!user) {
+    console.error("[Webhook] User not found for cancelled subscription event");
+    return;
+  }
+
+  const cancelledAt = user.subscriptionRenewsAt ?? (attributes.ends_at ? new Date(attributes.ends_at) : new Date());
   
   await prisma.user.update({
     where: { id: userId },
     data: {
       subscriptionStatus: "cancelled",
-      subscriptionCancelledAt: new Date(),
-      subscriptionPlan: SubscriptionPlan.FREE,
+      subscriptionCancelledAt: cancelledAt,
+      subscriptionRenewsAt: user.subscriptionRenewsAt,
+      subscriptionPlan: user.subscriptionPlan,
     },
   });
-  
-  // Downgrade children to FREE constraints
-  await updateChildrenConstraints(userId, SubscriptionPlan.FREE);
 }
 
 async function handlePaymentFailed(data: any, customData: any) {

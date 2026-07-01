@@ -2,13 +2,23 @@
 "use client";
 
 import { Check, Crown, Sparkles, Zap, Rocket } from "lucide-react";
-import { selectSubscriptionPlanAction, createCheckoutAction } from "@/src/actions/auth-actions";
+import { selectSubscriptionPlanAction, createCheckoutAction, cancelSubscriptionAction, upgradeSubscriptionAction } from "@/src/actions/auth-actions";
 import { useSession } from "next-auth/react";
 import { SubscriptionPlan } from "@/src/types/types";
 import { PricingPlanButton } from "./pricing-plan-button";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { User } from "@/src/lib/dashboard/types";
 import { CancelSubscriptionDialog } from "./CancelSubscriptionDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
+import { downgradeSubscriptionAction } from "@/src/actions/auth-actions";
 
 type Plan = {
   key: SubscriptionPlan;
@@ -25,7 +35,7 @@ const plans: Plan[] = [
     key: SubscriptionPlan.FREE,
     name: "Free",
     tagline: "A simple start for every family.",
-    price: "0$",
+    price: "0",
     tone: "from-emerald-400/20 via-cyan-400/10 to-transparent",
     features: [
       "1 child profile",
@@ -41,7 +51,7 @@ const plans: Plan[] = [
     name: "Pro",
     badge: "Most balanced",
     tagline: "The everyday family plan.",
-    price: "19.99$",
+    price: "19.99",
     tone: "from-amber-400/25 via-orange-400/15 to-transparent",
     features: [
       "Up to 3 child profiles",
@@ -57,7 +67,7 @@ const plans: Plan[] = [
     name: "Pro Plus",
     badge: "Premium",
     tagline: "The premium tier.",
-    price: "29.99$",
+    price: "29.99",
     tone: "from-sky-400/25 via-indigo-400/15 to-transparent",
     features: [
       "Up to 5 child profiles",
@@ -82,26 +92,70 @@ function PlanCard({
   plan,
   index,
   currentPlan,
+  subscriptionStatus,
+  subscriptionRenewsAt,
+  subscriptionCancelledAt,
   isLoggedIn,
-  userId,
+  user,
 }: {
   plan: Plan;
   index: number;
   currentPlan?: SubscriptionPlan;
+  subscriptionStatus?: string | null;
+  subscriptionRenewsAt?: Date | string | null;
+  subscriptionCancelledAt?: Date | string | null;
   isLoggedIn: boolean;
-  userId?: string;
+  user: User | null;
 }) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isDowngradeDialogOpen, setIsDowngradeDialogOpen] = useState(false);
+  const [downgradeError, setDowngradeError] = useState<string | null>(null);
+  const [mountedAt] = useState(() => Date.now());
   const isFeatured = index === 1;
   const isCurrentPlan = currentPlan === plan.key;
+  const isSubscriptionCancelled = subscriptionStatus === "cancelled";
+  const hasSubscriptionId = Boolean(user?.lemonSqueezySubscriptionId);
   
   // Disable upgrade buttons if user is already on a paid plan
   const isPaidPlan = currentPlan === SubscriptionPlan.PRO || currentPlan === SubscriptionPlan.PRO_PLUS;
-  const isUpgradeDisabled = isPaidPlan && plan.key !== SubscriptionPlan.FREE && !isCurrentPlan;
+  const isProPlusUpgrade = currentPlan === SubscriptionPlan.PRO && plan.key === SubscriptionPlan.PRO_PLUS && hasSubscriptionId;
+  const isProPlusDowngrade = currentPlan === SubscriptionPlan.PRO_PLUS && plan.key === SubscriptionPlan.PRO && hasSubscriptionId;
+  const isUpgradeDisabled = isPaidPlan && plan.key !== SubscriptionPlan.FREE && !isCurrentPlan && !isProPlusUpgrade && !isProPlusDowngrade;
+  
+  // Check if clicking FREE plan is actually a downgrade from paid plan
+  const isDowngradeToFree = isPaidPlan && plan.key === SubscriptionPlan.FREE && !isCurrentPlan;
+
+  // Format date for display
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Get the appropriate date to display
+  const expiryDate = subscriptionCancelledAt || subscriptionRenewsAt || null;
+  const renewalDate = isSubscriptionCancelled ? formatDate(expiryDate) : formatDate(subscriptionRenewsAt || null);
+  const dateLabel = isSubscriptionCancelled ? "Expires on" : "Renews on";
+  const daysUntilExpiry = useMemo(() => {
+    if (!isSubscriptionCancelled || !expiryDate) {
+      return null;
+    }
+
+    const targetDate = new Date(expiryDate);
+    const diffMs = targetDate.getTime() - mountedAt;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    return Math.max(diffDays, 0);
+  }, [expiryDate, isSubscriptionCancelled, mountedAt]);
 
   const handleCheckout = async () => {
-    if (!isLoggedIn || !userId || plan.key === SubscriptionPlan.FREE) return;
+    if (!isLoggedIn || !user?.id || plan.key === SubscriptionPlan.FREE) return;
     
     setIsLoading(true);
     try {
@@ -115,6 +169,68 @@ function PlanCard({
       }
     } catch (error) {
       console.error("Checkout failed", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handlePlanAction = () => {
+    if (isProPlusDowngrade) {
+      setIsDowngradeDialogOpen(true);
+      return;
+    }
+
+    void handleCheckout();
+  };
+
+  const handleProPlusUpgrade = async () => {
+    if (!isLoggedIn || !hasSubscriptionId) return;
+
+    setIsLoading(true);
+    try {
+      const result = await upgradeSubscriptionAction();
+
+      if (result.success) {
+        if (result.data?.redirectUrl) {
+          window.location.href = result.data.redirectUrl;
+          return;
+        }
+
+        router.refresh();
+        window.location.reload();
+      } else {
+        console.error("Upgrade failed");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Upgrade failed", error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleProDowngrade = async () => {
+    if (!isLoggedIn || !hasSubscriptionId) return;
+
+    setIsLoading(true);
+    setDowngradeError(null);
+
+    try {
+      const result = await downgradeSubscriptionAction();
+
+      if (result.success) {
+        if (result.data?.redirectUrl) {
+          window.location.href = result.data.redirectUrl;
+          return;
+        }
+
+        router.refresh();
+        window.location.reload();
+      } else {
+        setDowngradeError(result.error.message || "Failed to downgrade subscription");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Downgrade failed", error);
+      setDowngradeError("Failed to downgrade subscription");
       setIsLoading(false);
     }
   };
@@ -165,66 +281,160 @@ function PlanCard({
         <div className="mb-6 rounded-2xl border border-white/10 bg-black/15 p-5">
           <div className="flex items-end gap-3">
             <span className="text-4xl font-medium text-white sm:text-5xl">
-              {plan.price}
+            ${plan.price} <span className="text-lg font-normal text-white/70">/month</span>
             </span>
           </div>
         </div>
 
 
         {plan.key === SubscriptionPlan.FREE ? (
-          <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
-            <PricingPlanButton
-              isLoggedIn={isLoggedIn}
-              isCurrentPlan={isCurrentPlan}
-              isFeatured={isFeatured}
-              planKey={plan.key}
-            />
-          </form>
-        ) : (
-          <>
+          isSubscriptionCancelled && isDowngradeToFree ? (
+            <div className="mb-6 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-center text-sm font-medium text-emerald-100">
+              {daysUntilExpiry !== null && daysUntilExpiry > 0
+                ? `Downgrading to Free in ${daysUntilExpiry} ${daysUntilExpiry === 1 ? "day" : "days"}`
+                : "Downgrading to Free today"}
+            </div>
+          ) : isProPlusUpgrade ? (
             <button
-              onClick={handleCheckout}
-              disabled={!isLoggedIn || isCurrentPlan || isLoading || isUpgradeDisabled}
-              className={`group relative mb-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
-                !isLoggedIn
-                  ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
-                  : isCurrentPlan
-                    ? "cursor-default border border-white/30 bg-transparent text-white/70"
-                  : isUpgradeDisabled
-                    ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
-                    : isFeatured
-                      ? "border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
-                      : "border border-white/15 bg-white/8 text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
-              }`}
+              type="button"
+              onClick={handleProPlusUpgrade}
+              disabled={!isLoggedIn || isLoading}
+              className="group relative mb-6 flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl border border-sky-200/40 bg-linear-to-r from-sky-300 via-indigo-300 to-sky-200 px-4 py-3 text-base font-medium text-slate-950 shadow-lg shadow-sky-300/20 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-sky-300/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {!isLoggedIn || isCurrentPlan || isUpgradeDisabled ? null : (
-                <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/25 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
-              )}
               <span className="relative z-10 inline-flex items-center gap-2">
                 {isLoading ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Loading...
+                    Upgrading...
                   </>
                 ) : !isLoggedIn ? (
                   "Log in to choose"
-                ) : isCurrentPlan ? (
-                  "Current plan"
-                ) : isUpgradeDisabled ? (
-                  "disabled"
                 ) : (
-                  `Upgrade to ${plan.name}`
+                  "Upgrade to Pro Plus"
                 )}
               </span>
             </button>
-
-            {isCurrentPlan && (plan.key === SubscriptionPlan.PRO || plan.key === SubscriptionPlan.PRO_PLUS) && (
+          ) : isProPlusDowngrade ? (
+            <>
               <button
-                onClick={() => setIsCancelDialogOpen(true)}
-                className="mb-6 w-full  px-4 py-3 hover:underline font-medium cursor-pointer text-red-400 transition-all duration-300 hover:scale-[1.02]"
+                type="button"
+                onClick={() => setIsDowngradeDialogOpen(true)}
+                disabled={!isLoggedIn || isLoading}
+                className="group relative mb-6 flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl border border-amber-200/40 bg-linear-to-r from-amber-300 via-orange-300 to-amber-200 px-4 py-3 text-base font-medium text-slate-950 shadow-lg shadow-amber-300/20 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancel plan
+                <span className="relative z-10 inline-flex items-center gap-2">
+                  {isLoading ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      Downgrading...
+                    </>
+                  ) : !isLoggedIn ? (
+                    "Log in to choose"
+                  ) : (
+                    "Downgrade to Pro"
+                  )}
+                </span>
               </button>
+              {downgradeError ? (
+                <div className="mb-6 rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-center text-sm font-medium text-red-100">
+                  {downgradeError}
+                </div>
+              ) : null}
+            </>
+          ) : isPaidPlan && !isCurrentPlan ? (
+            <button
+              type="button"
+              onClick={() => setIsCancelDialogOpen(true)}
+              disabled={!isLoggedIn || isLoading}
+              className="group relative mb-6 flex w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl border border-emerald-200/30 bg-emerald-500/10 px-4 py-3 text-base font-medium text-emerald-100 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:bg-emerald-500/15 hover:shadow-lg hover:shadow-emerald-500/10 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <span className="relative z-10 inline-flex items-center gap-2">
+                {!isLoggedIn ? (
+                  "Log in to choose"
+                ) : (
+                  "Downgrade to Free"
+                )}
+              </span>
+            </button>
+          ) : (
+            <form action={selectSubscriptionPlanAction.bind(null, plan.key)}>
+              <PricingPlanButton
+                isLoggedIn={isLoggedIn}
+                isCurrentPlan={isCurrentPlan}
+                isFeatured={isFeatured}
+                planKey={plan.key}
+              />
+            </form>
+          )
+        ) : (
+          <>
+     <div className="relative mb-6">
+  {isCurrentPlan && (
+    <div className={`absolute -right-2 -top-2 z-30 flex h-6 w-6 items-center justify-center rounded-full border shadow-lg ${
+      plan.key === SubscriptionPlan.PRO 
+        ? "border-amber-300/40 bg-amber-500 shadow-amber-500/30" 
+        : plan.key === SubscriptionPlan.PRO_PLUS 
+          ? "border-sky-300/40 bg-sky-500 shadow-sky-500/30" 
+          : "border-emerald-300/40 bg-emerald-500 shadow-emerald-500/30"
+    }`}>
+      <Check className="h-3 w-3 text-white" strokeWidth={3} />
+    </div>
+  )}
+
+  <button
+    onClick={handlePlanAction}
+    disabled={!isLoggedIn || isCurrentPlan || isLoading || isUpgradeDisabled}
+    className={`group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3 text-base font-medium transition-all duration-300 ease-out ${
+      !isLoggedIn
+        ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+        : isCurrentPlan
+          ? "cursor-default border border-white/30 bg-white/5 text-white"
+          : isUpgradeDisabled
+            ? "cursor-not-allowed border border-white/10 bg-white/5 text-white/45"
+            : isFeatured
+              ? "border border-amber-200/40 bg-linear-to-r cursor-pointer from-amber-300 via-orange-300 to-amber-200 text-slate-950 shadow-lg shadow-amber-300/20 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-300/30 active:scale-[0.99]"
+              : "border border-white/15 bg-white/8 cursor-pointer text-white hover:-translate-y-1 hover:scale-[1.02] hover:bg-white/12 hover:shadow-lg hover:shadow-black/20 active:scale-[0.99]"
+    }`}
+  >
+    {!isLoggedIn || isCurrentPlan || isUpgradeDisabled ? null : (
+      <span className="absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-20deg] bg-white/25 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100" />
+    )}
+
+    <span className="relative z-10 inline-flex items-center gap-2">
+      {isLoading ? (
+        <>
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          Loading...
+        </>
+      ) : !isLoggedIn ? (
+        "Log in to choose"
+      ) : isCurrentPlan ? (
+        "Current plan"
+                ) : isUpgradeDisabled ? (
+        "Disabled"
+                ) : isProPlusUpgrade ? (
+                  "Upgrade to Pro Plus"
+      ) : isProPlusDowngrade ? (
+        "Downgrade to Pro"
+      ) : (
+        `Upgrade to ${plan.name}`
+      )}
+    </span>
+  </button>
+</div>
+
+            {isCurrentPlan && renewalDate && (
+              <div className="mb-6 flex justify-center">
+                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium border ${
+                  plan.key === SubscriptionPlan.PRO 
+                    ? "text-amber-200 border-amber-500/30 bg-amber-500/10" 
+                    : plan.key === SubscriptionPlan.PRO_PLUS 
+                      ? "text-sky-200 border-sky-500/30 bg-sky-500/10" 
+                      : "text-emerald-200 border-emerald-500/30 bg-emerald-500/10"
+                }`}>
+                  {dateLabel}: <span className="font-medium">{renewalDate}</span>
+                </div>
+              </div>
             )}
           </>
         )}
@@ -238,7 +448,60 @@ function PlanCard({
           ))}
         </div>
       </div>
-      <CancelSubscriptionDialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen} />
+      <CancelSubscriptionDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        onSuccess={() => {
+          setIsCancelDialogOpen(false);
+          router.refresh();
+          window.location.reload();
+        }}
+      />
+
+      <Dialog
+        open={isDowngradeDialogOpen}
+        onOpenChange={(open) => {
+          setIsDowngradeDialogOpen(open);
+          if (!open) {
+            setDowngradeError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Downgrade to Pro</DialogTitle>
+            <DialogDescription>
+              Your subscription will be changed from Pro Plus to Pro through Lemon Squeezy.
+              The change takes effect immediately.
+            </DialogDescription>
+          </DialogHeader>
+
+          {downgradeError ? (
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200">
+              {downgradeError}
+            </div>
+          ) : null}
+
+          <DialogFooter className="gap-2">
+            <button
+              type="button"
+              onClick={() => setIsDowngradeDialogOpen(false)}
+              className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+              disabled={isLoading}
+            >
+              Keep Pro Plus
+            </button>
+            <button
+              type="button"
+              onClick={handleProDowngrade}
+              className="rounded-md bg-amber-300 px-4 py-2 text-sm font-medium text-slate-950 shadow-sm transition-colors hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isLoading}
+            >
+              {isLoading ? "Downgrading..." : "Downgrade to Pro"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </article>
   );
 }
@@ -246,6 +509,9 @@ function PlanCard({
 export function Pricing({ user }: { user: User | null }) {
 
   const currentPlan = user?.subscriptionPlan
+  const subscriptionStatus = user?.subscriptionStatus
+  const subscriptionRenewsAt = user?.subscriptionRenewsAt
+  const subscriptionCancelledAt = user?.subscriptionCancelledAt
   const isLoggedIn = Boolean(user);
   const userId = user?.id;
 
@@ -274,8 +540,11 @@ export function Pricing({ user }: { user: User | null }) {
               plan={plan}
               index={index}
               currentPlan={currentPlan}
+              subscriptionStatus={subscriptionStatus}
+              subscriptionRenewsAt={subscriptionRenewsAt}
+              subscriptionCancelledAt={subscriptionCancelledAt}
               isLoggedIn={isLoggedIn}
-              userId={userId}
+              user={user}
             />
           ))}
         </div>

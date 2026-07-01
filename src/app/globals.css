@@ -46,112 +46,71 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 }
-
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* =========================
-     LIGHT MODE — Sunlit Sky & Honey Glass
-     airy, layered, warm + soft contrast
-     ========================= */
+  /* Light mode — soft warm twilight / golden hour transition feel */
+  --background: #fdfaf5;           /* very warm off-white / light wheat */
+  --card: #faf6f0;
+  --foreground: #1e293b;           /* deep slate for readability */
+  --muted: #f3e8d8;
+  --muted-foreground: #64748b;
+  --primary: #f59e0b;              /* warm amber/gold — rocket trail & wheat */
+  --primary-foreground: #ffffff;
+  --secondary: #a78bfa;            /* soft violet hint for galaxy */
+  --secondary-foreground: #ffffff;
+  --accent: #60a5fa;               /* gentle cyan/blue for star glow */
+  --accent-foreground: #ffffff;
+  --border: #e2d5c3;
+  --input: #e2d5c3;
+  --ring: #f59e0b;
+  --destructive: #ef4444;
+  --popover: #ffffff;
+  --popover-foreground: #1e293b;
+  --card: #faf6f0;
+  --card-foreground: #1e293b;
 
-  /* Background = subtle sky-cream blend (not flat) */
-  --background: #fff7ed;         /* warm sky cream base */
-  --foreground: #1c2736;         /* soft deep ink navy */
-
-  /* Elevated surfaces = glassy warmth layers */
-  --card: #fffdf7;               /* almost-white but warm */
-  --card-foreground: #1c2736;
-
-  --popover: #fffdf7;
-  --popover-foreground: #1c2736;
-
-  /* Muted = soft sand + air haze */
-  --muted: #f3e7d6;              /* warm sand mist */
-  --muted-foreground: #64748b;   /* cooler soft gray-blue for readability */
-
-  /* Primary = richer honey (less flat yellow) */
-  --primary: #f2b544;            /* deep sun honey */
-  --primary-foreground: #1c2736;
-
-  /* Secondary = dreamy lavender sky */
-  --secondary: #a78bfa;          /* richer pastel purple */
-  --secondary-foreground: #1c2736;
-
-  /* Accent = soft sky glow (slightly desaturated for elegance) */
-  --accent: #6fb6ff;             /* airy sky blue */
-  --accent-foreground: #1c2736;
-
-  /* Borders = warm paper edges (more natural separation) */
-  --border: #f0e3d2;
-  --input: #f0e3d2;
-
-  /* Focus ring = soft sky aura */
-  --ring: #6fb6ff;
-
-  --destructive: #ff6b6b;
-
-  /* Sidebar = layered warm depth (important upgrade) */
-  --sidebar: #fff3e0;            /* deeper warm base than background */
-  --sidebar-foreground: #1c2736;
-
-  --sidebar-primary: #f2b544;
-  --sidebar-primary-foreground: #1c2736;
-
-  --sidebar-accent: #eef4ff;     /* cool contrast layer */
-  --sidebar-accent-foreground: #1c2736;
-
-  --sidebar-border: #f1e3d2;
-  --sidebar-ring: #6fb6ff;
+  /* Sidebar — subtle warm dark contrast */
+  --sidebar: #fdfaf5;
+  --sidebar-foreground: #1e293b;
+  --sidebar-primary: #f59e0b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f3e8d8;
+  --sidebar-accent-foreground: #1e293b;
+  --sidebar-border: #e2d5c3;
+  --sidebar-ring: #f59e0b;
 }
 
 .dark {
-  /* =========================
-     DARK MODE — Cosmic Candy Night
-     ========================= */
+  --background: #0a0f1a;           /* deep midnight navy (core sky color) */
+  --card: #111827;                 /* slightly lighter dark slate */
+  --foreground: #e2e8f0;           /* soft light gray-blue for text */
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --primary: #f59e0b;              /* golden-amber — rocket exhaust & field glow */
+  --primary-foreground: #0f172a;
+  --secondary: #c084fc;            /* soft purple-violet for galaxy arms */
+  --secondary-foreground: #0f172a;
+  --accent: #60a5fa;               /* light cyan/blue — star & nebula highlights */
+  --accent-foreground: #0f172a;
+  --border: #334155;
+  --input: #334155;
+  --ring: #fbbf24;
+  --destructive: #f87171;
+  --popover: #111827;
+  --popover-foreground: #e2e8f0;
+  --card: #111827;
+  --card-foreground: #e2e8f0;
 
-  --background: #070b18;         /* deep cosmic navy */
-  --foreground: #e8eefc;         /* soft moonlight text */
-
-  --card: #0e1630;               /* elevated space panel */
-  --card-foreground: #e8eefc;
-
-  --muted: #141c36;              /* deep soft layer */
-  --muted-foreground: #a3b0d1;
-
-  /* Yellow = glowing star energy */
-  --primary: #facc15;            /* brighter neon gold */
-  --primary-foreground: #0b1020;
-
-  /* Purple = galaxy magic */
-  --secondary: #c084fc;          /* soft neon violet */
-  --secondary-foreground: #0b1020;
-
-  /* Blue = cosmic UI glow */
-  --accent: #38bdf8;             /* vibrant sky neon */
-  --accent-foreground: #0b1020;
-
-  --border: #1f2a44;
-  --input: #1f2a44;
-  --ring: #38bdf8;
-
-  --destructive: #fb7185;
-
-  --popover: #0e1630;
-  --popover-foreground: #e8eefc;
-
-  /* Sidebar — slightly glowing space panel */
-  --sidebar: #0b1020;
-  --sidebar-foreground: #cbd5f5;
-
-  --sidebar-primary: #facc15;
-  --sidebar-primary-foreground: #0b1020;
-
-  --sidebar-accent: #111a33;
-  --sidebar-accent-foreground: #e8eefc;
-
-  --sidebar-border: #1f2a44;
-  --sidebar-ring: #38bdf8;
+  /* Sidebar — dark cosmic feel with subtle glow accents */
+  --sidebar: #0f172a;              /* deep navy-indigo */
+  --sidebar-foreground: #cbd5e1;
+  --sidebar-primary: #f59e0b;      /* gold accent for primary actions */
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #e2e8f0;
+  --sidebar-border: #334155;
+  --sidebar-ring: #fbbf24;
 }
 
 @layer base {

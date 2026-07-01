@@ -18,7 +18,7 @@ import {
 import { findUserByEmail } from "@/src/lib/auth/user";
 import { SubscriptionPlan } from "@/src/types/types";
 import { getReadingPlanConfiguration, getAvailableChallengesByPlan } from "@/src/lib/onboarding/plan-constraints";
-import { createCheckout, createCustomerPortal } from "@/src/lib/subscriptions/lemonsqueezy";
+import { createCheckout, cancelSubscription, updateSubscription } from "@/src/lib/subscriptions/lemonsqueezy";
 
 function fail<T = void>(
   code: AuthErrorCode,
@@ -144,33 +144,176 @@ export async function createCheckoutAction(
   }
 }
 
-export async function createCustomerPortalAction(): Promise<AuthActionResult<{ portalUrl: string }>> {
+async function updateChildrenConstraints(userId: string, plan: SubscriptionPlan) {
+  const newConfig = getReadingPlanConfiguration(plan);
+  const newChallenges = getAvailableChallengesByPlan(plan);
+
+  await prisma.child.updateMany({
+    where: { parentId: userId },
+    data: {
+      parentSubscriptionPlan: newConfig.parentSubscriptionPlan,
+      maxThemesAllowed: newConfig.maxThemesAllowed,
+      maxStoriesPerWeekAllowed: newConfig.maxStoriesPerWeekAllowed,
+      storiesPerWeek: newConfig.maxStoriesPerWeekAllowed,
+      maxChallengeTypes: newConfig.maxChallengeTypes,
+      assignedChallenges: newChallenges,
+      maxWorldsPerRoadmapAllowed: newConfig.maxWorldsPerRoadmapAllowed,
+      maxEpisodesPerWorldAllowed: newConfig.maxEpisodesPerWorldAllowed,
+      maxChaptersPerStoryAllowed: newConfig.maxChaptersPerStoryAllowed,
+    },
+  });
+}
+
+export async function upgradeSubscriptionAction(): Promise<AuthActionResult<{ redirectUrl?: string }>> {
   const session = await auth();
 
   if (!session?.user?.id) {
-    return fail("UNAUTHORIZED", "You must be logged in to manage subscription");
+    return fail("UNAUTHORIZED", "You must be logged in to upgrade subscription");
   }
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { lemonSqueezySubscriptionId: true },
+    select: {
+      subscriptionPlan: true,
+      subscriptionStatus: true,
+      lemonSqueezySubscriptionId: true,
+    },
   });
 
-  console.log("[createCustomerPortalAction] User subscription ID:", user?.lemonSqueezySubscriptionId);
+  if (!user) {
+    return fail("UNAUTHORIZED", "User not found");
+  }
 
-  if (!user?.lemonSqueezySubscriptionId) {
-    console.error("[createCustomerPortalAction] No subscription ID found for user");
+  if (user.subscriptionPlan !== SubscriptionPlan.PRO) {
+    return fail("INVALID_PLAN", "Only Pro users can upgrade to Pro Plus");
+  }
+
+  if (!user.lemonSqueezySubscriptionId) {
     return fail("NO_SUBSCRIPTION", "No active subscription found");
   }
 
   try {
-    const portalUrl = await createCustomerPortal(user.lemonSqueezySubscriptionId);
-    console.log("[createCustomerPortalAction] Portal URL:", portalUrl);
+    const result = await updateSubscription(
+      user.lemonSqueezySubscriptionId,
+      SubscriptionPlan.PRO_PLUS,
+      { invoiceImmediately: true },
+    );
 
-    return { success: true, data: { portalUrl } };
+    if (!result.success) {
+      return fail("UPGRADE_FAILED", result.error || "Failed to upgrade subscription");
+    }
+
+    if (result.redirectUrl) {
+      return { success: true, data: { redirectUrl: result.redirectUrl } };
+    }
+
+    return { success: true };
   } catch (error) {
-    console.error("[createCustomerPortalAction]", error);
-    return fail("PORTAL_FAILED", "Failed to create customer portal session");
+    console.error("[upgradeSubscriptionAction]", error);
+    return fail("UPGRADE_FAILED", "Failed to upgrade subscription");
+  }
+}
+
+export async function downgradeSubscriptionAction(): Promise<AuthActionResult<{ redirectUrl?: string }>> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return fail("UNAUTHORIZED", "You must be logged in to downgrade subscription");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      subscriptionPlan: true,
+      subscriptionStatus: true,
+      lemonSqueezySubscriptionId: true,
+    },
+  });
+
+  if (!user) {
+    return fail("UNAUTHORIZED", "User not found");
+  }
+
+  if (user.subscriptionPlan !== SubscriptionPlan.PRO_PLUS) {
+    return fail("INVALID_PLAN", "Only Pro Plus users can downgrade to Pro");
+  }
+
+  if (!user.lemonSqueezySubscriptionId) {
+    return fail("NO_SUBSCRIPTION", "No active subscription found");
+  }
+
+  try {
+    const result = await updateSubscription(
+      user.lemonSqueezySubscriptionId,
+      SubscriptionPlan.PRO,
+    );
+
+    if (!result.success) {
+      return fail("DOWNGRADE_FAILED", result.error || "Failed to downgrade subscription");
+    }
+
+    if (result.redirectUrl) {
+      return { success: true, data: { redirectUrl: result.redirectUrl } };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("[downgradeSubscriptionAction]", error);
+    return fail("DOWNGRADE_FAILED", "Failed to downgrade subscription");
+  }
+}
+
+export async function cancelSubscriptionAction(): Promise<AuthActionResult<{ endsAt: string }>> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return fail("UNAUTHORIZED", "You must be logged in to cancel subscription");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      lemonSqueezySubscriptionId: true,
+      subscriptionStatus: true,
+      subscriptionRenewsAt: true,
+    },
+  });
+
+  console.log("[cancelSubscriptionAction] User subscription ID:", user?.lemonSqueezySubscriptionId);
+  console.log("[cancelSubscriptionAction] User subscription status:", user?.subscriptionStatus);
+
+  if (!user?.lemonSqueezySubscriptionId) {
+    console.error("[cancelSubscriptionAction] No subscription ID found for user");
+    return fail("NO_SUBSCRIPTION", "No active subscription found");
+  }
+
+  if (user.subscriptionStatus === "cancelled") {
+    console.error("[cancelSubscriptionAction] Subscription already cancelled");
+    return fail("ALREADY_CANCELLED", "Subscription is already cancelled");
+  }
+
+  try {
+    const result = await cancelSubscription(user.lemonSqueezySubscriptionId);
+    console.log("[cancelSubscriptionAction] Result:", result);
+
+    if (!result.success) {
+      return fail("CANCELLATION_FAILED", result.error || "Failed to cancel subscription");
+    }
+
+    const cancelledAt = user.subscriptionRenewsAt ?? (result.endsAt ? new Date(result.endsAt) : null);
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        subscriptionStatus: "cancelled",
+        subscriptionCancelledAt: cancelledAt,
+      },
+    });
+
+    return { success: true, data: { endsAt: result.endsAt || "" } };
+  } catch (error) {
+    console.error("[cancelSubscriptionAction]", error);
+    return fail("CANCELLATION_FAILED", "Failed to cancel subscription");
   }
 }
 

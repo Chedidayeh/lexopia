@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Home, Users, Library, LogIn, Zap, Rocket } from "lucide-react";
+import {
+  BookOpen,
+  Home,
+  Users,
+  Library,
+  LogIn,
+  Zap,
+  Rocket,
+  CircleFadingArrowUp,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { ModeToggle } from "@/src/components/shared/ModeToggle";
 import { useSession } from "next-auth/react";
@@ -18,7 +27,8 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
   const t = useTranslations("CoreHeader");
   const { isRTL } = useLocale();
   const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(null);
-
+  const showUpgradeButton =
+    subscriptionPlan === "FREE" || subscriptionPlan === "PRO";
 
   const session = useSession();
 
@@ -40,8 +50,6 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
     }
   }, [session.data?.user]);
 
-
-
   return (
     <>
       {/* Desktop Header */}
@@ -53,80 +61,58 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
               href="/"
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <img
-                src="/logo.png"
-                alt="Lexopia"
-                className=" w-30"
-              />
+              <img src="/logo.png" alt="Lexopia" className=" w-30" />
             </Link>
 
             {/* Center Navigation (keeps nav visually centered) */}
-            <div className="flex-1 flex justify-center">
-
-            </div>
+            <div className="flex-1 flex justify-center"></div>
 
             {/* Right - Login component (fixed to the far right) */}
             <div className="shrink-0 flex items-center gap-3">
-              {subscriptionPlan && (
-                <div
-                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium border backdrop-blur-md transition-all duration-300 hover:scale-[1.03]"
-                  style={{
-                    background:
-                      subscriptionPlan === "FREE"
-                        ? "linear-gradient(135deg, rgba(156,163,175,0.25), rgba(75,85,99,0.35))"
-                        : subscriptionPlan === "PRO"
-                          ? "linear-gradient(135deg, rgba(251,146,60,0.25), rgba(249,115,22,0.35))"
-                          : "linear-gradient(135deg, rgba(59,130,246,0.25), rgba(99,102,241,0.35))",
+   {showUpgradeButton && (
+  <Link
+    href="/#pricing"
+    className="
+      inline-flex animate-pulse items-center gap-1.5
+      px-3 py-1.5 text-sm font-medium
+      rounded-full transition-all duration-300
 
-                    borderColor:
-                      subscriptionPlan === "FREE"
-                        ? "rgba(156,163,175,0.4)"
-                        : subscriptionPlan === "PRO"
-                          ? "rgba(251,146,60,0.5)"
-                          : "rgba(99,102,241,0.5)",
+      bg-amber-100 text-amber-700 hover:bg-amber-200
+      dark:bg-amber-500/15 dark:text-amber-200 dark:hover:bg-amber-500/25
+    "
+  >
+    <CircleFadingArrowUp className="w-4 h-4 text-current" />
+    Upgrade
+  </Link>
+)}
 
-                    boxShadow:
-                      subscriptionPlan === "FREE"
-                        ? "0 6px 18px rgba(107,114,128,0.15)"
-                        : subscriptionPlan === "PRO"
-                          ? "0 6px 18px rgba(251,146,60,0.25)"
-                          : "0 6px 18px rgba(99,102,241,0.25)",
-                  }}
-                >
-                  {/* Icon */}
-                  {subscriptionPlan === "FREE" && <span className="text-gray-200">⭐</span>}
-                  {subscriptionPlan === "PRO" && <Zap className="w-3.5 h-3.5 text-orange-200" />}
-                  {subscriptionPlan === "PRO_PLUS" && <Rocket className="w-3.5 h-3.5 text-blue-200" />}
+{subscriptionPlan && (
+  <div
+    className={`
+      inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium
+      border shadow-sm transition-all
 
-                  {/* Better labels */}
-                  <span className="text-white/90 tracking-wide">
-                    {subscriptionPlan === "FREE" && "Free"}
-                    {subscriptionPlan === "PRO" && "Pro"}
-                    {subscriptionPlan === "PRO_PLUS" && "Pro Plus"}
-                  </span>
-
-                  {/* subtle glow dot */}
-                  {/* <span
-    className="w-1.5 h-1.5 rounded-full"
-    style={{
-      background:
+      ${
         subscriptionPlan === "FREE"
-          ? "#9ca3af"
+          ? "bg-gray-200 text-gray-700 border-gray-300 dark:bg-gray-700/40 dark:text-gray-200 dark:border-gray-600"
           : subscriptionPlan === "PRO"
-          ? "#fb923c"
-          : "#60a5fa",
-      boxShadow:
-        subscriptionPlan === "FREE"
-          ? "0 0 8px #9ca3af"
-          : subscriptionPlan === "PRO"
-          ? "0 0 10px #fb923c"
-          : "0 0 10px #60a5fa",
-    }}
-  /> */}
-                </div>
-              )}
+          ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/15 dark:text-orange-200 dark:border-orange-400/30"
+          : "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-200 dark:border-indigo-400/30"
+      }
+    `}
+  >
+    {subscriptionPlan === "FREE" && <span>⭐</span>}
+    {subscriptionPlan === "PRO" && <Zap className="w-3 h-3" />}
+    {subscriptionPlan === "PRO_PLUS" && <Rocket className="w-3 h-3" />}
+
+    <span className="capitalize">
+      {subscriptionPlan.replace("_", " ")}
+    </span>
+  </div>
+)}
+
               <Profile session={session.data!} />
-              {/* <ModeToggle /> */}
+              <ModeToggle />
               {/* <Switcher /> */}
             </div>
           </div>
@@ -136,48 +122,61 @@ const Header = ({ userRole }: { userRole: RoleType | undefined }) => {
       <header className="md:hidden sticky top-0 z-50 bg-card border-b border-black/10 shadow-warm">
         <div className="flex items-center justify-between px-4 py-3">
           {/* Logo */}
-               <Link
-              href="/"
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <img
-                src="/logo.png"
-                alt="Lexopia"
-                className=" w-30"
-              />
-            </Link>
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <img src="/logo.png" alt="Lexopia" className=" w-30" />
+          </Link>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {subscriptionPlan && (
-              <div className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium border shadow-sm"
-                style={{
-                  background: subscriptionPlan === "FREE"
-                    ? "linear-gradient(135deg, rgb(107, 114, 128) 0%, rgb(75, 85, 99) 100%)"
-                    : subscriptionPlan === "PRO"
-                      ? "linear-gradient(135deg, rgb(251, 146, 60) 0%, rgb(249, 115, 22) 100%)"
-                      : "linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(99, 102, 241) 100%)",
-                  borderColor: subscriptionPlan === "FREE"
-                    ? "rgba(107, 114, 128, 0.5)"
-                    : subscriptionPlan === "PRO"
-                      ? "rgba(251, 146, 60, 0.5)"
-                      : "rgba(59, 130, 246, 0.5)",
-                  boxShadow: subscriptionPlan === "FREE"
-                    ? "0 4px 15px rgba(107, 114, 128, 0.2)"
-                    : subscriptionPlan === "PRO"
-                      ? "0 4px 15px rgba(251, 146, 60, 0.3)"
-                      : "0 4px 15px rgba(59, 130, 246, 0.3)"
-                }}
-              >
-                {subscriptionPlan === "FREE" && <span>⭐</span>}
-                {subscriptionPlan === "PRO" && <Zap className="w-3 h-3" />}
-                {subscriptionPlan === "PRO_PLUS" && <Rocket className="w-3 h-3" />}
-                <span className="text-white">{subscriptionPlan}</span>
-              </div>
-            )}
-            {/* <ModeToggle /> */}
+  {showUpgradeButton && (
+  <Link
+    href="/#pricing"
+    className="
+      inline-flex animate-pulse items-center gap-1.5
+      px-3 py-1.5 text-sm font-medium
+      rounded-full transition-all duration-300
+
+      bg-amber-100 text-amber-700 hover:bg-amber-200
+      dark:bg-amber-500/15 dark:text-amber-200 dark:hover:bg-amber-500/25
+    "
+  >
+    <CircleFadingArrowUp className="w-4 h-4 text-current" />
+    Upgrade
+  </Link>
+)}
+
+{subscriptionPlan && (
+  <div
+    className={`
+      inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium
+      border shadow-sm transition-all
+
+      ${
+        subscriptionPlan === "FREE"
+          ? "bg-gray-200 text-gray-700 border-gray-300 dark:bg-gray-700/40 dark:text-gray-200 dark:border-gray-600"
+          : subscriptionPlan === "PRO"
+          ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/15 dark:text-orange-200 dark:border-orange-400/30"
+          : "bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-200 dark:border-indigo-400/30"
+      }
+    `}
+  >
+    {subscriptionPlan === "FREE" && <span>⭐</span>}
+    {subscriptionPlan === "PRO" && <Zap className="w-3 h-3" />}
+    {subscriptionPlan === "PRO_PLUS" && <Rocket className="w-3 h-3" />}
+
+    <span className="capitalize">
+      {subscriptionPlan.replace("_", " ")}
+    </span>
+  </div>
+)}
+
 
             <Profile session={session.data!} />
+                        <ModeToggle />
+
           </div>
         </div>
       </header>

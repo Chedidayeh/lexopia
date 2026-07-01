@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Mars, Venus } from "lucide-react";
+import { CircleFadingArrowUp, ExternalLink, Mars, Venus } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -743,8 +745,8 @@ export function ChallengesStep({
                 {t(challenge.labelKey)}
               </span>
               {isUnavailable && (
-                <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                  Upgrade
+                <span className="text-xs flex items-center gap-1 text-amber-200 dark:text-amber-200 font-medium">
+                  <CircleFadingArrowUp className="w-4 h-4 text-amber-200" />Upgrade
                 </span>
               )}
               <ChallengeTypeInfoDialog

@@ -23,6 +23,10 @@ export type User = {
   role: string;
   newUser?: boolean;
   subscriptionPlan?: SubscriptionPlan;
+  subscriptionStatus?: string | null;
+  subscriptionRenewsAt?: Date | string | null;
+  subscriptionCancelledAt?: Date | string | null;
+  lemonSqueezySubscriptionId?: string | null;
 };
 
 export type ParentUser = User;

@@ -11,7 +11,11 @@ export type AuthErrorCode =
   | "INVALID_PLAN"
   | "CHECKOUT_FAILED"
   | "NO_SUBSCRIPTION"
-  | "PORTAL_FAILED";
+  | "PORTAL_FAILED"
+  | "UPGRADE_FAILED"
+  | "DOWNGRADE_FAILED"
+  | "ALREADY_CANCELLED"
+  | "CANCELLATION_FAILED";
 
 export type AuthActionError = {
   code: AuthErrorCode;

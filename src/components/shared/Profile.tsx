@@ -17,14 +17,18 @@ import { toast } from "sonner";
 import { Session } from "next-auth";
 import Link from "next/link";
 import { RoleType, SubscriptionPlan } from "../../types/types";
+import { CancelSubscriptionDialog } from "@/src/components/landing/CancelSubscriptionDialog";
 
 export default function Profile({ session }: { session: Session }) {
   const [closeDialog, setCloseDialog] = React.useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "settings">("profile");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [subscriptionRenewsAt, setSubscriptionRenewsAt] = useState<Date | string | null>(null);
+  const [subscriptionCancelledAt, setSubscriptionCancelledAt] = useState<Date | string | null>(null);
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
-  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const t = useTranslations("Profile");
 
   const handleLogout = async () => {
@@ -38,48 +42,31 @@ export default function Profile({ session }: { session: Session }) {
     }
   };
 
+  const loadSubscriptionPlan = async () => {
+    try {
+      const response = await fetch("/api/user/subscription");
+      if (response.ok) {
+        const data = await response.json();
+        setSubscriptionPlan(data.subscriptionPlan);
+        setSubscriptionStatus(data.subscriptionStatus ?? null);
+        setSubscriptionRenewsAt(data.subscriptionRenewsAt ?? null);
+        setSubscriptionCancelledAt(data.subscriptionCancelledAt ?? null);
+      }
+    } catch (error) {
+      console.error("Failed to load subscription plan:", error);
+    } finally {
+      setIsLoadingPlan(false);
+    }
+  };
+
   // Load subscription plan on mount
   useEffect(() => {
-    const loadSubscriptionPlan = async () => {
-      try {
-        const response = await fetch("/api/user/subscription");
-        if (response.ok) {
-          const data = await response.json();
-          setSubscriptionPlan(data.subscriptionPlan);
-        }
-      } catch (error) {
-        console.error("Failed to load subscription plan:", error);
-      } finally {
-        setIsLoadingPlan(false);
-      }
-    };
-
     loadSubscriptionPlan();
   }, []);
 
-  const handleCancelPlan = async () => {
+  const handleCancelPlan = () => {
     if (!subscriptionPlan || subscriptionPlan === SubscriptionPlan.FREE) return;
-
-    setIsUpdatingPlan(true);
-    try {
-      const response = await fetch("/api/user/subscription", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subscriptionPlan: SubscriptionPlan.FREE }),
-      });
-
-      if (response.ok) {
-        setSubscriptionPlan(SubscriptionPlan.FREE);
-        toast.success("Plan cancelled successfully");
-      } else {
-        toast.error("Failed to cancel plan");
-      }
-    } catch (error) {
-      console.error("Failed to cancel plan:", error);
-      toast.error("Failed to cancel plan");
-    } finally {
-      setIsUpdatingPlan(false);
-    }
+    setIsCancelDialogOpen(true);
   };
 
   const getPlanDisplayName = (plan: SubscriptionPlan) => {
@@ -94,6 +81,23 @@ export default function Profile({ session }: { session: Session }) {
         return plan;
     }
   };
+
+  const getDaysUntilDate = (date: Date | string | null) => {
+    if (!date) return null;
+
+    const targetDate = new Date(date);
+    const diffMs = targetDate.getTime() - Date.now();
+    return Math.max(Math.ceil(diffMs / (1000 * 60 * 60 * 24)), 0);
+  };
+
+  const isPlanCancelled = subscriptionStatus === "cancelled";
+  const cancellationDate = subscriptionCancelledAt || subscriptionRenewsAt || null;
+  const daysUntilDowngrade = isPlanCancelled ? getDaysUntilDate(cancellationDate) : null;
+  const billingPortalUrl =
+    process.env.NEXT_PUBLIC_LEMONSQUEEZY_BILLING_URL ??
+    (process.env.NEXT_PUBLIC_LEMONSQUEEZY_STORE_SUBDOMAIN
+      ? `https://${process.env.NEXT_PUBLIC_LEMONSQUEEZY_STORE_SUBDOMAIN}.lemonsqueezy.com/billing`
+      : null);
 
   return (
     <Dialog open={closeDialog} onOpenChange={setCloseDialog}>
@@ -305,27 +309,44 @@ export default function Profile({ session }: { session: Session }) {
                           </div>
                         </div>
 
-                        {/* Cancel Plan */}
-                        {subscriptionPlan && subscriptionPlan !== SubscriptionPlan.FREE && (
+                        {subscriptionPlan && subscriptionPlan !== SubscriptionPlan.FREE && billingPortalUrl ? (
+                          <div className="border-t pt-4">
+                            <Button asChild variant="outline" size="sm" className="w-full">
+                              <a href={billingPortalUrl} aria-label="Open billing portal">
+                                <CreditCard className="w-4 h-4 mr-2" />
+                                Billing Portal
+                              </a>
+                            </Button>
+                          </div>
+                        ) : null}
+
+                        {isPlanCancelled && cancellationDate ? (
+       <div className="border-t pt-4">
+  <div
+    className="
+      rounded-lg border px-3 py-2 text-sm font-medium
+
+      bg-emerald-50 text-emerald-800 border-emerald-200
+      dark:bg-emerald-500/10 dark:text-emerald-100 dark:border-emerald-500/20
+    "
+  >
+    {daysUntilDowngrade !== null && daysUntilDowngrade > 0
+      ? `Downgrading to Free in ${daysUntilDowngrade} ${
+          daysUntilDowngrade === 1 ? "day" : "days"
+        }`
+      : "Downgrading to Free today"}
+  </div>
+</div>
+                        ) : subscriptionPlan && subscriptionPlan !== SubscriptionPlan.FREE && (
                           <div className="border-t pt-4">
                             <Button
                               variant="default"
                               size="sm"
                               onClick={handleCancelPlan}
-                              disabled={isUpdatingPlan}
                               className="w-full"
                             >
-                              {isUpdatingPlan ? (
-                                <>
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  Cancelling...
-                                </>
-                              ) : (
-                                <>
-                                  <X className="w-4 h-4 mr-2" />
-                                  Cancel Plan
-                                </>
-                              )}
+                              <X className="w-4 h-4 mr-2" />
+                              Cancel Plan
                             </Button>
                           </div>
                         )}
@@ -352,6 +373,15 @@ export default function Profile({ session }: { session: Session }) {
           </div>
         </div>
       </DialogContent>
+      <CancelSubscriptionDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        onSuccess={() => {
+          setIsCancelDialogOpen(false);
+          setCloseDialog(false);
+          loadSubscriptionPlan();
+        }}
+      />
     </Dialog>
   );
 }

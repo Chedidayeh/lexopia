@@ -60,9 +60,10 @@ const Header = ({ session }: { session: Session | null }) => {
                   <Button size={"sm"}>Admin</Button>
                 </Link>
               )}
-              {/* <ModeToggle /> */}
               {/* <Switcher /> */}
               {user ? <Profile session={session} /> : <LoginForm />}{" "}
+                            <ModeToggle />
+
             </div>
           </div>
         </div>
@@ -84,9 +85,10 @@ const Header = ({ session }: { session: Session | null }) => {
           </Link>
 
           <div className="flex items-center gap-2">
-            {/* <ModeToggle /> */}
             {/* <Switcher /> */}
             {user ? <Profile session={session} /> : <LoginForm />}{" "}
+                        <ModeToggle />
+
           </div>
         </div>
       </header>

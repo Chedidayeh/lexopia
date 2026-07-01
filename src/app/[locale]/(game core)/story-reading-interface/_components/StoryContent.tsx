@@ -83,7 +83,7 @@ const StoryContent = ({
               }}
               className={
                 idx === highlightedSentence
-                  ? "bg-blue-800 rounded-sm"
+                  ? "dark:bg-blue-800 bg-accent rounded-sm"
                   : ""
               }
             >
